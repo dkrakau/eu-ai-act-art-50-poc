@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="text_color">#FF0A2A48</color>
+
+    <color name="btn_text_color">#FF0a2a48</color>
+    <color name="btn_fill_color">#FF0a2a48</color>
+
+    <color name="primary_color">#FF0a2a48</color>
+    <color name="secondary_color">#FF6699CF</color>
+    <color name="accent_color">#FF6699CF</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
