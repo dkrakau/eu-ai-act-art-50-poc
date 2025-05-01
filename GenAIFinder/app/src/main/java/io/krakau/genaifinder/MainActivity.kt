@@ -2,55 +2,92 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import io.krakau.genaifinder.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
+import androidx.core.net.toUri
+import io.krakau.genaifinder.picassso.Base64RequestHandler
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var picasso: Picasso
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    // tasks
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var mainScope: CoroutineScope
+    private lateinit var mJob: Job
+
+    // bindings
+    private var previewImage: ImageView? = null
+    private var previewTitle: TextView? = null
+    private var previewDescription: TextView? = null
+    private var previewUrl: TextView? = null
     private var textIntent: TextView? = null
     private var textImages: TextView? = null
-    private var webview: WebView? = null
     private var searchBtn: Button? = null
+    private var webview: WebView? = null
 
-    private var url: String = "https://x.com/spsth/status/1851232714399039837?t=2iKpQnarnkM3IDK8NXTVfg&s=19"
+    // data
+    private var imageUrls: Array<String?> = emptyArray()
+
+    //private var url: String = "https://x.com/spsth/status/1851232714399039837?t=2iKpQnarnkM3IDK8NXTVfg&s=19"
     //private var url: String = "https://pbs.twimg.com/media/GbDmULJXYAAsPBQ?format=jpg&name=small";
     //private var url: String = "https://www.spiegel.de/";
-    //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
+    private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
+    //private var url: String = "https://www.tagesschau.de/"
+    //private var url: String = "https://web.de/"
     //private var url: String = "";
-
-    private var imageUrls: Array<String?> = emptyArray()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Picasso with SVG and Base64 support
+        picasso = Picasso.Builder(this)
+            //.addRequestHandler(SvgRequestHandler())
+            .addRequestHandler(Base64RequestHandler())
+            .build()
+            // Set this instance as the singleton
+        Picasso.setSingletonInstance(picasso)
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        previewImage = binding.previewImage
+        previewTitle = binding.previewTitle
+        previewDescription = binding.previewDescription
+        previewUrl = binding.previewUrl
         textIntent = binding.textIntent
         textImages = binding.textImages
-        webview = binding.webview
         searchBtn = binding.searchBtn
+        webview = binding.webview
+
+        coroutineScope = CoroutineScope(Dispatchers.IO)
+        mainScope = CoroutineScope(Dispatchers.Main)
 
         // check intent
         when {
@@ -95,9 +132,8 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         }
-        webview?.loadUrl(url)
 
-        searchBtn?.setOnClickListener(View.OnClickListener {
+        searchBtn?.setOnClickListener {
             Log.d("BUTTONS", "User tapped the searchBtn")
             // execute js
             val javascript: String = """
@@ -107,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             }
             """.trimIndent()
             webview?.loadUrl("javascript:$javascript")
-        })
+        }
 
         /*val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -137,11 +173,96 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleSendText(intent: Intent) {
         intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+            // clear imageUrls
+            imageUrls = emptyArray()
             Log.d("Intent", it)
             url = it
+            // load url into webview
+            webview?.loadUrl(url)
             // Update UI to reflect text being shared
             textIntent?.setText(it)
+            searchBtn?.isEnabled = true
+            startParsing()
         }
+    }
+
+
+    private fun startParsing() {
+        cancelJob()
+        mJob = coroutineScope.launch {
+            extractUrlData(url)
+        }
+    }
+
+    private fun cancelJob() {
+        if (::mJob.isInitialized) {
+            mJob.cancel()
+        }
+    }
+
+    // Extract preview data from the URL
+    private fun extractUrlData(url: String) {
+
+        var doc = Jsoup.connect(url)
+            //.followRedirects(true)
+            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+            .get()
+
+        // Get metadata from Open Graph tags or regular HTML tags
+        var title = doc.select("meta[property=og:title]").attr("content").ifEmpty {
+            doc.title()
+        }
+        if(title.equals("")) {
+            title = "Titleless"
+        }
+
+        var description = doc.select("meta[property=og:description]").attr("content").ifEmpty {
+            doc.select("meta[name=description]").attr("content") ?: ""
+        }
+        if(description.equals("")) {
+            description = "Descriptionless"
+        }
+
+        var imageUrl = doc.select("meta[property=og:image]").attr("content").ifEmpty {
+            // Try to find first image as fallback
+            doc.select("img").firstOrNull()?.attr("src") ?: ""
+        }
+        var uri = imageUrl.toUri()
+        if(imageUrl.contains("data:image") && imageUrl.contains("base64")) {
+            uri = Uri.parse("${Base64RequestHandler.SCHEME_BASE64}://$imageUrl")
+            Log.d("OG:IMAGEURL:BASE64", imageUrl)
+        } else {
+            if(uri.host == null) {
+                imageUrl = "https://" + url.toUri().authority + imageUrl
+            }
+        }
+
+        Log.d("OG:IMAGEURL", uri.toString())
+        Log.d("OG:IMAGEURLAF", imageUrl)
+
+        runOnUiThread(Runnable {
+            picasso.load(uri)
+                .placeholder(R.drawable.placeholder_image)
+                .into(previewImage)
+            previewTitle?.text = title
+            previewDescription?.text = description
+            previewUrl?.text = url
+        })
+
+
+
+        Log.d("JSOUP", title)
+        Log.d("JSOUP", description)
+        Log.d("JSOUP", imageUrl)
+
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        // Set the new intent so getIntent() will return the latest one
+        setIntent(intent)
+        // Process the new intent
+        intent?.let { handleSendText(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
