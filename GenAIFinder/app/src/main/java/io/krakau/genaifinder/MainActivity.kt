@@ -80,6 +80,20 @@ class MainActivity : AppCompatActivity() {
                     }
                     """.trimIndent()
             }
+
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                if (request.url == null) {
+                    return true
+                }
+                if (!TextUtils.isEmpty(request.url.host) && request.url.toString().startsWith("fb://")) {
+                    return true
+                } else if (!TextUtils.isEmpty(request.url.host) && request.url.toString().startsWith("instagram://")) {
+                    return true
+                } else {
+                    view.loadUrl(request.url.toString())
+                }
+                return true
+            }
         }
         webview?.loadUrl(url)
 
