@@ -86,6 +86,7 @@ obj/
 .idea/dictionaries
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
+.idea/deploymentTargetSelector.xml
 .idea/datasources.xml
 .idea/dataSources.ids
 .idea/sqlDataSources.xml
