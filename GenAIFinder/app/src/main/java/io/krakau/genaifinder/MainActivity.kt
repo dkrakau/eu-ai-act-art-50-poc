@@ -1,7 +1,9 @@
 package io.krakau.genaifinder
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +13,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.TextView
 import io.krakau.genaifinder.databinding.ActivityMainBinding
@@ -55,9 +61,64 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //webview?.setVisibility(View.GONE);
+        webview?.settings?.javaScriptEnabled = true
+        webview?.settings?.domStorageEnabled = true
+        webview?.addJavascriptInterface(MyJavaScriptInterface(this),"ImageAnalyser")
+        webview?.webViewClient = object : WebViewClient()  {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+            }
+            private fun loadScript(javascript: String) {
+                webview?.loadUrl("javascript:$javascript")
+            }
+            private fun getImages(): String {
+                return """
+                    let imgTags = document.getElementsByTagName("img");
+                    for (let i = 0; i < imgTags.length; i++) {
+                        ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
+                    }
+                    """.trimIndent()
+            }
+        }
+        webview?.loadUrl(url)
+
+        searchBtn?.setOnClickListener(View.OnClickListener {
+            Log.d("BUTTONS", "User tapped the searchBtn")
+            // execute js
+            val javascript: String = """
+            let imgTags = document.getElementsByTagName("img");
+            for (let i = 0; i < imgTags.length; i++) {
+                ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
+            }
+            """.trimIndent()
+            webview?.loadUrl("javascript:$javascript")
+        })
+
         /*val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)*/
+    }
+
+    private inner class MyJavaScriptInterface(private val ctx: Context) {
+        @JavascriptInterface
+        fun boundMethod(imageSrc: String, i: Int, size: Int) {
+            if (i == 0) {
+                imageUrls = arrayOfNulls(size)
+            }
+            imageUrls[i] = imageSrc
+            if (i == size - 1) {
+                runOnUiThread(Runnable {
+                    var images = ""
+                    for (imageUrl in imageUrls) {
+                        Log.d("imageUrls", imageUrl!!)
+                        images += "$imageUrl; "
+                    }
+                    // Stuff that updates the UI
+                    textImages?.setText(images)
+                })
+            }
+        }
     }
 
     private fun handleSendText(intent: Intent) {
