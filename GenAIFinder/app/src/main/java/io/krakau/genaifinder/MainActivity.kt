@@ -56,8 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     //private var url: String = "https://x.com/spsth/status/1851232714399039837?t=2iKpQnarnkM3IDK8NXTVfg&s=19"
     //private var url: String = "https://pbs.twimg.com/media/GbDmULJXYAAsPBQ?format=jpg&name=small";
-    //private var url: String = "https://www.spiegel.de/";
-    private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
+    private var url: String = "https://www.spiegel.de/";
+    //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
     //private var url: String = "https://www.tagesschau.de/"
     //private var url: String = "https://web.de/"
     //private var url: String = "";
@@ -165,7 +165,13 @@ class MainActivity : AppCompatActivity() {
                         images += "$imageUrl; "
                     }
                     // Stuff that updates the UI
-                    textImages?.setText(images)
+                    textImages?.text = images
+
+                    val sendDataIntent = Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
+                        //putExtra("imageUrls", imageUrls)
+                        putExtra("imageUrls", imageUrls)
+                    }
+                    startActivity(sendDataIntent)
                 })
             }
         }
