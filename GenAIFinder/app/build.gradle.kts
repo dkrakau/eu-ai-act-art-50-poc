@@ -55,4 +55,5 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.picasso)
     implementation("com.caverock:androidsvg-aar:1.4")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 }

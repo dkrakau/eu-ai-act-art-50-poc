@@ -47,9 +47,70 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ImageGallery"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_corners"
+            android:orientation="vertical">
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexboxLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="space_evenly">
+
+                <androidx.constraintlayout.utils.widget.MockView
+                    android:id="@+id/mockView10"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+                <androidx.constraintlayout.utils.widget.MockView
+                    android:id="@+id/mockView11"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+                <androidx.constraintlayout.utils.widget.MockView
+                    android:id="@+id/mockView12"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+                <androidx.constraintlayout.utils.widget.MockView
+                    android:id="@+id/mockView13"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+                <androidx.constraintlayout.utils.widget.MockView
+                    android:id="@+id/mockView14"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

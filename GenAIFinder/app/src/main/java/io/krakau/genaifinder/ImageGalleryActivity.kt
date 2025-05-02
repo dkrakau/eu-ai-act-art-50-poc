@@ -1,17 +1,22 @@
 package io.krakau.genaifinder
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.appcompat.app.ActionBar.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import com.google.android.flexbox.FlexboxLayout
+import com.squareup.picasso.Picasso
 import io.krakau.genaifinder.databinding.ActivityMainBinding
-import android.util.Log
-import android.widget.TextView
-import org.w3c.dom.Text
 
 class ImageGalleryActivity : AppCompatActivity() {
 
@@ -19,6 +24,9 @@ class ImageGalleryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var txt: TextView
+
+    private lateinit var scrollView: ScrollView
+    private lateinit var flexboxLayout: FlexboxLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,31 +38,56 @@ class ImageGalleryActivity : AppCompatActivity() {
 
         txt = findViewById<TextView>(R.id.testIntent)
 
-        var imageUrls: Array<String>? = intent?.getStringArrayExtra("imageUrls")
+        scrollView = findViewById<ScrollView>(R.id.scrollview)
+        flexboxLayout = findViewById<FlexboxLayout>(R.id.flexboxLayout)
+
+        val imageUrls: Array<String>? = intent?.getStringArrayExtra("imageUrls")
+        debugImageUrlTexts(imageUrls)
+        displayImages(imageUrls)
+    }
+
+    private fun debugImageUrlTexts(imageUrls: Array<String>?) {
         var images = ""
         imageUrls?.forEach {
             Log.d("ImageGallery", it)
             images += it + "; "
+
         }
         txt.text = images
     }
 
-    fun handleIntent(intent: Intent?) {
-        var imageUrls: Array<String>? = intent?.getStringArrayExtra("imageUrls")
-        var images = ""
+    private fun displayImages(imageUrls: Array<String>?) {
+        val layoutParams = LinearLayout.LayoutParams(
+            dpToPx(125), // width
+            dpToPx(125)  // height
+        )
+        layoutParams.setMargins(0, 0, 0, dpToPx(10))
+
         imageUrls?.forEach {
-            Log.d("ImageGallery", it)
-            images += it + "; "
+            val imageCardView = CardView(this)
+            imageCardView.radius = this.resources.displayMetrics.density * (15f) // radius in dp
+            val imageView = ImageView(this)
+            imageView.adjustViewBounds = true
+            val imageLayoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+            imageView.layoutParams = imageLayoutParams
+            Picasso.get().load(it)
+                .placeholder(R.drawable.placeholder_image)
+                .into(imageView)
+            imageCardView.addView(imageView, layoutParams)
+            flexboxLayout.addView(imageCardView, layoutParams)
         }
-        txt.text = images
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        // Set the new intent so getIntent() will return the latest one
-        setIntent(intent)
-        // Process the new intent
-        intent?.let { handleIntent(it) }
+    private fun dpToPx(dp: Int): Int {
+        val scale = this.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
+    }
+
+    private fun calculateHorizontalSpacing(): Int {
+        return this.resources.displayMetrics.widthPixels - ( (dpToPx(125) * 3) + (dpToPx(15) * 2) + (dpToPx(20) * 2) )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
