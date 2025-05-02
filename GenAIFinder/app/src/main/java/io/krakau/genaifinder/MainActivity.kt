@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     private var previewUrl: TextView? = null
     private var textIntent: TextView? = null
     private var textImages: TextView? = null
-    private var searchBtn: Button? = null
+    private var discoverBtn: Button? = null
     private var webview: WebView? = null
 
     // data
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         previewUrl = binding.previewUrl
         textIntent = binding.textIntent
         textImages = binding.textImages
-        searchBtn = binding.searchBtn
+        discoverBtn = binding.discoverBtn
         webview = binding.webview
 
         coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -133,8 +133,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        searchBtn?.setOnClickListener {
-            Log.d("BUTTONS", "User tapped the searchBtn")
+        discoverBtn?.setOnClickListener {
+            Log.d("BUTTONS", "User tapped the discoverBtn")
             // execute js
             val javascript: String = """
             let imgTags = document.getElementsByTagName("img");
@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             webview?.loadUrl(url)
             // Update UI to reflect text being shared
             textIntent?.setText(it)
-            searchBtn?.isEnabled = true
+            discoverBtn?.isEnabled = true
             startParsing()
         }
     }
