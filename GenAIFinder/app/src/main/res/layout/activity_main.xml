@@ -46,7 +46,7 @@
         android:id="@+id/webview"
         android:layout_width="0dp"
         android:layout_height="300dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -56,7 +56,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:enabled="false"
         android:text="Discover"
         android:textColor="@color/btn_text_color"
         android:textSize="24sp"
@@ -90,7 +89,8 @@
                 android:layout_gravity="clip_vertical|top"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
-                android:maxWidth="180dp" />
+                android:maxWidth="100dp"
+                android:maxHeight="80dp" />
 
             <TextView
                 android:id="@+id/previewTitle"

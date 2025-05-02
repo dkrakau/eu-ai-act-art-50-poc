@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -53,14 +54,13 @@ class MainActivity : AppCompatActivity() {
 
     // data
     private var imageUrls: Array<String?> = emptyArray()
-
-    private var url: String = "https://x.com/spsth/status/1851232714399039837?t=2iKpQnarnkM3IDK8NXTVfg&s=19"
+    private var url: String = "";
+    //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
     //private var url: String = "https://pbs.twimg.com/media/GbDmULJXYAAsPBQ?format=jpg&name=small";
     //private var url: String = "https://www.spiegel.de/";
     //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
     //private var url: String = "https://www.tagesschau.de/"
     //private var url: String = "https://web.de/"
-    //private var url: String = "";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,26 +98,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //webview?.setVisibility(View.GONE);
+        discoverBtn?.isEnabled = false
+        webview?.setVisibility(View.GONE);
+
         webview?.settings?.javaScriptEnabled = true
         webview?.settings?.domStorageEnabled = true
         webview?.addJavascriptInterface(MyJavaScriptInterface(this),"ImageAnalyser")
         webview?.webViewClient = object : WebViewClient()  {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                Log.d("WEBVIEW", webview!!.url!!)
+                // ###
+                // ChromeWebDriver will redirect to url which jsoup can handle
+                // ###
+                startParsing(webview!!.url!!)
             }
-            private fun loadScript(javascript: String) {
-                webview?.loadUrl("javascript:$javascript")
-            }
-            private fun getImages(): String {
-                return """
-                    let imgTags = document.getElementsByTagName("img");
-                    for (let i = 0; i < imgTags.length; i++) {
-                        ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
-                    }
-                    """.trimIndent()
-            }
-
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 if (request.url == null) {
                     return true
@@ -168,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                     textImages?.text = images
 
                     val sendDataIntent = Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
-                        //putExtra("imageUrls", imageUrls)
                         putExtra("imageUrls", filterContent(imageUrls))
                     }
                     /* If set, and the activity being launched is already running in the current task,
@@ -206,13 +200,11 @@ class MainActivity : AppCompatActivity() {
             webview?.loadUrl(url)
             // Update UI to reflect text being shared
             textIntent?.setText(it)
-            discoverBtn?.isEnabled = true
-            startParsing()
         }
     }
 
 
-    private fun startParsing() {
+    private fun startParsing(url: String) {
         cancelJob()
         mJob = coroutineScope.launch {
             extractUrlData(url)
@@ -229,8 +221,10 @@ class MainActivity : AppCompatActivity() {
     private fun extractUrlData(url: String) {
 
         var doc = Jsoup.connect(url)
+            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
+            .ignoreHttpErrors(true)
+            .timeout(2000)
             .followRedirects(true)
-            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
             .get()
 
         // Get metadata from Open Graph tags or regular HTML tags
@@ -262,6 +256,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        Log.d("extractUrlData", url)
         Log.d("OG:IMAGEURL", uri.toString())
         Log.d("OG:IMAGEURLAF", imageUrl)
 
@@ -272,9 +267,8 @@ class MainActivity : AppCompatActivity() {
             previewTitle?.text = title
             previewDescription?.text = description
             previewUrl?.text = url
+            discoverBtn?.isEnabled = true
         })
-
-
 
         Log.d("JSOUP", title)
         Log.d("JSOUP", description)
