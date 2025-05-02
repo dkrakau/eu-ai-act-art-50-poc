@@ -13,4 +13,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="bg">#FFFFFFFF</color>
+
+
+    <color name="dialog_bg">#FFFEF7FF</color>
+
 </resources>

@@ -17,4 +17,6 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="bg">#FF000000</color>
+
+    <color name="dialog_bg">#FF141218</color>
 </resources>

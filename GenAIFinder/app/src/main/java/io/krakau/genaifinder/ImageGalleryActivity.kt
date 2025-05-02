@@ -1,9 +1,13 @@
 package io.krakau.genaifinder
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -27,6 +31,12 @@ class ImageGalleryActivity : AppCompatActivity() {
 
     private lateinit var scrollView: ScrollView
     private lateinit var flexboxLayout: FlexboxLayout
+    private var imageUrls: Array<String>? = emptyArray()
+    private var selectedImageUrl: String = "null"
+
+    private lateinit var dialog: Dialog
+    private lateinit var dialogImageView: ImageView
+    private lateinit var searchBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,31 +51,50 @@ class ImageGalleryActivity : AppCompatActivity() {
         scrollView = findViewById<ScrollView>(R.id.scrollview)
         flexboxLayout = findViewById<FlexboxLayout>(R.id.flexboxLayout)
 
-        val imageUrls: Array<String>? = intent?.getStringArrayExtra("imageUrls")
-        debugImageUrlTexts(imageUrls)
-        displayImages(imageUrls)
+        // Dialog for image url selection
+        dialog = Dialog(this)
+        dialog.setContentView(R.layout.custom_dialog_box)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_corners))
+        searchBtn = dialog.findViewById<Button>(R.id.searchBtn)
+        searchBtn.setOnClickListener {
+            Log.d("BUTTONS", "User tapped the searchBtn")
+            Log.d("DIALOG", selectedImageUrl)
+        }
+
+        // load image urls into flexboxLayout
+        imageUrls = intent?.getStringArrayExtra("imageUrls")
+        debugImageUrlTexts()
+        displayImages()
     }
 
-    private fun debugImageUrlTexts(imageUrls: Array<String>?) {
+    private fun debugImageUrlTexts() {
         var images = ""
         imageUrls?.forEach {
             Log.d("ImageGallery", it)
             images += it + "; "
-
         }
         txt.text = images
     }
 
-    private fun displayImages(imageUrls: Array<String>?) {
+    private fun displayImages() {
         val layoutParams = LinearLayout.LayoutParams(
             dpToPx(125), // width
             dpToPx(125)  // height
         )
         layoutParams.setMargins(0, 0, 0, dpToPx(10))
 
-        imageUrls?.forEach {
+        imageUrls?.forEachIndexed { index, imageUrl ->
             val imageCardView = CardView(this)
             imageCardView.radius = this.resources.displayMetrics.density * (15f) // radius in dp
+            imageCardView.setOnClickListener {
+                selectedImageUrl = imageUrls?.get(index)!!
+                dialogImageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
+                Picasso.get().load(selectedImageUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(dialogImageView)
+                dialog.show()
+            }
             val imageView = ImageView(this)
             imageView.adjustViewBounds = true
             val imageLayoutParams = LinearLayout.LayoutParams(
@@ -73,7 +102,7 @@ class ImageGalleryActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
             imageView.layoutParams = imageLayoutParams
-            Picasso.get().load(it)
+            Picasso.get().load(imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .into(imageView)
             imageCardView.addView(imageView, layoutParams)
