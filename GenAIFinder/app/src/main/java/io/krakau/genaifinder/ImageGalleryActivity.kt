@@ -1,6 +1,5 @@
 package io.krakau.genaifinder
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import androidx.appcompat.app.ActionBar.LayoutParams
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
@@ -36,7 +35,7 @@ class ImageGalleryActivity : AppCompatActivity() {
 
     private lateinit var dialog: Dialog
     private lateinit var dialogImageView: ImageView
-    private lateinit var searchBtn: Button
+    private lateinit var findBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +55,11 @@ class ImageGalleryActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.custom_dialog_box)
         dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_corners))
-        searchBtn = dialog.findViewById<Button>(R.id.searchBtn)
-        searchBtn.setOnClickListener {
+        findBtn = dialog.findViewById<Button>(R.id.findBtn)
+        findBtn.setOnClickListener {
             Log.d("BUTTONS", "User tapped the searchBtn")
             Log.d("DIALOG", selectedImageUrl)
+            Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
         }
 
         // load image urls into flexboxLayout
