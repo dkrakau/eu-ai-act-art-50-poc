@@ -17,6 +17,8 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexboxLayout
 import com.squareup.picasso.Picasso
 import io.krakau.genaifinder.databinding.ActivityMainBinding
@@ -90,8 +92,12 @@ class ImageGalleryActivity : AppCompatActivity() {
             imageCardView.setOnClickListener {
                 selectedImageUrl = imageUrls?.get(index)!!
                 dialogImageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
-                Picasso.get().load(selectedImageUrl)
+                /*Picasso.get().load(selectedImageUrl)
                     .placeholder(R.drawable.placeholder_image)
+                    .into(dialogImageView)*/
+                Glide.with(this)
+                    .load(selectedImageUrl)
+                    .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
                     .into(dialogImageView)
                 dialog.show()
             }
@@ -102,8 +108,12 @@ class ImageGalleryActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
             imageView.layoutParams = imageLayoutParams
-            Picasso.get().load(imageUrl)
+            /*Picasso.get().load(imageUrl)
                 .placeholder(R.drawable.placeholder_image)
+                .into(imageView)*/
+            Glide.with(this)
+                .load(imageUrl)
+                .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
                 .into(imageView)
             imageCardView.addView(imageView, layoutParams)
             flexboxLayout.addView(imageCardView, layoutParams)

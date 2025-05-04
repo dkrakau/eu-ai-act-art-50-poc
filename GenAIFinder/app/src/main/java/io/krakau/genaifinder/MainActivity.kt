@@ -28,6 +28,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.picassso.Base64RequestHandler
 
 class MainActivity : AppCompatActivity() {
@@ -153,7 +155,7 @@ class MainActivity : AppCompatActivity() {
             }
             imageUrls[i] = imageSrc
             if (i == size - 1) {
-                runOnUiThread(Runnable {
+                runOnUiThread {
                     var images = ""
                     for (imageUrl in imageUrls) {
                         Log.d("imageUrls", imageUrl!!)
@@ -171,7 +173,7 @@ class MainActivity : AppCompatActivity() {
                     to the (now on top) old activity as a new Intent. */
                     sendDataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(sendDataIntent)
-                })
+                }
             }
         }
     }
@@ -232,14 +234,14 @@ class MainActivity : AppCompatActivity() {
             doc.title()
         }
         if(title.equals("")) {
-            title = "Titleless"
+            title = "No title provided"
         }
 
         var description = doc.select("meta[property=og:description]").attr("content").ifEmpty {
             doc.select("meta[name=description]").attr("content") ?: ""
         }
         if(description.equals("")) {
-            description = "Descriptionless"
+            description = "No description provided"
         }
 
         var imageUrl = doc.select("meta[property=og:image]").attr("content").ifEmpty {
@@ -260,15 +262,20 @@ class MainActivity : AppCompatActivity() {
         Log.d("OG:IMAGEURL", uri.toString())
         Log.d("OG:IMAGEURLAF", imageUrl)
 
-        runOnUiThread(Runnable {
-            picasso.load(uri)
+        runOnUiThread {
+            /*picasso.load(uri)
                 .placeholder(R.drawable.placeholder_image)
-                .into(previewImage)
+                .into(previewImage)*/
+            Log.d("GLIDE", imageUrl)
+            Glide.with(this)
+                .load(imageUrl)
+                .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
+                .into(previewImage!!)
             previewTitle?.text = title
             previewDescription?.text = description
             previewUrl?.text = url
             discoverBtn?.isEnabled = true
-        })
+        }
 
         Log.d("JSOUP", title)
         Log.d("JSOUP", description)

@@ -56,4 +56,5 @@ dependencies {
     implementation(libs.picasso)
     implementation("com.caverock:androidsvg-aar:1.4")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
