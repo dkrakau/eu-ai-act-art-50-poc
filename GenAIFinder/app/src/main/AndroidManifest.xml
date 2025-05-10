@@ -32,6 +32,9 @@
         <activity
             android:name=".ImageGalleryActivity"
             android:theme="@style/Theme.GenAIFinder" />
+        <activity
+            android:name=".FindActivity"
+            android:theme="@style/Theme.GenAIFinder" />
     </application>
 
 </manifest>

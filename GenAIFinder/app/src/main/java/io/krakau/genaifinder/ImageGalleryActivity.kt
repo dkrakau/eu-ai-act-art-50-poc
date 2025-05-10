@@ -1,6 +1,7 @@
 package io.krakau.genaifinder
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -62,6 +63,10 @@ class ImageGalleryActivity : AppCompatActivity() {
             Log.d("BUTTONS", "User tapped the searchBtn")
             Log.d("DIALOG", selectedImageUrl)
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
+            val sendDataIntent = Intent(this@ImageGalleryActivity, FindActivity::class.java).apply {
+                //putExtra("imageUrls", filterContent(imageUrls))
+            }
+            startActivity(sendDataIntent)
         }
 
         // load image urls into flexboxLayout

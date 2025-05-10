@@ -17,4 +17,6 @@
 
     <color name="dialog_bg">#FFFEF7FF</color>
 
+    <color name="hint">#FFD3D3D4</color>
+
 </resources>

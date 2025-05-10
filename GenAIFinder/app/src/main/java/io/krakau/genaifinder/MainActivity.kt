@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        discoverBtn?.isEnabled = false
+        //discoverBtn?.isEnabled = false
         webview?.setVisibility(View.GONE);
 
         webview?.settings?.javaScriptEnabled = true
@@ -139,7 +139,11 @@ class MainActivity : AppCompatActivity() {
                 ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
             }
             """.trimIndent()
-            webview?.loadUrl("javascript:$javascript")
+            //webview?.loadUrl("javascript:$javascript")
+            val sendDataIntent = Intent(this@MainActivity, FindActivity::class.java).apply {
+               // putExtra("imageUrls", filterContent(imageUrls))
+            }
+            startActivity(sendDataIntent)
         }
 
         /*val navController = findNavController(R.id.nav_host_fragment_content_main)
