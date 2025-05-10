@@ -94,7 +94,7 @@ class FinderActivity : AppCompatActivity() {
                     title,
                     description,
                     "100% Simularity",
-                    "Origin",
+                    "Midjourney",
                     getDate(currentTime),
                     getTime(currentTime),
                 )
@@ -605,6 +605,6 @@ class FinderActivity : AppCompatActivity() {
             }
         ]
         """.trimIndent()
-        return shortIsccData
+        return largeIsccData
     }
 }

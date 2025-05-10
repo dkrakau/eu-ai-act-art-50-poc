@@ -81,6 +81,7 @@
                         android:id="@+id/itemImageView"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:scaleType="centerCrop"
                         app:srcCompat="@android:drawable/sym_def_app_icon" />
 
                 </androidx.cardview.widget.CardView>
@@ -107,6 +108,7 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/lorem_ipsum"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -115,7 +117,8 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="@string/lorem_ipsum" />
+                            android:text="@string/lorem_ipsum"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/simularityTextView"
@@ -171,10 +174,11 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:ellipsize="end"
-                            android:hint="Tag"
                             android:maxWidth="90dp"
                             android:maxLines="2"
-                            android:textAlignment="center" />
+                            android:text="Tag"
+                            android:textAlignment="center"
+                            android:textSize="16sp" />
                     </androidx.cardview.widget.CardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

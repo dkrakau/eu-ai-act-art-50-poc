@@ -20,6 +20,7 @@
             android:id="@+id/itemImageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:scaleType="centerCrop"
             app:srcCompat="@android:drawable/sym_def_app_icon" />
 
     </androidx.cardview.widget.CardView>
@@ -110,10 +111,11 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:ellipsize="end"
-                android:hint="tag"
                 android:maxWidth="90dp"
                 android:maxLines="2"
-                android:textAlignment="center" />
+                android:text="Midjourney"
+                android:textAlignment="center"
+                android:textSize="16sp" />
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
