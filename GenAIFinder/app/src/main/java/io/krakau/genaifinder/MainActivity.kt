@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             }
             """.trimIndent()
             //webview?.loadUrl("javascript:$javascript")
-            val sendDataIntent = Intent(this@MainActivity, FindActivity::class.java).apply {
+            val sendDataIntent = Intent(this@MainActivity, FinderActivity::class.java).apply {
                // putExtra("imageUrls", filterContent(imageUrls))
             }
             startActivity(sendDataIntent)

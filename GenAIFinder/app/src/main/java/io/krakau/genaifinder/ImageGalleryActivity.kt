@@ -21,7 +21,6 @@ import androidx.navigation.ui.navigateUp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexboxLayout
-import com.squareup.picasso.Picasso
 import io.krakau.genaifinder.databinding.ActivityMainBinding
 
 class ImageGalleryActivity : AppCompatActivity() {
@@ -60,10 +59,10 @@ class ImageGalleryActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_corners))
         findBtn = dialog.findViewById<Button>(R.id.findBtn)
         findBtn.setOnClickListener {
-            Log.d("BUTTONS", "User tapped the searchBtn")
+            Log.d("BUTTONS", "User tapped the findBtn")
             Log.d("DIALOG", selectedImageUrl)
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
-            val sendDataIntent = Intent(this@ImageGalleryActivity, FindActivity::class.java).apply {
+            val sendDataIntent = Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
                 //putExtra("imageUrls", filterContent(imageUrls))
             }
             startActivity(sendDataIntent)

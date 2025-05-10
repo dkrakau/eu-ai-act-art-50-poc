@@ -33,7 +33,7 @@
             android:name=".ImageGalleryActivity"
             android:theme="@style/Theme.GenAIFinder" />
         <activity
-            android:name=".FindActivity"
+            android:name=".FinderActivity"
             android:theme="@style/Theme.GenAIFinder" />
     </application>
 
