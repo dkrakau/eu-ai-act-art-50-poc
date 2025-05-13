@@ -12,9 +12,20 @@ public class FindService {
     
     private String url;
     
+    private AssetService assetService;
+    private DownloadService downloadService;
+    private IsccWebService isccWebService;
+    
     @Autowired
-    public FindService() {
+    public FindService(
+            AssetService assetService,
+            DownloadService downloadService,
+            IsccWebService isccWebService
+    ) {
         this.url = null;
+        this.assetService = assetService;
+        this.downloadService = downloadService;
+        this.isccWebService = isccWebService;
     }
     
     public String findImage(String url) {
