@@ -1,4 +1,4 @@
-package io.krakau.genaifinderapi.model;
+package io.krakau.genaifinderapi.component;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -7,14 +7,16 @@ import java.util.Base64;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Dominik
  */
+@Component
 public class VectorConverter {
     
-     public VectorConverter() {
+    public VectorConverter() {
     
     }   
     

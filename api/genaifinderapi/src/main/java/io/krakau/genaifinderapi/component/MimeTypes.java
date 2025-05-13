@@ -1,13 +1,13 @@
-package io.krakau.genaifinderapi.model;
+package io.krakau.genaifinderapi.component;
 
 import java.util.HashMap;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Dominik
  */
-@Service
+@Component
 public class MimeTypes {
     public static final String MIME_APPLICATION_ANDREW_INSET = "application/andrew-inset";
     public static final String MIME_APPLICATION_JSON = "application/json";

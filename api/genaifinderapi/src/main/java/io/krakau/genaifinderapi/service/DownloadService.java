@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.service;
 
-import io.krakau.genaifinderapi.model.MimeTypes;
+import io.krakau.genaifinderapi.component.MimeTypes;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
