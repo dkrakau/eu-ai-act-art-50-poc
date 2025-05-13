@@ -12,6 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,27 +33,8 @@ public class FindController {
     }
     
     @Operation(
-            summary = "Search Assets by query",
-            description = "Searching for Assets by a specific query.",
-            tags = {"Find"})
-    @ApiResponses({
-        @ApiResponse(responseCode = "200",
-                description = "Assets that have matched the query.",
-                content = {
-                    @Content(schema = @Schema(implementation = Slice.class), mediaType = "application/json")}),
-        @ApiResponse(responseCode = "400",
-                description = "Error message if the request failed.",
-                content = {
-                    @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
-    })
-    @GetMapping("/getHelloWorld")
-    public ResponseEntity<String> getHelloWorld() throws Exception {
-        return ResponseEntity.ok().body(this.findService.getHelloWorld());
-    }
-    
-    @Operation(
-            summary = "Search Assets by query",
-            description = "Searching for Assets by a specific query.",
+            summary = "Finds assets",
+            description = "Finding assets.",
             tags = {"Find"})
     @ApiResponses({
         @ApiResponse(responseCode = "200",
@@ -65,8 +47,8 @@ public class FindController {
                     @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
     })
     @GetMapping("/image")
-    public ResponseEntity<String> findImage() throws Exception {
-        return ResponseEntity.ok().body(this.findService.findImage());
+    public ResponseEntity<String> findImage(@RequestParam("url") String url) throws Exception {
+        return ResponseEntity.ok().body(this.findService.findImage(url));
     }
     
 }

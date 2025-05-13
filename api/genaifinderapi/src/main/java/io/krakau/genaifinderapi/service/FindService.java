@@ -10,19 +10,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindService {
     
-    private String helloWorld;
+    private String url;
     
     @Autowired
     public FindService() {
-        this.helloWorld = "Hello World!";
+        this.url = null;
     }
     
-    public String getHelloWorld() {
-        return this.helloWorld;
-    }
-    
-    public String findImage() {
-        return "findImage";
+    public String findImage(String url) {
+        
+        this.url = url;
+        
+        /*
+            1. Download asset by url link
+            2. Send asset to iscc-web to create iscc
+            3. Send iscc to iscc-web to explain iscc
+            3. Nearest neighbour search for content unit on assets iscc code
+            4. Decrypt encryptedMessage with publicKey
+            5. Compare message and decryptedMessage
+            6. Return List of assets
+        */
+        
+        return this.url;
     }
     
 }
