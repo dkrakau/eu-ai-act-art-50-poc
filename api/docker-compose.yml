@@ -5,7 +5,7 @@ services:
     build:
       context: ./genaifinderapi
     ports:
-      - "8080:8080"
+      - "80:80"
     volumes:
       - type: bind
         source: ./application.properties
