@@ -3,6 +3,7 @@ package io.krakau.genaifinderapi.repository;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -11,6 +12,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface AssetRepository extends MongoRepository<Asset, String>{
     
-     Slice<Asset> findAllAssets(Pageable page);
+    @Aggregation(pipeline = {
+        "{$match:{}}"
+    })
+    Slice<Asset> findAllAssets(Pageable page);
     
 }
