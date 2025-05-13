@@ -1,5 +1,6 @@
 package io.krakau.genaifinderapi.controller;
 
+import io.krakau.genaifinderapi.service.CreateService;
 import io.krakau.genaifinderapi.service.FindService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,22 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Dominik
  */
 //@CrossOrigin(origins = "*") // just for testing
-@Tag(name = "Find", description = "Finding generative AI content")
+@Tag(name = "Create", description = "Creates entries to find generative AI content")
 @RestController
-@RequestMapping("/find")
-public class FindController {
+@RequestMapping("/create")
+public class CreateController {
     
-     private final FindService findService;
+     private final CreateService createService;
 
     @Autowired
-    public FindController(FindService findService) {
-        this.findService = findService;
+    public CreateController(CreateService createService) {
+        this.createService = createService;
     }
     
     @Operation(
             summary = "Search Assets by query",
             description = "Searching for Assets by a specific query.",
-            tags = {"Find"})
+            tags = {"Create"})
     @ApiResponses({
         @ApiResponse(responseCode = "200",
                 description = "Assets that have matched the query.",
@@ -47,13 +49,13 @@ public class FindController {
     })
     @GetMapping("/getHelloWorld")
     public ResponseEntity<String> getHelloWorld() throws Exception {
-        return ResponseEntity.ok().body(this.findService.getHelloWorld());
+        return ResponseEntity.ok().body(this.createService.getHelloWorld());
     }
     
     @Operation(
             summary = "Search Assets by query",
             description = "Searching for Assets by a specific query.",
-            tags = {"Find"})
+            tags = {"Create"})
     @ApiResponses({
         @ApiResponse(responseCode = "200",
                 description = "Assets that have matched the query.",
@@ -64,9 +66,9 @@ public class FindController {
                 content = {
                     @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
     })
-    @GetMapping("/image")
+    @PostMapping("/image")
     public ResponseEntity<String> findImage() throws Exception {
-        return ResponseEntity.ok().body(this.findService.findImage());
+        return ResponseEntity.ok().body(this.createService.createImage());
     }
     
 }

@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
  * @author Dominik
  */
 @Service
-public class FindService {
+public class CreateService {
     
     private String helloWorld;
     
     @Autowired
-    public FindService() {
+    public CreateService() {
         this.helloWorld = "Hello World!";
     }
     
@@ -21,8 +21,8 @@ public class FindService {
         return this.helloWorld;
     }
     
-    public String findImage() {
-        return "findImage";
+    public String createImage() {
+        return "createImage";
     }
     
 }
