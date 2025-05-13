@@ -2,6 +2,11 @@ package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
+import io.milvus.client.MilvusServiceClient;
+import io.milvus.param.ConnectParam;
+import io.milvus.param.R;
+import io.milvus.param.RpcStatus;
+import io.milvus.param.collection.LoadCollectionParam;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,16 +25,19 @@ public class CreateService {
     private AssetService assetService;
     private IsccWebService isccWebService;
     private VectorConverter vectorConverter;
+    private MilvusService milvusService;
 
     @Autowired
     public CreateService(
             AssetService assetService,
             IsccWebService isccWebService,
-            VectorConverter vectorConverter
+            VectorConverter vectorConverter,
+            MilvusService milvusService
     ) {
         this.assetService = assetService;
         this.isccWebService = isccWebService;
         this.vectorConverter = vectorConverter;
+        this.milvusService = milvusService;
     }
 
     public String createImage(MultipartFile imageFile, String prividerName, String prompt, Long timestamp) {
@@ -41,7 +49,10 @@ public class CreateService {
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getName());
             //    2. Send iscc to iscc-web to explain iscc
             ExplainedISCC explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
+           
             //    3. Insert units to milvus collection
+            R<RpcStatus> status = this.milvusService.loadImageCollection();
+            Logger.getLogger(CreateService.class.getName()).log(Level.INFO, status.toString());
             //    4. Encrypt privider.name + iscc + timestamp with private key
             //    5. Insert asset into mongodb
             //    6. Return asset that was inserted into mongodb
