@@ -25,4 +25,8 @@ public class AssetService {
         return this.assetRepository.findAllAssets(pageable);
     }
     
+    public Asset insert(Asset asset) {
+        return this.assetRepository.insert(asset);
+    }
+    
 }

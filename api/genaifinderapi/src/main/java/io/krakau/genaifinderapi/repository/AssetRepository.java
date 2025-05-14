@@ -15,6 +15,7 @@ public interface AssetRepository extends MongoRepository<Asset, String>{
     @Aggregation(pipeline = {
         "{$match:{}}"
     })
-    Slice<Asset> findAllAssets(Pageable page);
+    public Slice<Asset> findAllAssets(Pageable page);
+    
     
 }
