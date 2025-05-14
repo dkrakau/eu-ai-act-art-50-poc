@@ -1,5 +1,25 @@
 package io.krakau.genaifinderapi.component;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,17 +28,60 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Cryptographer {
-    
-    public Cryptographer() {
-    
+
+    private KeyPairGenerator keyPairGenerator;
+    private Cipher cipher;
+    private HashMap<String, KeyPair> keyPairs;
+
+    @Autowired
+    public Cryptographer() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        this.keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        this.keyPairGenerator.initialize(512);
+        this.cipher = Cipher.getInstance("RSA/ECB/NoPadding");
     }
-    
-    public void encrypt(String privateKey, String message) {
+
+    public void loadKeyPair(String provider, File privateKeyFile, File publicKeyFile) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         
-    }
-    
-    public void decrypt(String publicKey, String message) {
+        // load private key
+        byte[] privateKeyBytes = Files.readAllBytes(privateKeyFile.toPath());
+        PKCS8EncodedKeySpec specPrivateKey = new PKCS8EncodedKeySpec(privateKeyBytes);
         
+        // load public key
+        byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
+        X509EncodedKeySpec specPublicKey = new X509EncodedKeySpec(publicKeyBytes);
+        
+        // extract private and public key
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = kf.generatePrivate(specPrivateKey);
+        PublicKey publicKey = kf.generatePublic(specPublicKey);
+        
+        // save keypair in mapping
+        this.keyPairs.put(provider, new KeyPair(publicKey, privateKey));
     }
-    
+
+    public String encrypt(String provider, String message) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException {
+        
+        KeyPair keyPair = this.keyPairs.get(provider);
+        
+        byte[] byteMessage = message.getBytes();        
+        Cipher cipher = Cipher.getInstance("RSA/ECB/NoPadding");
+        cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPrivate());
+        cipher.update(byteMessage);
+        byte[] ciphertext = cipher.doFinal();
+        
+        return new String(ciphertext, "UTF8");
+    }
+
+    public String decrypt(String provider, String encryptedMessage) throws IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException {
+        
+        KeyPair keyPair = this.keyPairs.get(provider);
+        
+        byte[] byteEncryptedMessage = encryptedMessage.getBytes();
+        cipher.init(Cipher.DECRYPT_MODE, keyPair.getPublic());
+        cipher.update(byteEncryptedMessage);
+        byte[] decrypted = cipher.doFinal();
+        
+        return new String(decrypted, "UTF8");
+    }
+
 }
