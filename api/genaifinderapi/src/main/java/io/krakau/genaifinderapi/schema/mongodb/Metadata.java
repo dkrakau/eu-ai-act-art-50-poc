@@ -14,6 +14,35 @@ public class Metadata {
     private Provider provider;
     
     @Field("iscc")
-    private ISCC iscc;
+    private IsccData iscc;
+    
+    public Metadata() {
+    }
+
+    public Metadata(Provider provider, IsccData iscc) {
+        this.provider = provider;
+        this.iscc = iscc;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public IsccData getIscc() {
+        return iscc;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+    public void setIscc(IsccData iscc) {
+        this.iscc = iscc;
+    }
+
+    @Override
+    public String toString() {
+        return "Metadata{" + "provider=" + provider + ", iscc=" + iscc + '}';
+    }
     
 }

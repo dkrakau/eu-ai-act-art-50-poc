@@ -24,4 +24,45 @@ public class Asset {
     
     private Float distance;
     
+    public Asset() {
+    }
+
+    public Asset(Metadata metadata, Long nnsId) {
+        this.metadata = metadata;
+        this.nnsId = nnsId;
+    }
+
+    public String getId() {
+        return id;
+    }
+    
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public Long getNnsId() {
+        return nnsId;
+    }
+
+    public Float getDistance() {
+        return distance;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public void setNnsId(Long nnsId) {
+        this.nnsId = nnsId;
+    }
+
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
+    @Override
+    public String toString() {
+        return "Asset{" + "id=" + id + ", metadata=" + metadata + ", nnsId=" + nnsId + ", distance=" + distance + '}';
+    }
+    
 }

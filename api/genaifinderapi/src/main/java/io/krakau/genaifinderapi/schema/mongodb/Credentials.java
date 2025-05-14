@@ -19,9 +19,36 @@ public class Credentials {
     @Field("publicKey")
     private String publicKey;
     
+    public Credentials() {
+    }
+    
     public Credentials(String message, String encryptedMessage, String publicKey) {
         this.message = message;
         this.encryptedMessage = encryptedMessage;
+        this.publicKey = publicKey;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getEncryptedMessage() {
+        return encryptedMessage;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setEncryptedMessage(String encryptedMessage) {
+        this.encryptedMessage = encryptedMessage;
+    }
+
+    public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
 
