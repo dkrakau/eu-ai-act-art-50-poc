@@ -19,4 +19,15 @@ public class Credentials {
     @Field("publicKey")
     private String publicKey;
     
+    public Credentials(String message, String encryptedMessage, String publicKey) {
+        this.message = message;
+        this.encryptedMessage = encryptedMessage;
+        this.publicKey = publicKey;
+    }
+
+    @Override
+    public String toString() {
+        return "Credentials{" + "message=" + message + ", encryptedMessage=" + encryptedMessage + ", publicKey=" + publicKey + '}';
+    }
+    
 }

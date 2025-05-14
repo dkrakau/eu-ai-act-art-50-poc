@@ -1,12 +1,10 @@
 package io.krakau.genaifinderapi.service;
 
+import io.krakau.genaifinderapi.component.Cryptographer;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
-import io.milvus.client.MilvusServiceClient;
-import io.milvus.param.ConnectParam;
 import io.milvus.param.R;
 import io.milvus.param.RpcStatus;
-import io.milvus.param.collection.LoadCollectionParam;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,18 +24,21 @@ public class CreateService {
     private IsccWebService isccWebService;
     private VectorConverter vectorConverter;
     private MilvusService milvusService;
+    private Cryptographer cryptographer;
 
     @Autowired
     public CreateService(
             AssetService assetService,
             IsccWebService isccWebService,
             VectorConverter vectorConverter,
-            MilvusService milvusService
+            MilvusService milvusService,
+            Cryptographer cryptographer
     ) {
         this.assetService = assetService;
         this.isccWebService = isccWebService;
         this.vectorConverter = vectorConverter;
         this.milvusService = milvusService;
+        this.cryptographer = cryptographer;
     }
 
     public String createImage(MultipartFile imageFile, String prividerName, String prompt, Long timestamp) {
@@ -54,6 +55,7 @@ public class CreateService {
             R<RpcStatus> status = this.milvusService.loadImageCollection();
             Logger.getLogger(CreateService.class.getName()).log(Level.INFO, status.toString());
             //    4. Encrypt privider.name + iscc + timestamp with private key
+            Logger.getLogger(CreateService.class.getName()).log(Level.INFO, this.cryptographer.getCredentials("OpenAI", "test 1 test 2 test 3?").toString());
             //    5. Insert asset into mongodb
             //    6. Return asset that was inserted into mongodb
         } catch (IOException ioe) {
