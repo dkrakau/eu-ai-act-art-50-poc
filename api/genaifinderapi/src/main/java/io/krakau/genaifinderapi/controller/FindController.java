@@ -1,5 +1,6 @@
 package io.krakau.genaifinderapi.controller;
 
+import io.krakau.genaifinderapi.schema.mongodb.Asset;
 import io.krakau.genaifinderapi.service.FindService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ public class FindController {
                     @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
     })
     @GetMapping("/image")
-    public ResponseEntity<String> findImage(@RequestParam("url") String url) throws Exception {
+    public ResponseEntity<List<Asset>> findImage(@RequestParam("url") String url) throws Exception {
         return ResponseEntity.ok().body(this.findService.findImage(url));
     }
     
