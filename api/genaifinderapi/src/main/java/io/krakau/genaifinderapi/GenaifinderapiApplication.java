@@ -21,8 +21,8 @@ public class GenaifinderapiApplication {
 
         SpringApplication.run(GenaifinderapiApplication.class, args);
 
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Mongo:\t\t\t" + env.getProperty("spring.data.mongodb.host") + ":" + env.getProperty("spring.data.mongodb.port"));
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Milvus:\t\t\t" + env.getProperty("spring.data.milvus.host") + ":" + env.getProperty("spring.data.milvus.port")
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Mongo:\t\t" + env.getProperty("spring.data.mongodb.host") + ":" + env.getProperty("spring.data.mongodb.port"));
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Milvus:\t\t" + env.getProperty("spring.data.milvus.uri")
                 + ", distance: " + env.getProperty("spring.data.milvus.distance")
                 + ", topK: " + env.getProperty("spring.data.milvus.topK")
                 + ", nlist: " + env.getProperty("spring.data.milvus.nlist")
