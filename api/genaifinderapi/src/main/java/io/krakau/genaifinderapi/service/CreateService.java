@@ -58,15 +58,14 @@ public class CreateService {
         Asset asset = null;
         Document iscc = null;
         ExplainedISCC explainedISCC = null;
-
         Long snowflakeId = this.snowflaker.id();
 
         try {
-            //    1. Send image to iscc-web to create iscc
+            // 1. Send image to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getName());
-            //    2. Send iscc to iscc-web to explain iscc
+            // 2. Send iscc to iscc-web to explain iscc
             explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
-            //    3. Insert units to milvus collection
+            // 3. Insert units to milvus collection
             List<Field> metaFields = new ArrayList<>();
             metaFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
             metaFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
@@ -102,14 +101,14 @@ public class CreateService {
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.instance"),
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
                     instanceFields);
-            //    5. Insert asset into mongodb
+            // 4. Append cryptographic credentials to asset and insert asset into mongodb
             asset = new Asset(
                     new Metadata(
                             new Provider(
                                     providerName,
                                     prompt,
                                     timestamp,
-                                    this.cryptographer.getCredentials(
+                                    this.cryptographer.getCredentials( 
                                             providerName,
                                             providerName + "-" + iscc.getString("iscc") + "-" + timestamp
                                     )
@@ -120,6 +119,7 @@ public class CreateService {
                             )
                     ),
                     snowflakeId);
+            // 5. Insert asset into mongodb
             this.assetService.insert(asset);
 
         } catch (IOException ioe) {
@@ -127,8 +127,7 @@ public class CreateService {
         } catch (Exception ex) {
             Logger.getLogger(CreateService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //    6. Return asset that was inserted into mongodb
+        // 6. Return asset that was inserted into mongodb
         return asset;
     }
 
