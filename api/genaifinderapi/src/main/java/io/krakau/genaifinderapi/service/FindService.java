@@ -8,12 +8,16 @@ import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.SearchResults;
 import io.milvus.param.MetricType;
 import io.milvus.param.R;
+import io.milvus.response.SearchResultsWrapper;
+import io.milvus.response.SearchResultsWrapper.IDScore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bson.Document;
@@ -49,7 +53,7 @@ public class FindService {
     }
 
     public List<Asset> findImage(String url) {
-        
+
         List<Asset> assets = new ArrayList<>();
 
         File downloadedFile = null;
@@ -64,26 +68,44 @@ public class FindService {
             // 3. Send iscc to iscc-web to explain iscc
             explainedIscc = this.isccWebService.explainISCC(iscc.getString("iscc"));
             // 3. Nearest neighbour search for content unit on assets iscc code
-            List<ByteBuffer> vector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedIscc.getUnits().get(1).getHash_bits()));
-            List<String> outFields = Arrays.asList("nnsId");
-            R<SearchResults> nnsResult = this.milvusService.search(
+            List<ByteBuffer> searchVector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedIscc.getUnits().get(1).getHash_bits()));
+            List<String> outFields = Arrays.asList("id", "nnsId");
+            R<SearchResults> reqSearch = this.milvusService.search(
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"),
                     Arrays.asList(GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image")),
                     ConsistencyLevelEnum.BOUNDED,
                     MetricType.HAMMING,
-                    vector,
+                    searchVector,
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.field.vector"),
                     outFields,
                     Integer.parseInt(GenaifinderapiApplication.env.getProperty("spring.data.milvus.topK")),
                     "");
             // 4. Get nnsIds from search result
-            // 5. Sort by distance < 16
-            // 6. Return List of assets by nnsIds
+            SearchResultsWrapper wrapperSearch = new SearchResultsWrapper(reqSearch.getData().getResults());
+          
+            HashMap<Long, Float> result = new HashMap<>();
+
+            List<Long> nnsIds = (List<Long>) wrapperSearch.getFieldData("nnsId", 0);
+            List<Float> distances = new ArrayList<>();
+            for (IDScore score : wrapperSearch.getIDScore(0)) {
+                Float distance = score.getScore();
+                distances.add(distance);
+            }
+            for(int i = 0; i < nnsIds.size(); i++) {
+                result.put(nnsIds.get(i), distances.get(i));
+            }
+            
+
+            Logger.getLogger(FindService.class.getName()).log(Level.INFO, result.toString());
+
+            // 6. Find assets by nnsIds from mongodb
+            assets = this.assetService.findByNnsId(nnsIds);
 
         } catch (Exception ex) {
             Logger.getLogger(FindService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return assets;
     }
 

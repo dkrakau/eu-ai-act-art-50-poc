@@ -19,6 +19,7 @@ public class Provider {
     @Field("timestamp")
     private Long timestamp;
     
+    @Field("credentials")
     private Credentials credentials;
     
     public Provider() {

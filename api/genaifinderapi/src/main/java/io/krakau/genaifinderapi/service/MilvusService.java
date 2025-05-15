@@ -63,7 +63,7 @@ public class MilvusService {
                 .build());
     }
 
-    public R<SearchResults> search(String databaseName, String collectionName, List<String> partitionNames, ConsistencyLevelEnum consistencyLevel, MetricType metricType, List<ByteBuffer> vectors, List<String> outFields, Integer topK, String expression) {
+    public R<SearchResults> search(String databaseName, String collectionName, List<String> partitionNames, ConsistencyLevelEnum consistencyLevel, MetricType metricType, List<ByteBuffer> vectors, String serachVectorField, List<String> outFields, Integer topK, String expression) {
         return this.milvusServiceClient.search(SearchParam.newBuilder()
                 .withDatabaseName(databaseName)
                 .withCollectionName(collectionName)
@@ -71,6 +71,7 @@ public class MilvusService {
                 .withConsistencyLevel(consistencyLevel)
                 .withMetricType(metricType)
                 .withBinaryVectors(vectors)
+                .withVectorFieldName(serachVectorField)
                 .withOutFields(outFields)
                 .withTopK(topK)
                 .withExpr(expression)
