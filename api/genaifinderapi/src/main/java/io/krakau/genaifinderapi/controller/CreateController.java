@@ -1,5 +1,6 @@
 package io.krakau.genaifinderapi.controller;
 
+import io.krakau.genaifinderapi.schema.mongodb.Asset;
 import io.krakau.genaifinderapi.service.CreateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,14 +60,11 @@ public class CreateController {
     path = "/image", 
     method = RequestMethod.POST, 
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createImage(
+    public ResponseEntity<Asset> createImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("provider") String provider,
             @RequestParam("prompt") String prompt,
             @RequestParam("timestamp") Long timestamp) throws Exception {
-        
-        
-        
         return ResponseEntity.ok().body(this.createService.createImage(file, provider, prompt, timestamp));
     }
     
