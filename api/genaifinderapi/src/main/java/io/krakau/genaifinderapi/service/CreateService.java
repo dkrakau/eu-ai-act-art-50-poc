@@ -1,11 +1,20 @@
 package io.krakau.genaifinderapi.service;
 
+import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.Cryptographer;
+import io.krakau.genaifinderapi.component.Snowflaker;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
-import io.milvus.param.R;
-import io.milvus.param.RpcStatus;
+import io.krakau.genaifinderapi.schema.mongodb.Asset;
+import io.krakau.genaifinderapi.schema.mongodb.IsccData;
+import io.krakau.genaifinderapi.schema.mongodb.Metadata;
+import io.krakau.genaifinderapi.schema.mongodb.Provider;
+import io.milvus.param.dml.InsertParam;
+import io.milvus.param.dml.InsertParam.Field;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bson.Document;
@@ -25,6 +34,7 @@ public class CreateService {
     private VectorConverter vectorConverter;
     private MilvusService milvusService;
     private Cryptographer cryptographer;
+    private Snowflaker snowflaker;
 
     @Autowired
     public CreateService(
@@ -32,39 +42,94 @@ public class CreateService {
             IsccWebService isccWebService,
             VectorConverter vectorConverter,
             MilvusService milvusService,
-            Cryptographer cryptographer
+            Cryptographer cryptographer,
+            Snowflaker snowflaker
     ) {
         this.assetService = assetService;
         this.isccWebService = isccWebService;
         this.vectorConverter = vectorConverter;
         this.milvusService = milvusService;
         this.cryptographer = cryptographer;
+        this.snowflaker = snowflaker;
     }
 
-    public String createImage(MultipartFile imageFile, String prividerName, String prompt, Long timestamp) {
+    public Asset createImage(MultipartFile imageFile, String providerName, String prompt, Long timestamp) {
 
+        Asset asset = null;
         Document iscc = null;
-                
+        ExplainedISCC explainedISCC = null;
+
+        Long snowflakeId = this.snowflaker.id();
+
         try {
             //    1. Send image to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getName());
             //    2. Send iscc to iscc-web to explain iscc
-            ExplainedISCC explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
-           
+            explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
             //    3. Insert units to milvus collection
-            R<RpcStatus> status = this.milvusService.loadImageCollection();
-            Logger.getLogger(CreateService.class.getName()).log(Level.INFO, status.toString());
-            //    4. Encrypt privider.name + iscc + timestamp with private key
-            Logger.getLogger(CreateService.class.getName()).log(Level.INFO, this.cryptographer.getCredentials("OpenAI", "test 1 test 2 test 3?").toString());
+            List<Field> metaFields = new ArrayList<>();
+            metaFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
+            metaFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            this.milvusService.insert(
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.meta"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    metaFields);
+            
+            List<Field> contentFields = new ArrayList<>();
+            contentFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()))));
+            contentFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            this.milvusService.insert(
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    contentFields);
+            
+            List<Field> dataFields = new ArrayList<>();
+            dataFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(2).getHash_bits()))));
+            dataFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            this.milvusService.insert(
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.data"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    dataFields);
+            
+            List<Field> instanceFields = new ArrayList<>();
+            instanceFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(3).getHash_bits()))));
+            instanceFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            this.milvusService.insert(
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.instance"),
+                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    instanceFields);
             //    5. Insert asset into mongodb
-            //    6. Return asset that was inserted into mongodb
+            asset = new Asset(
+                    new Metadata(
+                            new Provider(
+                                    providerName,
+                                    prompt,
+                                    timestamp,
+                                    this.cryptographer.getCredentials(
+                                            providerName,
+                                            providerName + "-" + iscc.getString("iscc") + "-" + timestamp
+                                    )
+                            ),
+                            new IsccData(
+                                    iscc,
+                                    explainedISCC
+                            )
+                    ),
+                    snowflakeId);
+            this.assetService.insert(asset);
+
         } catch (IOException ioe) {
             Logger.getLogger(CreateService.class.getName()).log(Level.SEVERE, null, ioe);
         } catch (Exception ex) {
             Logger.getLogger(CreateService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return iscc.toString();
+        //    6. Return asset that was inserted into mongodb
+        return asset;
     }
 
 }
