@@ -1,122 +1,142 @@
 [
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 1,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 2,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 3,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 4,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 5,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 6,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 7,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 8,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 9,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 10,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 11,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 12,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 13,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 14,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 15,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 16,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 17,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 18,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 19,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
+        "file":"/"
     },
     {
-        "provider":"text",
-        "prompt":"text",
+        "counter": 20,
+        "provider":"providername",
+        "prompt":"prompttext",
         "timestamp":123456789,
-        "file":"path"
-    }
+        "file":"/"
+    }    
 ]
