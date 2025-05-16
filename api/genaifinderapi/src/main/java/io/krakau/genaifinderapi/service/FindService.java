@@ -4,6 +4,9 @@ import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
+import io.krakau.genaifinderapi.schema.mongodb.IsccData;
+import io.krakau.genaifinderapi.schema.mongodb.Metadata;
+import io.krakau.genaifinderapi.schema.mongodb.Provider;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.SearchResults;
 import io.milvus.param.MetricType;
@@ -12,12 +15,13 @@ import io.milvus.response.SearchResultsWrapper;
 import io.milvus.response.SearchResultsWrapper.IDScore;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URI;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bson.Document;
@@ -54,11 +58,15 @@ public class FindService {
 
     public List<Asset> findImage(String url) {
 
-        List<Asset> assets = new ArrayList<>();
+        Instant instant = Instant.now();
+        Long timestamp = instant.toEpochMilli();
 
+        List<Asset> assets = new ArrayList<>();
+        List<Asset> foundAssets = new ArrayList<>();
+        
         File downloadedFile = null;
         Document iscc = null;
-        ExplainedISCC explainedIscc = null;
+        ExplainedISCC explainedISCC = null;
 
         try {
             // 1. Download asset by url link
@@ -66,11 +74,13 @@ public class FindService {
             // 2. Send asset to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(new FileInputStream(downloadedFile), downloadedFile.getName());
             // 3. Send iscc to iscc-web to explain iscc
-            explainedIscc = this.isccWebService.explainISCC(iscc.getString("iscc"));
-            // 3. Nearest neighbour search for content unit on assets iscc code
-            List<ByteBuffer> searchVector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedIscc.getUnits().get(1).getHash_bits()));
+            explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
+            // 4. Delete downloaded file
+            downloadedFile.delete();
+            // 5. Nearest neighbour vector search for content unit on assets iscc code
+            List<ByteBuffer> searchVector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()));
             List<String> outFields = Arrays.asList("id", "nnsId");
-            R<SearchResults> reqSearch = this.milvusService.search(
+            R<SearchResults> nnsResponse = this.milvusService.search(
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
                     GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"),
                     Arrays.asList(GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image")),
@@ -81,31 +91,52 @@ public class FindService {
                     outFields,
                     Integer.parseInt(GenaifinderapiApplication.env.getProperty("spring.data.milvus.topK")),
                     "");
-            // 4. Get nnsIds from search result
-            SearchResultsWrapper wrapperSearch = new SearchResultsWrapper(reqSearch.getData().getResults());
-          
-            HashMap<Long, Float> result = new HashMap<>();
-
-            List<Long> nnsIds = (List<Long>) wrapperSearch.getFieldData("nnsId", 0);
-            List<Float> distances = new ArrayList<>();
-            for (IDScore score : wrapperSearch.getIDScore(0)) {
-                Float distance = score.getScore();
-                distances.add(distance);
+            // 6. Get response from vector search
+            SearchResultsWrapper nnsReponseWrapper = new SearchResultsWrapper(nnsResponse.getData().getResults());
+            // 7. Map nnsIds to distance
+            HashMap<Long, Float> nnsResultMap = new HashMap<>();
+            List<Long> fieldDataNnsId = (List<Long>) nnsReponseWrapper.getFieldData("nnsId", 0);
+            List<IDScore> idScores = nnsReponseWrapper.getIDScore(0);
+            for (int i = 0; i < idScores.size() && (idScores.get(i).getScore() <= 64.0); i++) { // distance filter
+                Long nnsId = fieldDataNnsId.get(i);
+                Float distance = idScores.get(i).getScore();
+                nnsResultMap.put(nnsId, distance);
+                Logger.getLogger(FindService.class.getName()).log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
             }
-            for(int i = 0; i < nnsIds.size(); i++) {
-                result.put(nnsIds.get(i), distances.get(i));
+            Logger.getLogger(FindService.class.getName()).log(Level.INFO, nnsResultMap.toString());
+            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus");
+            // 8. Find assets by nnsIds from mongodb
+            List<Long> nnsIds = new ArrayList<>();
+            nnsIds.addAll(nnsResultMap.keySet());
+            foundAssets = this.assetService.findByNnsId(nnsIds);
+            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
+            // 9. Add distance to assets
+            for(Asset asset : assets) {
+                asset.setDistance(nnsResultMap.get(asset.getNnsId()));
             }
-            
-
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, result.toString());
-
-            // 6. Find assets by nnsIds from mongodb
-            assets = this.assetService.findByNnsId(nnsIds);
-
+            // 10. Create asset for url
+            URI uri = new URI(url);
+            Asset assetForUrl = new Asset(
+                    new Metadata(
+                            new Provider(
+                                    uri.getHost(),
+                                    null,
+                                    timestamp,
+                                    null
+                            ),
+                            new IsccData(
+                                    iscc,
+                                    explainedISCC
+                            )
+                    ),
+                    null);
+            // 11. Add url asset and found assets to assets
+            assets.add(assetForUrl);
+            assets.addAll(foundAssets);
         } catch (Exception ex) {
             Logger.getLogger(FindService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        // 12. Return assets
         return assets;
     }
 
