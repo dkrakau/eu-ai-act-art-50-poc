@@ -6,3 +6,6 @@
 
 ### ISCC-Web ###
 /iscc-web
+
+### Keys ###
+/keys/*.pem
