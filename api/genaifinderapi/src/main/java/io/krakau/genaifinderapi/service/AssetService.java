@@ -26,8 +26,8 @@ public class AssetService {
         return this.assetRepository.findAll();
     }
     
-    public Slice<Asset> findAllAssets(Pageable pageable) {
-        return this.assetRepository.findAllAssets(pageable);
+    public Slice<Asset> findAllPageable(Pageable pageable) {
+        return this.assetRepository.findAllPageable(pageable);
     }
     
     public List<Asset> findByNnsId(List<Long> nnsIds) {

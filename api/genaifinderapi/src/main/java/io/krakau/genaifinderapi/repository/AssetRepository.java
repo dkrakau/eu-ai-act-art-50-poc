@@ -16,12 +16,12 @@ public interface AssetRepository extends MongoRepository<Asset, String> {
     @Aggregation(pipeline = {
         "{$match:{}}"
     })
-    public Slice<Asset> findAllAssets(Pageable page);
-
+    public List<Asset> findAll();
+    
     @Aggregation(pipeline = {
         "{$match:{}}"
     })
-    public List<Asset> findAll();
+    public Slice<Asset> findAllPageable(Pageable page);
 
     @Aggregation(pipeline = {
         "{$match: {\"nnsId\": {$in: ?0}}}"
