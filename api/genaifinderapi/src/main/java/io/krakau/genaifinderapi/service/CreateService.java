@@ -4,6 +4,7 @@ import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.Cryptographer;
 import io.krakau.genaifinderapi.component.Snowflaker;
 import io.krakau.genaifinderapi.component.VectorConverter;
+import io.krakau.genaifinderapi.schema.dto.ProviderDto;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
 import io.krakau.genaifinderapi.schema.mongodb.IsccData;
@@ -53,7 +54,7 @@ public class CreateService {
         this.snowflaker = snowflaker;
     }
 
-    public Asset createImage(MultipartFile imageFile, String providerName, String prompt, Long timestamp) {
+    public Asset createImage(ProviderDto provider, MultipartFile imageFile) {
 
         Asset asset = null;
         Document iscc = null;
@@ -105,12 +106,12 @@ public class CreateService {
             asset = new Asset(
                     new Metadata(
                             new Provider(
-                                    providerName,
-                                    prompt,
-                                    timestamp,
+                                    provider.getName(),
+                                    provider.getPrompt(),
+                                    provider.getTimestamp(),
                                     this.cryptographer.getCredentials( 
-                                            providerName,
-                                            providerName + "-" + iscc.getString("iscc") + "-" + timestamp
+                                            provider.getName(),
+                                            provider.getName() + "-" + iscc.getString("iscc") + "-" + provider.getTimestamp()
                                     )
                             ),
                             new IsccData(
