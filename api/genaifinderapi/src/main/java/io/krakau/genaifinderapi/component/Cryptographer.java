@@ -1,6 +1,5 @@
 package io.krakau.genaifinderapi.component;
 
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.schema.mongodb.Credentials;
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class Cryptographer {
             this.loadKeyPair(
                     env.CRYPTOGRAPHER_LEONARDOAI,
                     this.resourceLoader.getResource(env.CRYPTOGRAPHER_LEONARDOAI_KEY_PRIVATE).getFile(),
-                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_OPENAI_KEY_PUBLIC).getFile()
+                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_LEONARDOAI_KEY_PUBLIC).getFile()
             );
         } catch (IOException ex) {
             Logger.getLogger(Cryptographer.class.getName()).log(Level.SEVERE, null, ex);

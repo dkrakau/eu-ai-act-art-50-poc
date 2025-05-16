@@ -5,7 +5,4 @@
 /dbs/mongodb/data
 
 ### ISCC-Web ###
-/iscc-web
-
-### Keys ###
-/keys/*.pem
+# /iscc-web
