@@ -1,142 +1,86 @@
 [
     {
+        "counter": 0,
+        "provider": "OpenAI",
+        "prompt": "prompttext",
+        "timestamp": 9999,
+        "file": "/chatgpt.com/"
+    },
+    {
         "counter": 1,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "A family house is destroyed in Berlin.",
+        "timestamp": 1746960206,
+        "file": "/chatgpt.com/Zerstörtes Haus in Berlin.png"
     },
     {
         "counter": 2,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Tedros Adhanom Ghebreyesus is sitting in a press conference and promoting a cup of suggar.",
+        "timestamp": 1746971006,
+        "file": "/chatgpt.com/WHO Pressekonferenz_ Zucker und Gesundheit.png"
     },
     {
         "counter": 3,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Pope throws Donald Trump out of the Vatican.",
+        "timestamp": 1747054267,
+        "file": "/chatgpt.com/Papst vertreibt Trump aus dem Vatikan.png"
     },
     {
         "counter": 4,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Putin is crying in front of Selensky inside Kreml.",
+        "timestamp": 1747054678,
+        "file": "/chatgpt.com/Emotionale Begegnung im Kreml.png"
     },
     {
         "counter": 5,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Alexander Dobrindt überreicht der Westfälischen Hochschule in Gelsenkirchen eine Auszeichnung als beste Universität Deutschlands.",
+        "timestamp": 1747052914,
+        "file": "/chatgpt.com/Auszeichnung an der Westfälischen Hochschule.png"
     },
     {
         "counter": 6,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Erstelle ein realistisches Bild für die folgende Szene: In Berlin auf dem Alexanderplatz stehen viele medizinische Zelte um eine Virusepedemie einzudämmen.",
+        "timestamp": 1747141397,
+        "file": "/chatgpt.com/Medizinzelt bei Alexanderplatz in Berlin.png"
     },
     {
         "counter": 7,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Friedrich Merz, Frances Emmanuel Macron and Wolodymyr Selenskyj celebrating a party inside a train car with cocaine.",
+        "timestamp": 1747142495,
+        "file": "/chatgpt.com/Luxuriöser Zug und geheime Handlungen.png"
     },
     {
         "counter": 8,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Donald Trump gets arrested by police in oval office.",
+        "timestamp": 1746786227,
+        "file": "/chatgpt.com/Trump im Oval Office in Handschellen.png"
     },
     {
         "counter": 9,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Pope is wearing high markt value chlothes.",
+        "timestamp": 1746868730,
+        "file": "/chatgpt.com/Papst Franziskus in eleganter Ausstattung.png"
     },
     {
         "counter": 10,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
+        "provider": "OpenAI",
+        "prompt": "Kim Jong-un and Robert Habeck are drinking tee together.",
+        "timestamp": 1746871793,
+        "file": "/chatgpt.com/Gespräch bei Tee und Teekannen.png"
     },
     {
         "counter": 11,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 12,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 13,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 14,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 15,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 16,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 17,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 18,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 19,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    },
-    {
-        "counter": 20,
-        "provider":"providername",
-        "prompt":"prompttext",
-        "timestamp":123456789,
-        "file":"/"
-    }    
+        "provider": "LeonardoAI",
+        "prompt": "Narendra Modi and Imran Khan are sitting on a table and signing a paper togehter with happy faces.",
+        "timestamp": 1746976297,
+        "file": "/app.leonardo.ai/Flux_Dev_Narendra_Modi_wearing_a_traditional_Indian_attire_wit_2.jpg"
+    }
 ]
