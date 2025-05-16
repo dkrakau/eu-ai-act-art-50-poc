@@ -15,9 +15,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         
         databaseManager = new DatabaseManager();
-        importService = new ImportService();
+        importService = new ImportService("ai-images/data-images.json"); 
         
-        System.out.println(importService.getData());     
+        importService.importData();
         
 //        databaseManager.create();
 //        databaseManager.drop();
