@@ -1,13 +1,22 @@
 package io.krakau.genaifinderdbmanager;
 
+import java.io.IOException;
+
 /**
  *
  * @author Dominik
  */
 public class Main {
     
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+    private static DatabaseManager databaseManager;
+    
+    public static void main(String[] args) throws IOException {
+        
+        databaseManager = new DatabaseManager();
+        
+        databaseManager.create();
+        
+//        databaseManager.drop();
     }
     
 }
