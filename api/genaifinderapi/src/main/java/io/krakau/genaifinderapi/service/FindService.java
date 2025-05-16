@@ -97,7 +97,7 @@ public class FindService {
             HashMap<Long, Float> nnsResultMap = new HashMap<>();
             List<Long> fieldDataNnsId = (List<Long>) nnsReponseWrapper.getFieldData("nnsId", 0);
             List<IDScore> idScores = nnsReponseWrapper.getIDScore(0);
-            for (int i = 0; i < idScores.size() && (idScores.get(i).getScore() <= 64.0); i++) { // distance filter
+            for (int i = 0; i < idScores.size() && (idScores.get(i).getScore() <= Float.parseFloat(GenaifinderapiApplication.env.getProperty("spring.data.milvus.distance"))); i++) { // distance filter
                 Long nnsId = fieldDataNnsId.get(i);
                 Float distance = idScores.get(i).getScore();
                 nnsResultMap.put(nnsId, distance);
