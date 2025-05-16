@@ -1,6 +1,7 @@
 package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.GenaifinderapiApplication;
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.iscc.Unit;
 import java.io.IOException;
@@ -34,13 +35,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class IsccWebService {
     
-    private final String ISCC_WEB_CREATE;
-    private final String ISCC_WEB_EXPLAIN;
+    private EnviromentVariables env;
     
     @Autowired
-    public IsccWebService() {
-        this.ISCC_WEB_CREATE = GenaifinderapiApplication.env.getProperty("spring.api.iscc-web-create");
-        this.ISCC_WEB_EXPLAIN = GenaifinderapiApplication.env.getProperty("spring.api.iscc-web-explain");
+    public IsccWebService(EnviromentVariables env) {
+        this.env = env;
     }
     
     
@@ -48,7 +47,7 @@ public class IsccWebService {
 
         CloseableHttpClient client = HttpClients.createDefault();
 
-        HttpPost httpPost = new HttpPost(this.ISCC_WEB_CREATE);
+        HttpPost httpPost = new HttpPost(env.API_ISCCWEB_CREATE);
         httpPost.addHeader("accept", "application/json");
         httpPost.addHeader("Content-Type", "application/octet-stream");
         httpPost.addHeader("X-Upload-Filename", getBase64EncodedFilename(filename));
@@ -88,7 +87,7 @@ public class IsccWebService {
 
         CloseableHttpClient client = HttpClients.createDefault();
 
-        HttpGet httpGet = new HttpGet(this.ISCC_WEB_EXPLAIN + "/" + iscc);
+        HttpGet httpGet = new HttpGet(env.API_ISCCWEB_EXPLAIN + "/" + iscc);
 
         String response = null;
         ExplainedISCC explainedISCC = null;

@@ -25,7 +25,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +44,7 @@ public class Cryptographer {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    public Cryptographer(ResourceLoader resourceLoader) throws NoSuchAlgorithmException, NoSuchPaddingException {
+    public Cryptographer(EnviromentVariables env, ResourceLoader resourceLoader) throws NoSuchAlgorithmException, NoSuchPaddingException {
         
         this.privateKeys = new HashMap<String, PrivateKey>();
         this.publicKeys = new HashMap<String, PublicKey>();
@@ -58,14 +57,14 @@ public class Cryptographer {
 
         try {
             this.loadKeyPair(
-                    GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.openai"),
-                    this.resourceLoader.getResource(GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.openai.key.private")).getFile(),
-                    this.resourceLoader.getResource(GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.openai.key.public")).getFile()
+                    env.CRYPTOGRAPHER_OPENAI,
+                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_OPENAI_KEY_PRIVATE).getFile(),
+                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_OPENAI_KEY_PUBLIC).getFile()
             );
             this.loadKeyPair(
-                    GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.leonardoai"),
-                    this.resourceLoader.getResource(GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.leonardoai.key.private")).getFile(),
-                    this.resourceLoader.getResource(GenaifinderapiApplication.env.getProperty("spring.data.cryptographer.proivider.leonardoai.key.public")).getFile()
+                    env.CRYPTOGRAPHER_LEONARDOAI,
+                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_LEONARDOAI_KEY_PRIVATE).getFile(),
+                    this.resourceLoader.getResource(env.CRYPTOGRAPHER_OPENAI_KEY_PUBLIC).getFile()
             );
         } catch (IOException ex) {
             Logger.getLogger(Cryptographer.class.getName()).log(Level.SEVERE, null, ex);

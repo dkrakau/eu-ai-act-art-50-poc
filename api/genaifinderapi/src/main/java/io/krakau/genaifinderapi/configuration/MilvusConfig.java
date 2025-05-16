@@ -1,8 +1,9 @@
 package io.krakau.genaifinderapi.configuration;
 
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.ConnectParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,11 +14,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MilvusConfig {
 
+    private EnviromentVariables env;
+    
+    @Autowired
+    public MilvusConfig(EnviromentVariables env) {
+        this.env = env;
+    }
+
     @Bean
     public MilvusServiceClient milvusClient() {
         return new MilvusServiceClient(ConnectParam.newBuilder()
-                .withAuthorization(GenaifinderapiApplication.env.getProperty("spring.data.milvus.auth.username"), GenaifinderapiApplication.env.getProperty("spring.data.milvus.auth.password"))
-                .withUri(GenaifinderapiApplication.env.getProperty("spring.data.milvus.uri"))
+                .withAuthorization(env.MILVUS_AUTH_USERNAME, env.MILVUS_AUTH_PASSWORD)
+                .withUri(env.MILVUS_URL)
                 .build());
     }
 

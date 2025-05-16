@@ -1,6 +1,7 @@
 package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.GenaifinderapiApplication;
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
@@ -35,6 +36,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindService {
 
+    private EnviromentVariables env;
+    
     private AssetService assetService;
     private DownloadService downloadService;
     private IsccWebService isccWebService;
@@ -43,12 +46,14 @@ public class FindService {
 
     @Autowired
     public FindService(
+            EnviromentVariables env,
             AssetService assetService,
             DownloadService downloadService,
             IsccWebService isccWebService,
             VectorConverter vectorConverter,
             MilvusService milvusService
     ) {
+        this.env = env;
         this.assetService = assetService;
         this.downloadService = downloadService;
         this.isccWebService = isccWebService;
@@ -79,32 +84,33 @@ public class FindService {
             downloadedFile.delete();
             // 5. Nearest neighbour vector search for content unit on assets iscc code
             List<ByteBuffer> searchVector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()));
-            List<String> outFields = Arrays.asList("id", "nnsId");
+            List<String> outFields = Arrays.asList(env.MILVUS_COLLECTION_FIELD_NNSID);
             R<SearchResults> nnsResponse = this.milvusService.search(
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"),
-                    Arrays.asList(GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image")),
+                    env.MILVUS_DATABASE,
+                    env.MILVUS_COLLECTION_UNIT_CONTENT,
+                    Arrays.asList(env.MILVUS_PARTITION_IMAGE),
                     ConsistencyLevelEnum.BOUNDED,
                     MetricType.HAMMING,
                     searchVector,
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.field.vector"),
+                    env.MILVUS_COLLECTION_FIELD_VECTOR,
                     outFields,
-                    Integer.parseInt(GenaifinderapiApplication.env.getProperty("spring.data.milvus.topK")),
+                    Integer.parseInt(env.MILVUS_TOP_K),
+                    //Integer.parseInt(GenaifinderapiApplication.env.getProperty("spring.data.milvus.topK")),
                     "");
             // 6. Get response from vector search
             SearchResultsWrapper nnsReponseWrapper = new SearchResultsWrapper(nnsResponse.getData().getResults());
             // 7. Map nnsIds to distance
             HashMap<Long, Float> nnsResultMap = new HashMap<>();
-            List<Long> fieldDataNnsId = (List<Long>) nnsReponseWrapper.getFieldData("nnsId", 0);
+            List<Long> fieldDataNnsId = (List<Long>) nnsReponseWrapper.getFieldData(env.MILVUS_COLLECTION_FIELD_NNSID, 0);
             List<IDScore> idScores = nnsReponseWrapper.getIDScore(0);
-            for (int i = 0; i < idScores.size() && (idScores.get(i).getScore() <= Float.parseFloat(GenaifinderapiApplication.env.getProperty("spring.data.milvus.distance"))); i++) { // distance filter
+            for (int i = 0; i < idScores.size() && (idScores.get(i).getScore() <= Float.parseFloat(env.MILVUS_DISTANCE)); i++) { // distance filter
                 Long nnsId = fieldDataNnsId.get(i);
                 Float distance = idScores.get(i).getScore();
                 nnsResultMap.put(nnsId, distance);
                 Logger.getLogger(FindService.class.getName()).log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
             }
             Logger.getLogger(FindService.class.getName()).log(Level.INFO, nnsResultMap.toString());
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus");
+            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus with distance " + env.MILVUS_DISTANCE);
             // 8. Find assets by nnsIds from mongodb
             List<Long> nnsIds = new ArrayList<>();
             nnsIds.addAll(nnsResultMap.keySet());

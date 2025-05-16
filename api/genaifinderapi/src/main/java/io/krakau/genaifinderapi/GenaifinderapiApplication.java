@@ -1,19 +1,19 @@
 package io.krakau.genaifinderapi;
 
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 public class GenaifinderapiApplication {
 
-    public static Environment env;
+    public static EnviromentVariables env;
 
     @Autowired
-    public GenaifinderapiApplication(Environment env) {
+    public GenaifinderapiApplication(EnviromentVariables env) {
         GenaifinderapiApplication.env = env;
     }
 
@@ -21,13 +21,13 @@ public class GenaifinderapiApplication {
 
         SpringApplication.run(GenaifinderapiApplication.class, args);
 
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Mongo:\t\t" + env.getProperty("spring.data.mongodb.host") + ":" + env.getProperty("spring.data.mongodb.port"));
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Milvus:\t\t" + env.getProperty("spring.data.milvus.uri")
-                + ", distance: " + env.getProperty("spring.data.milvus.distance")
-                + ", topK: " + env.getProperty("spring.data.milvus.topK")
-                + ", nlist: " + env.getProperty("spring.data.milvus.nlist")
-                + ", nprobe: " + env.getProperty("spring.data.milvus.nprobe"));
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "ISCC-Web create:\t" + env.getProperty("spring.api.iscc-web-create"));
-        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "ISCC-Web explain:\t" + env.getProperty("spring.api.iscc-web-explain"));
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Mongo:\t\t" + env.MONGODB_HOST + ":" + env.MONGODB_PORT);
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "Milvus:\t\t" + env.MILVUS_URL
+                + ", distance: " + env.MILVUS_DISTANCE
+                + ", topK: " + env.MILVUS_TOP_K
+                + ", nlist: " + env.MILVUS_NLIST
+                + ", nprobe: " + env.MILVUS_NPROBE);
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "ISCC-Web create:\t" + env.API_ISCCWEB_CREATE);
+        Logger.getLogger(GenaifinderapiApplication.class.getName()).log(Level.INFO, "ISCC-Web explain:\t" + env.API_ISCCWEB_EXPLAIN);
     }
 }

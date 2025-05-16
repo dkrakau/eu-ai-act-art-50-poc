@@ -2,6 +2,7 @@ package io.krakau.genaifinderapi.service;
 
 import com.google.gson.JsonObject;
 import io.krakau.genaifinderapi.GenaifinderapiApplication;
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.MutationResult;
@@ -29,12 +30,15 @@ public class MilvusService {
     private MilvusServiceClient milvusServiceClient;
 
     @Autowired
-    public MilvusService(MilvusServiceClient milvusServiceClient) {
+    public MilvusService(
+            EnviromentVariables env,
+            MilvusServiceClient milvusServiceClient
+    ) {
         this.milvusServiceClient = milvusServiceClient;
-        loadCollection(GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"), GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.meta"));
-        loadCollection(GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"), GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"));
-        loadCollection(GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"), GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.data"));
-        loadCollection(GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"), GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.instance"));
+        loadCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_META);
+        loadCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_CONTENT);
+        loadCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_DATA);
+        loadCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE);
     }
     
 

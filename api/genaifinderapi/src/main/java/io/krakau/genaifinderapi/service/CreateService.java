@@ -2,6 +2,7 @@ package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.Cryptographer;
+import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.krakau.genaifinderapi.component.Snowflaker;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.dto.ProviderDto;
@@ -30,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class CreateService {
 
+    private EnviromentVariables env;
+    
     private AssetService assetService;
     private IsccWebService isccWebService;
     private VectorConverter vectorConverter;
@@ -39,6 +42,7 @@ public class CreateService {
 
     @Autowired
     public CreateService(
+            EnviromentVariables env,
             AssetService assetService,
             IsccWebService isccWebService,
             VectorConverter vectorConverter,
@@ -46,6 +50,7 @@ public class CreateService {
             Cryptographer cryptographer,
             Snowflaker snowflaker
     ) {
+        this.env = env;
         this.assetService = assetService;
         this.isccWebService = isccWebService;
         this.vectorConverter = vectorConverter;
@@ -68,39 +73,39 @@ public class CreateService {
             explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
             // 3. Insert units to milvus collection
             List<Field> metaFields = new ArrayList<>();
-            metaFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
-            metaFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            metaFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
+            metaFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
             this.milvusService.insert(
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.meta"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    env.MILVUS_DATABASE,
+                    env.MILVUS_COLLECTION_UNIT_META,
+                    env.MILVUS_PARTITION_IMAGE,
                     metaFields);
             
             List<Field> contentFields = new ArrayList<>();
-            contentFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()))));
-            contentFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            contentFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()))));
+            contentFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
             this.milvusService.insert(
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.content"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    env.MILVUS_DATABASE,
+                    env.MILVUS_COLLECTION_UNIT_CONTENT,
+                    env.MILVUS_PARTITION_IMAGE,
                     contentFields);
             
             List<Field> dataFields = new ArrayList<>();
-            dataFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(2).getHash_bits()))));
-            dataFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            dataFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(2).getHash_bits()))));
+            dataFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
             this.milvusService.insert(
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.data"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    env.MILVUS_DATABASE,
+                    env.MILVUS_COLLECTION_UNIT_DATA,
+                    env.MILVUS_PARTITION_IMAGE,
                     dataFields);
             
             List<Field> instanceFields = new ArrayList<>();
-            instanceFields.add(new InsertParam.Field("vector", Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(3).getHash_bits()))));
-            instanceFields.add(new InsertParam.Field("nnsId", Arrays.asList(snowflakeId)));
+            instanceFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(3).getHash_bits()))));
+            instanceFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
             this.milvusService.insert(
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.database"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.collection.name.units.instance"),
-                    GenaifinderapiApplication.env.getProperty("spring.data.milvus.partition.name.image"),
+                    env.MILVUS_DATABASE,
+                    env.MILVUS_COLLECTION_UNIT_INSTANCE,
+                    env.MILVUS_PARTITION_IMAGE,
                     instanceFields);
             // 4. Append cryptographic credentials to asset and insert asset into mongodb
             asset = new Asset(
