@@ -14,9 +14,9 @@ public class Main {
         
         databaseManager = new DatabaseManager();
         
-        databaseManager.create();
+//        databaseManager.create();
         
-//        databaseManager.drop();
+        databaseManager.drop();
     }
     
 }
