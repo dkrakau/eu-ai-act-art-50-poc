@@ -1,0 +1,7 @@
+{
+  email {$ISCC_WEB_SITE_EMAIL}
+}
+
+{$ISCC_WEB_SITE_ADDRESS} {
+  reverse_proxy app:8000
+}
