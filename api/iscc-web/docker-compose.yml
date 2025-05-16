@@ -1,0 +1,34 @@
+version: "3.8"
+
+volumes:
+  caddy-config:
+  caddy-data:
+
+services:
+  app:
+    image: ghcr.io/iscc/iscc-web:main
+    init: true
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  caddy:
+    image: caddy:2.6.1-alpine
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-config:/config
+      - caddy-data:/data
+    ports:
+      - "8000:8000"
+      - "443:443"
+      - "443:443/udp"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - app
+
+networks:
+  default:
+    name: genaifinder
+
