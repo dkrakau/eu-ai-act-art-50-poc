@@ -1,18 +1,16 @@
 package io.krakau.genaifinderdbmanager.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
@@ -24,42 +22,53 @@ import org.json.JSONObject;
  */
 public class ImportService {
 
+    private String filePath;
     private JSONArray assets;
 
-    public ImportService(String file) throws IOException {
-        this.assets = readData(file);
+    public ImportService(String filePath) throws IOException {
+        this.filePath = filePath;
+        this.assets = readData(filePath);
     }
 
     public void importData() throws FileNotFoundException, IOException {
+        System.out.println("Importing image data from " + this.filePath + " ...");
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = (JSONObject) assets.get(i);
-            System.out.println(sendCreateImageRequest(asset));
+            JSONObject responseJson = sendCreateImageRequest(asset);
+            System.out.println("{ \"nnsId\" : " + responseJson.getLong("nnsId") + " }");
         }
     }
 
-    private String sendCreateImageRequest(JSONObject asset) throws FileNotFoundException, IOException {
+    private JSONObject sendCreateImageRequest(JSONObject asset) throws FileNotFoundException, IOException {
         // Get values from JSONObejct
         String provider = asset.getString("provider");
         String prompt = asset.getString("prompt");
         Long timestamp = asset.getLong("timestamp");
-        File file = new File(asset.getString("file"));
-        String requestParams = "?provider=" + provider + "&prompt=" + prompt + "&timestamp=" + timestamp;
-        // Send create image request with post to api
+        Path path = Path.of(convertFileNameUTF8ToISO88591(asset.getString("file")));
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost uploadFile = new HttpPost("http://localhost/create/image" + requestParams);
-        
+        String requestParams = "?provider=" + provider + "&prompt=" + transformSpacesForUrl(prompt) + "&timestamp=" + timestamp;
+        HttpPost createImagePostRequest = new HttpPost("http://localhost/create/image" + requestParams);
+        // Attach file to POST request body
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        // This attaches the file to the POST:
-        builder.addBinaryBody(
-                "file",
-                new FileInputStream(file)
-        );
-
+        builder.addBinaryBody("file", path.toFile());
         HttpEntity multipart = builder.build();
-        uploadFile.setEntity(multipart);
-        CloseableHttpResponse response = httpClient.execute(uploadFile);
-        HttpEntity responseEntity = response.getEntity();
-        return provider + prompt + timestamp + file.getName();
+        // Add muiltipart to POST request
+        createImagePostRequest.setEntity(multipart);
+        // Send POST request
+        CloseableHttpResponse response = httpClient.execute(createImagePostRequest);
+        // return response body as json obejct
+        return new JSONObject(new String(response.getEntity().getContent().readAllBytes()));
+    }
+
+    private String transformSpacesForUrl(String s) {
+        return s.replaceAll(" ", "%20");
+    }
+
+    private String convertFileNameUTF8ToISO88591(String fileName) {
+        // Convert the UTF-16 Java String to ISO-8859-1 bytes
+        byte[] filenameBytes = fileName.getBytes(StandardCharsets.ISO_8859_1);
+        // Create a new String using the ISO-8859-1 bytes
+        return new String(filenameBytes, StandardCharsets.UTF_8);
     }
 
     private JSONArray readData(String filePath) throws FileNotFoundException, IOException {
