@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * @author Dominik
  */
 public class EnvironmentVariables {
-    
+
     // Mongodb
     public final String MONGODB_URL;
     public final String MONGODB_HOST;
@@ -25,7 +25,7 @@ public class EnvironmentVariables {
     public final String MONGODB_AUTH_PASSWORD;
     public final String MONGODB_DATABASE;
     public final String MONGODB_COLLECTION;
-    
+
     // Milvus
     public final String MILVUS_URL;
     public final int MILVUS_PORT;
@@ -47,9 +47,15 @@ public class EnvironmentVariables {
     public final int MILVUS_VECTOR_DIM;
     public final String MILVUS_INDEX_NAME;
     public final String MILVUS_INDEX_PARAM;
-    
+
+    // Importer
+    public final String IMPORTER_API_ENDPOINT_CREATE_IMAGE;
+    public final String IMPORTER_KEY_PROVIDER;
+    public final String IMPORTER_KEY_PROMPT;
+    public final String IMPORTER_KEY_TIMESTAMP;
+
     private Map<String, String> applicationProperties;
-    
+
     public EnvironmentVariables(String fileName) throws IOException {
         // Loading application.properties file
         this.applicationProperties = loadApplicationProperties(fileName);
@@ -61,8 +67,8 @@ public class EnvironmentVariables {
         this.MONGODB_AUTH_DB = this.applicationProperties.get("genaifinder.dbmanager.mongo.authentication");
         this.MONGODB_AUTH_USERNAME = this.applicationProperties.get("genaifinder.dbmanager.mongo.user");
         this.MONGODB_AUTH_PASSWORD = this.applicationProperties.get("genaifinder.dbmanager.mongo.passwort");
-        this.MONGODB_DATABASE = this.applicationProperties.get("genaifinder.dbmanager.mongo.db.name=genaifinder");
-        this.MONGODB_COLLECTION = this.applicationProperties.get("");
+        this.MONGODB_DATABASE = this.applicationProperties.get("genaifinder.dbmanager.mongo.db.name");
+        this.MONGODB_COLLECTION = this.applicationProperties.get("genaifinder.dbmanager.mongo.collection.name");
         // MILVUS
         this.MILVUS_URL = this.applicationProperties.get("genaifinder.dbmanager.milvus.url");
         this.MILVUS_PORT = Integer.parseInt(this.applicationProperties.get("genaifinder.dbmanager.milvus.port"));
@@ -83,9 +89,14 @@ public class EnvironmentVariables {
         this.MILVUS_FIELD_ORIGINID = this.applicationProperties.get("genaifinder.dbmanager.milvus.field.originId");
         this.MILVUS_VECTOR_DIM = Integer.parseInt(this.applicationProperties.get("genaifinder.dbmanager.milvus.vectorDim"));
         this.MILVUS_INDEX_NAME = this.applicationProperties.get("genaifinder.dbmanager.milvus.index.name");
-        this.MILVUS_INDEX_PARAM = "{\"nlist\":" + this.applicationProperties.get("genaifinder.dbmanager.milvus.index.param") + "}";        
+        this.MILVUS_INDEX_PARAM = "{\"nlist\":" + this.applicationProperties.get("genaifinder.dbmanager.milvus.index.param") + "}";
+        // IMPORTER
+        this.IMPORTER_API_ENDPOINT_CREATE_IMAGE = this.applicationProperties.get("genaifinder.dbmanager.importer.api.endpoint.create.image");
+        this.IMPORTER_KEY_PROVIDER = this.applicationProperties.get("genaifinder.dbmanager.importer.key.provider");
+        this.IMPORTER_KEY_PROMPT = this.applicationProperties.get("genaifinder.dbmanager.importer.key.prompt");
+        this.IMPORTER_KEY_TIMESTAMP = this.applicationProperties.get("genaifinder.dbmanager.importer.key.timestamp");
     }
-    
+
     public Map<String, String> loadApplicationProperties(String fileName) throws FileNotFoundException, IOException {
         Map<String, String> applicationProperties = new HashMap<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fileName))));
@@ -105,5 +116,5 @@ public class EnvironmentVariables {
         reader.close();
         return applicationProperties;
     }
-    
+
 }
