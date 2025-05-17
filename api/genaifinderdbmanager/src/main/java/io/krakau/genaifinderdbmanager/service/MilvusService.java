@@ -59,7 +59,7 @@ public class MilvusService {
     private final MilvusServiceClient milvusClient;
 
     public MilvusService(String url, int port) {
-       
+
         this.milvusClient = new MilvusServiceClient(
                 ConnectParam.newBuilder()
                         .withHost(url)
@@ -67,7 +67,7 @@ public class MilvusService {
                         .build()
         );
     }
-    
+
     public void createDatabse(String databaseName) {
         CreateDatabaseParam createDatabaseParam = CreateDatabaseParam.newBuilder()
                 .withDatabaseName(databaseName)
@@ -75,7 +75,7 @@ public class MilvusService {
         this.milvusClient.createDatabase(createDatabaseParam);
         System.out.println("Milvus database " + databaseName + " created successfully.");
     }
-    
+
     public void dropDatabse(String databaseName) {
         DropDatabaseParam dropDatabaseParam = DropDatabaseParam.newBuilder()
                 .withDatabaseName(databaseName)
@@ -85,7 +85,6 @@ public class MilvusService {
     }
 
     public void createCollection(String databaseName, String collectionName, String description, List<FieldType> fields, int shardsNum, ConsistencyLevelEnum consistency) {
-
         CreateCollectionParam createCollectionReq = CreateCollectionParam.newBuilder()
                 .withDatabaseName(databaseName)
                 .withCollectionName(collectionName)
@@ -95,7 +94,6 @@ public class MilvusService {
                 .withEnableDynamicField(false)
                 .withFieldTypes(fields)
                 .build();
-
         this.milvusClient.createCollection(createCollectionReq);
     }
 
@@ -161,25 +159,21 @@ public class MilvusService {
     }
 
     public void insert(String databaseName, String collectionName, List<InsertParam.Field> fields) {
-
         InsertParam insertParam = InsertParam.newBuilder()
                 .withDatabaseName(databaseName)
                 .withCollectionName(collectionName)
                 .withFields(fields)
                 .build();
-
         this.milvusClient.insert(insertParam);
     }
 
     public void insert(String databaseName, String collectionName, String partitionName, List<InsertParam.Field> fields) {
-
         InsertParam insertParam = InsertParam.newBuilder()
                 .withDatabaseName(databaseName)
                 .withCollectionName(collectionName)
                 .withPartitionName(partitionName)
                 .withFields(fields)
                 .build();
-
         this.milvusClient.insert(insertParam);
     }
 
@@ -255,7 +249,6 @@ public class MilvusService {
                         .withCollectionName(collectionName)
                         .build()
         );
-
         System.out.println("Milvus collection " + collectionName + " dropped successfully.");
     }
 
@@ -266,7 +259,6 @@ public class MilvusService {
                         .withPartitionName(partitionName)
                         .build()
         );
-
         System.out.println("Milvus partition " + partitionName + " of collection " + collectionName + " dropped successfully.");
     }
 
@@ -278,7 +270,6 @@ public class MilvusService {
                         .withIndexName(indexName)
                         .build()
         );
-
         System.out.println("Milvus index " + indexName + " of collection " + collectionName + " dropped successfully.");
     }
 
@@ -304,19 +295,15 @@ public class MilvusService {
     }
 
     public boolean hasCollection(String databaseName, String collectionName) {
-
         boolean hasCollection = false;
-
         R<Boolean> respHasCollection = this.milvusClient.hasCollection(
                 HasCollectionParam.newBuilder()
                         .withDatabaseName(databaseName)
                         .withCollectionName(collectionName)
-                        .build()
-        );
+                        .build());
         if (respHasCollection.getData() == Boolean.TRUE) {
             hasCollection = true;
         }
-
         return hasCollection;
     }
 
@@ -328,8 +315,7 @@ public class MilvusService {
                         .withDatabaseName(databaseName)
                         .withCollectionName(collectionName)
                         .withPartitionName(partitionName)
-                        .build()
-        );
+                        .build());
         if (respHasPartition.getData() == Boolean.TRUE) {
             hasPartition = true;
         }
@@ -338,13 +324,9 @@ public class MilvusService {
     }
 
     public R<ShowCollectionsResponse> listCollections(String databaseName) {
-
         R<ShowCollectionsResponse> respShowCollections = this.milvusClient.showCollections(
                 ShowCollectionsParam.newBuilder().withDatabaseName(databaseName).build()
         );
-        System.out.println("########## Milvus collections ##########");
-        System.out.println(respShowCollections);
-
         return respShowCollections;
     }
 
