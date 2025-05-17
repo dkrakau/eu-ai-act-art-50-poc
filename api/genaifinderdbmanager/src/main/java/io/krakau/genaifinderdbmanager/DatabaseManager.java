@@ -2,6 +2,7 @@ package io.krakau.genaifinderdbmanager;
 
 import io.krakau.genaifinderdbmanager.config.EnvironmentVariables;
 import io.krakau.genaifinderdbmanager.service.MilvusService;
+import io.krakau.genaifinderdbmanager.service.MongoService;
 import java.io.IOException;
 
 /**
@@ -10,12 +11,11 @@ import java.io.IOException;
  */
 public class DatabaseManager {
 
-    private EnvironmentVariables env;
-
+    private MongoService mongoService;
     private MilvusService milvusService;
 
     public DatabaseManager(EnvironmentVariables env) throws IOException {
-        this.env = env;
+        this.mongoService = new MongoService(env);
         this.milvusService = new MilvusService(env);
     }
 
@@ -24,16 +24,23 @@ public class DatabaseManager {
         this.milvusService.createCollections();
         this.milvusService.createPartition();
         this.milvusService.createIndexes();
+        
+        this.mongoService.createDatabse();
+        this.mongoService.createCollection();
     }
 
     public void drop() {
         this.milvusService.drop();
+        
+        this.mongoService.dropCollection();
+        this.mongoService.dropDatabase();
     }
 
     public void stats() {
         this.milvusService.getInfo();
+        this.mongoService.getInfo();
     }
-    
+
     public void help() {
         System.out.println("Usage: DatabaseManager <options>");
         System.out.println("  -c, --create\t\tCreate milvus vector and mongodb database");

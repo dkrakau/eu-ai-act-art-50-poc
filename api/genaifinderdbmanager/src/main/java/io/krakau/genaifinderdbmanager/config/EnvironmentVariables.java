@@ -19,11 +19,12 @@ public class EnvironmentVariables {
     // Mongodb
     public final String MONGODB_URL;
     public final String MONGODB_HOST;
-    public final String MONGODB_PORT;
+    public final int MONGODB_PORT;
     public final String MONGODB_AUTH_DB;
     public final String MONGODB_AUTH_USERNAME;
     public final String MONGODB_AUTH_PASSWORD;
-    public final String MONGBDB_DATABASE;
+    public final String MONGODB_DATABASE;
+    public final String MONGODB_COLLECTION;
     
     // Milvus
     public final String MILVUS_URL;
@@ -56,11 +57,12 @@ public class EnvironmentVariables {
         // MONGODB
         this.MONGODB_URL = this.applicationProperties.get("genaifinder.dbmanager.mongo.url");
         this.MONGODB_HOST = this.applicationProperties.get("genaifinder.dbmanager.mongo.host");
-        this.MONGODB_PORT = this.applicationProperties.get("genaifinder.dbmanager.mongo.port");
+        this.MONGODB_PORT = Integer.parseInt(this.applicationProperties.get("genaifinder.dbmanager.mongo.port"));
         this.MONGODB_AUTH_DB = this.applicationProperties.get("genaifinder.dbmanager.mongo.authentication");
         this.MONGODB_AUTH_USERNAME = this.applicationProperties.get("genaifinder.dbmanager.mongo.user");
         this.MONGODB_AUTH_PASSWORD = this.applicationProperties.get("genaifinder.dbmanager.mongo.passwort");
-        this.MONGBDB_DATABASE = this.applicationProperties.get("genaifinder.dbmanager.mongo.db.name=genaifinder");
+        this.MONGODB_DATABASE = this.applicationProperties.get("genaifinder.dbmanager.mongo.db.name=genaifinder");
+        this.MONGODB_COLLECTION = this.applicationProperties.get("");
         // MILVUS
         this.MILVUS_URL = this.applicationProperties.get("genaifinder.dbmanager.milvus.url");
         this.MILVUS_PORT = Integer.parseInt(this.applicationProperties.get("genaifinder.dbmanager.milvus.port"));
