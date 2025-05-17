@@ -1,6 +1,6 @@
 package io.krakau.genaifinderdbmanager.service;
 
-import java.io.File;
+import io.krakau.genaifinderdbmanager.config.EnvironmentVariables;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,11 +21,14 @@ import org.json.JSONObject;
  * @author Dominik
  */
 public class ImportService {
+    
+    private EnvironmentVariables env;
 
     private String filePath;
     private JSONArray assets;
 
-    public ImportService(String filePath) throws IOException {
+    public ImportService(EnvironmentVariables env, String filePath) throws IOException {
+        this.env = env;
         this.filePath = filePath;
         this.assets = readData(filePath);
     }
