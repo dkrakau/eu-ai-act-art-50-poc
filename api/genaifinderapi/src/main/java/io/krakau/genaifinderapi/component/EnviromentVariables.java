@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class EnviromentVariables {
     
+    // ### SECURITY ###
+    public String SECURITY_LOCALHOST;
+    public String SECURITY_DOMAIN;
+    public String SECURITY_IP;
+    
     // ### OPENAPI ###
     public String OPENAPI_PAHT;
     public String OPENAPI_SERVER_URL;
@@ -57,7 +62,6 @@ public class EnviromentVariables {
     public String MILVUS_PARTITION_TEXT;
     public String MILVUS_PARTITION_VIDEO;
    
-    
     // ### Cryptographer ###
     public String CRYPTOGRAPHER_OPENAI;
     public String CRYPTOGRAPHER_OPENAI_KEY_PRIVATE;
@@ -72,6 +76,11 @@ public class EnviromentVariables {
     
     @Autowired
     public EnviromentVariables(Environment env) {
+        
+        // ### SECURITY ###
+        this.SECURITY_LOCALHOST = env.getProperty("spring.security.allowed.localhost");
+        this.SECURITY_DOMAIN = env.getProperty("spring.security.allowed.domain");
+        this.SECURITY_IP = env.getProperty("spring.security.allowed.ip");
         
         // ### OPENAPI ###
         this.OPENAPI_PAHT = env.getProperty("springdoc.api-docs.path");

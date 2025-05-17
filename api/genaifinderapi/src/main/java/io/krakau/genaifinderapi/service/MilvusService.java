@@ -1,7 +1,5 @@
 package io.krakau.genaifinderapi.service;
 
-import com.google.gson.JsonObject;
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;

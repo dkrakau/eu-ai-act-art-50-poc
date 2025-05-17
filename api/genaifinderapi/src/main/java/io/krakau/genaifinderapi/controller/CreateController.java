@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author Dominik
  */
-@CrossOrigin(origins = "localhost") // just for testing
+@CrossOrigin(origins = "*")
 @Tag(
         name = "Create",
         description = "Create entries for generated AI assets")
@@ -47,7 +47,7 @@ public class CreateController {
             description = "This api endpoint is beeing used to create image asset entries.",
             tags = {"Create"})
     @ApiResponses({
-        @ApiResponse(responseCode = "200",
+        @ApiResponse(responseCode = "201",
                 description = "Asset have been created.",
                 content = {
                     @Content(schema = @Schema(implementation = Slice.class),
