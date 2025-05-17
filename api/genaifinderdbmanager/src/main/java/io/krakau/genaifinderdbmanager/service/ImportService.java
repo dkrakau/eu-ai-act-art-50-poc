@@ -34,23 +34,25 @@ public class ImportService {
     }
 
     public void importData() throws FileNotFoundException, IOException {
-        System.out.println("Importing image data from " + this.filePath + " ...");
+        System.out.println("ImportService: Importing image data from " + this.filePath + " ...");
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = (JSONObject) assets.get(i);
             JSONObject responseJson = sendCreateImageRequest(asset);
-            System.out.println("{ \"nnsId\" : " + responseJson.getLong("nnsId") + " }");
+            System.out.println("ImportService: Asset { \"" + env.MILVUS_FIELD_NNSID + "\" : " + responseJson.getLong(env.MILVUS_FIELD_NNSID) + " } imported successfully.");
         }
     }
 
     private JSONObject sendCreateImageRequest(JSONObject asset) throws FileNotFoundException, IOException {
         // Get values from JSONObejct
-        String provider = asset.getString("provider");
-        String prompt = asset.getString("prompt");
-        Long timestamp = asset.getLong("timestamp");
+        String provider = asset.getString(env.IMPORTER_KEY_PROVIDER);
+        String prompt = asset.getString(env.IMPORTER_KEY_PROMPT);
+        Long timestamp = asset.getLong(env.IMPORTER_KEY_TIMESTAMP);
         Path path = Path.of(convertFileNameUTF8ToISO88591(asset.getString("file")));
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        String requestParams = "?provider=" + provider + "&prompt=" + transformSpacesForUrl(prompt) + "&timestamp=" + timestamp;
-        HttpPost createImagePostRequest = new HttpPost("http://localhost/create/image" + requestParams);
+        String requestParams = "?" + env.IMPORTER_KEY_PROVIDER + "=" + provider 
+                + "&" + env.IMPORTER_KEY_PROMPT + "=" + transformSpacesForUrl(prompt) 
+                + "&" + env.IMPORTER_KEY_TIMESTAMP + "=" + timestamp;
+        HttpPost createImagePostRequest = new HttpPost(env.IMPORTER_API_ENDPOINT_CREATE_IMAGE + requestParams);
         // Attach file to POST request body
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.addBinaryBody("file", path.toFile());
