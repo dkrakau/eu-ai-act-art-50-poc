@@ -33,5 +33,14 @@ public class DatabaseManager {
     public void stats() {
         this.milvusService.getInfo();
     }
+    
+    public void help() {
+        System.out.println("Usage: DatabaseManager <options>");
+        System.out.println("  -c, --create\t\tCreate milvus vector and mongodb database");
+        System.out.println("  -d, --drop\t\tDrop milvus vector and mongodb database");
+        System.out.println("  -i, --import\t\tImport data into milvus vector and mongodb database using http post requests");
+        System.out.println("  -s, --stats\t\tShow information of milvus and mongodb database");
+        System.out.println("  -h, --help\t\tShow help information of DatabaseManager");
+    }
 
 }

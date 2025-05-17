@@ -40,29 +40,19 @@ public class Main {
                     importService.importData();
                 } else {
                     System.out.println("Path to file is missing. See help.");
-                    printHelp();
+                    databaseManager.help();
                 }
             } else if (args[0].equals("-s") || args[0].equals("--stats")) {
                databaseManager.stats();
             } else if (args[0].equals("-h") || args[0].equals("--help")) {
-                printHelp();
+                databaseManager.help();
             } else {
                 System.out.println("Wrong arguments are used. See help.");
-                printHelp();
+                databaseManager.help();
             }
         } else {
             System.out.println("No arguments provided. See help.");
-            printHelp();
+            databaseManager.help();
         }
     }
-
-    public static void printHelp() {
-        System.out.println("Usage: DatabaseManager <options>");
-        System.out.println("  -c, --create\t\tCreate milvus vector and mongodb database");
-        System.out.println("  -d, --drop\t\tDrop milvus vector and mongodb database");
-        System.out.println("  -i, --import\t\tImport data into milvus vector and mongodb database using http post requests");
-        System.out.println("  -s, --stats\t\tShow information of milvus and mongodb database");
-        System.out.println("  -h, --help\t\tShow help information of DatabaseManager");
-    }
-
 }
