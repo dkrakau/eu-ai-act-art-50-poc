@@ -73,7 +73,7 @@ public class MilvusWrapper {
                 .withDatabaseName(databaseName)
                 .build();
         this.milvusClient.createDatabase(createDatabaseParam);
-        System.out.println("Milvus database " + databaseName + " created successfully.");
+        System.out.println("Milvus: Database " + databaseName + " created successfully.");
     }
 
     public void dropDatabse(String databaseName) {
@@ -81,7 +81,7 @@ public class MilvusWrapper {
                 .withDatabaseName(databaseName)
                 .build();
         this.milvusClient.dropDatabase(dropDatabaseParam);
-        System.out.println("Milvus database " + databaseName + " dropped successfully.");
+        System.out.println("Milvus: Database " + databaseName + " dropped successfully.");
     }
 
     public void createCollection(String databaseName, String collectionName, String description, List<FieldType> fields, int shardsNum, ConsistencyLevelEnum consistency) {
@@ -95,6 +95,7 @@ public class MilvusWrapper {
                 .withFieldTypes(fields)
                 .build();
         this.milvusClient.createCollection(createCollectionReq);
+        System.out.println("Milvus: Collection " + collectionName + " created successfully.");
     }
 
     public void createPartition(String databaseName, String collectionName, String partitionName) {
@@ -105,6 +106,7 @@ public class MilvusWrapper {
                         .withPartitionName(partitionName)
                         .build()
         );
+        System.out.println("Milvus: Partition " + partitionName + " for collection " + collectionName + " created successfully.");
     }
 
     public void createIndex(String indexName, String databaseName, String collectionName, String field, IndexType indexType, MetricType metricType, String indexParam, Boolean syncMode) {
@@ -120,6 +122,7 @@ public class MilvusWrapper {
                         .withSyncMode(syncMode)
                         .build()
         );
+        System.out.println("Milvus: Index " + indexName + " for collection " + collectionName + " created successfully.");
     }
 
     public void loadCollection(String databaseName, String collectionName) {
@@ -238,7 +241,7 @@ public class MilvusWrapper {
                             .withCollectionName(collectionName)
                             .build()
             );
-            System.out.println("Milvus collection " + collectionName + " dropped successfully.");
+            System.out.println("Milvus: Collection " + collectionName + " dropped successfully.");
         }
     }
 
@@ -249,7 +252,7 @@ public class MilvusWrapper {
                         .withCollectionName(collectionName)
                         .build()
         );
-        System.out.println("Milvus collection " + collectionName + " dropped successfully.");
+        System.out.println("Milvus: Collection " + collectionName + " dropped successfully.");
     }
 
     public void deletePartition(String collectionName, String partitionName) {
@@ -259,7 +262,7 @@ public class MilvusWrapper {
                         .withPartitionName(partitionName)
                         .build()
         );
-        System.out.println("Milvus partition " + partitionName + " of collection " + collectionName + " dropped successfully.");
+        System.out.println("Milvus: Partition " + partitionName + " of collection " + collectionName + " dropped successfully.");
     }
 
     public void deleteIndex(String databaseName, String collectionName, String indexName) {
@@ -270,7 +273,7 @@ public class MilvusWrapper {
                         .withIndexName(indexName)
                         .build()
         );
-        System.out.println("Milvus index " + indexName + " of collection " + collectionName + " dropped successfully.");
+        System.out.println("Milvus: Index " + indexName + " of collection " + collectionName + " dropped successfully.");
     }
 
     public void deleteColumns(String databaseName, String collectionName, String deleteExpr) {
@@ -308,19 +311,13 @@ public class MilvusWrapper {
     }
 
     public boolean hasPartition(String databaseName, String collectionName, String partitionName) {
-        boolean hasPartition = false;
-
         R<Boolean> respHasPartition = this.milvusClient.hasPartition(
                 HasPartitionParam.newBuilder()
                         .withDatabaseName(databaseName)
                         .withCollectionName(collectionName)
                         .withPartitionName(partitionName)
                         .build());
-        if (respHasPartition.getData() == Boolean.TRUE) {
-            hasPartition = true;
-        }
-
-        return hasPartition;
+        return (Boolean) respHasPartition.getData();
     }
 
     public R<ShowCollectionsResponse> listCollections(String databaseName) {
