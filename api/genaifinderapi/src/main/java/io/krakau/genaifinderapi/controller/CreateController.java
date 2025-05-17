@@ -47,7 +47,7 @@ public class CreateController {
             description = "This api endpoint is beeing used to create image asset entries.",
             tags = {"Create"})
     @ApiResponses({
-        @ApiResponse(responseCode = "200",
+        @ApiResponse(responseCode = "201",
                 description = "Asset have been created.",
                 content = {
                     @Content(schema = @Schema(implementation = Slice.class),
