@@ -1,6 +1,5 @@
 package io.krakau.genaifinderapi.service;
 
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.EnviromentVariables;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
