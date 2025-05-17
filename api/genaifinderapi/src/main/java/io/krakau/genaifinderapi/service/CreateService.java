@@ -63,11 +63,11 @@ public class CreateService {
         Asset asset = null;
         Document iscc = null;
         ExplainedISCC explainedISCC = null;
-        Long snowflakeId = this.snowflaker.id();
+        Long snowflakeId = this.snowflaker.id();        
 
         try {
             // 1. Send image to iscc-web to create iscc
-            iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getName());
+            iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getOriginalFilename());
             // 2. Send iscc to iscc-web to explain iscc
             explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
             // 3. Insert units to milvus collection
