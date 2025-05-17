@@ -1,6 +1,5 @@
 package io.krakau.genaifinderapi.configuration;
 
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
 import io.krakau.genaifinderapi.component.EnviromentVariables;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

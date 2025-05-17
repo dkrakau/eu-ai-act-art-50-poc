@@ -16,14 +16,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // ###########################  PRODUCTION  ############################
-        EnvironmentVariables env = new EnvironmentVariables(APPLICATION_PROPOERTIES);
-        databaseManager = new DatabaseManager(env);
-        initArgsReader(args);
-        // ##########################  DEVELOPMENT  ############################
 //        EnvironmentVariables env = new EnvironmentVariables(APPLICATION_PROPOERTIES);
 //        databaseManager = new DatabaseManager(env);
+//        initArgsReader(args);
+        // ##########################  DEVELOPMENT  ############################
+        EnvironmentVariables env = new EnvironmentVariables(APPLICATION_PROPOERTIES);
+        databaseManager = new DatabaseManager(env);
 //        databaseManager.create();
-//        databaseManager.drop();
+        databaseManager.drop();
 //        importService = new ImportService(env, "ai-images/data-images.json");
 //        importService.importData();
         // #####################################################################
