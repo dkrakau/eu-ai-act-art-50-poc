@@ -33,5 +33,5 @@ build/
 .vscode/
 
 ### Keys ###
-/keys/private/*.pem
-/keys/public/*.pem
+#/keys/private/*.pem
+#/keys/public/*.pem
