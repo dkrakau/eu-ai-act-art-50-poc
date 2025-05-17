@@ -2,14 +2,17 @@ version: '3.5'
 
 services:
   genaifinderapi:
-    build:
-      context: ./genaifinderapi
+    build: .
     ports:
       - "80:80"
     volumes:
       - type: bind
-        source: ./application.properties
+        source: ./src/main/resources/application.properties
         target: /app/application.properties
+        read_only: true
+      - type: bind
+        source: ./keys
+        target: /app/keys
         read_only: true
     restart: always
 
