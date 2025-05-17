@@ -29,25 +29,25 @@ public class MilvusService {
     
     public void drop() {
         if (collectionsExists()) {
-            System.out.println("Dropping collections ...");
+            System.out.println("Milvus: Dropping collections ...");
             this.milvusService.deleteCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_META);
             this.milvusService.deleteCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_CONTENT);
             this.milvusService.deleteCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_DATA);
             this.milvusService.deleteCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE);
             this.milvusService.dropDatabse(env.MILVUS_DATABASE);
         } else {
-            System.out.println("Drop collections failed: Milvus collections do not exist.");
+            System.out.println("Milvus: Drop collections failed: Milvus collections do not exists.");
         }
     }
 
     public void createDatabase() {
-        System.out.println("Creating database ...");
+        System.out.println("Milvus: Creating database ...");
         this.milvusService.createDatabse(env.MILVUS_DATABASE);
     }
 
     public void createCollections() {
         if (!collectionsExists()) {
-            System.out.println("Creating collections ...");
+            System.out.println("Milvus: Creating collections ...");
             FieldType id = FieldType.newBuilder()
                     .withName(env.MILVUS_FIELD_ID)
                     .withDataType(DataType.Int64)
@@ -76,13 +76,16 @@ public class MilvusService {
             this.milvusService.createCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_DATA, env.MILVUS_COLLECTION_DESCRIPTION, fieldList, env.MILVUS_SHARDS, ConsistencyLevelEnum.STRONG);
             this.milvusService.createCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE, env.MILVUS_COLLECTION_DESCRIPTION, fieldList, env.MILVUS_SHARDS, ConsistencyLevelEnum.STRONG);
         } else {
-            System.out.println("Create collections failed: Milvus collections with partitions already exitst.");
+            System.out.println("Milvus: Create collections failed: Milvus collections with partitions already exists.");
         }
     }
 
     public void createPartition() {
-        if (collectionsExists()) {
-            System.out.println("Creating partitions ...");
+        if (!partitionsExists(env.MILVUS_COLLECTION_UNIT_META)
+                && !partitionsExists(env.MILVUS_COLLECTION_UNIT_CONTENT)
+                && !partitionsExists(env.MILVUS_COLLECTION_UNIT_DATA)
+                && !partitionsExists(env.MILVUS_COLLECTION_UNIT_INSTANCE)) {
+            System.out.println("Milvus: Creating partitions ...");
             String[] mediaType = {env.MILVUS_PARTITION_TEXT, env.MILVUS_PARTITION_IMAGE, env.MILVUS_PARTITION_AUDIO, env.MILVUS_PARTITION_VIDEO};
             for (int i = 0; i < mediaType.length; i++) {
                 this.milvusService.createPartition(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_META, mediaType[i]);
@@ -91,19 +94,19 @@ public class MilvusService {
                 this.milvusService.createPartition(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE, mediaType[i]);
             }
         } else {
-            System.out.println("Create partitions failed: Milvus collections does not exitst.");
+            System.out.println("Milvus: Create partitions failed: Milvus partitions already exists.");
         }
     }
 
     public void createIndexes() {
         if (collectionsExists()) {
-            System.out.println("Creating indexes for collections ...");
+            System.out.println("Milvus: Creating indexes for collections ...");
             this.milvusService.createIndex(env.MILVUS_INDEX_NAME, env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_META, env.MILVUS_FIELD_VECTOR, IndexType.BIN_IVF_FLAT, MetricType.HAMMING, env.MILVUS_INDEX_PARAM, Boolean.FALSE);
             this.milvusService.createIndex(env.MILVUS_INDEX_NAME, env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_CONTENT, env.MILVUS_FIELD_VECTOR, IndexType.BIN_IVF_FLAT, MetricType.HAMMING, env.MILVUS_INDEX_PARAM, Boolean.FALSE);
             this.milvusService.createIndex(env.MILVUS_INDEX_NAME, env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_DATA, env.MILVUS_FIELD_VECTOR, IndexType.BIN_IVF_FLAT, MetricType.HAMMING, env.MILVUS_INDEX_PARAM, Boolean.FALSE);
             this.milvusService.createIndex(env.MILVUS_INDEX_NAME, env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE, env.MILVUS_FIELD_VECTOR, IndexType.BIN_IVF_FLAT, MetricType.HAMMING, env.MILVUS_INDEX_PARAM, Boolean.FALSE);
         } else {
-            System.out.println("Create indexes failed: Milvus collections already exitst.");
+            System.out.println("Milvus: Create indexes failed: Milvus collections already exists.");
         }
     }
 
@@ -112,6 +115,13 @@ public class MilvusService {
                 && this.milvusService.hasCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_CONTENT)
                 && this.milvusService.hasCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_DATA)
                 && this.milvusService.hasCollection(env.MILVUS_DATABASE, env.MILVUS_COLLECTION_UNIT_INSTANCE);
+    }
+    
+    private boolean partitionsExists(String collectionName) {
+        return this.milvusService.hasPartition(env.MILVUS_DATABASE, collectionName, env.MILVUS_PARTITION_AUDIO)
+                && this.milvusService.hasPartition(env.MILVUS_DATABASE, collectionName, env.MILVUS_PARTITION_IMAGE)
+                && this.milvusService.hasPartition(env.MILVUS_DATABASE, collectionName, env.MILVUS_PARTITION_TEXT)
+                && this.milvusService.hasPartition(env.MILVUS_DATABASE, collectionName, env.MILVUS_PARTITION_VIDEO);
     }
 
     public void getInfo() {
@@ -128,10 +138,10 @@ public class MilvusService {
                     || name.equals(env.MILVUS_COLLECTION_UNIT_INSTANCE)) {
                 this.milvusService.collectionInfo(env.MILVUS_DATABASE, name);
             } else {
-                System.out.println("Milvus collection name [" + name + "] not found.");
+                System.out.println("Milvus: Collection name [" + name + "] not found.");
             }
         } else {
-            System.out.println("Collection info failed: Milvus collections does not exist.");
+            System.out.println("Milvus: Collection info failed: Milvus collections do not exist.");
         }
     }
     
