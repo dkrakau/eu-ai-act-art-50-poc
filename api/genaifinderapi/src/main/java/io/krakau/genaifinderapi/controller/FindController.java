@@ -54,7 +54,7 @@ public class FindController {
     @GetMapping("/image")
     public ResponseEntity<List<Asset>> findImage(
             @PathVariable("url")
-            @Parameter(description = "URL of an image resource.", example = "https://pbs.twimg.com/media/GrAdSm-WAAA0yxV?format=jpg&name=large")
+            @Parameter(description = "URL of an image resource.", example = "https://pbs.twimg.com/media/GrKvjjpWAAAh1Iz?format=jpg&name=large")
             @RequestParam String url) throws Exception {
         return ResponseEntity.ok().body(this.findService.findImage(url));
     }
