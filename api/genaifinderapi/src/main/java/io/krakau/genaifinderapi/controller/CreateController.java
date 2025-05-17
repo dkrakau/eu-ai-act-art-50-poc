@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author Dominik
  */
-@CrossOrigin(origins = "localhost") // just for testing
+@CrossOrigin(origins = "*")
 @Tag(
         name = "Create",
         description = "Create entries for generated AI assets")
