@@ -1,18 +1,12 @@
 package io.krakau.genaifinder
 
-import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import java.io.Serializable
 
 class SettingsActivity : AppCompatActivity() {
 

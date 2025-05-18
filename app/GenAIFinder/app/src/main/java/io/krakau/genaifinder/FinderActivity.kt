@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.json.JSONArray
@@ -613,5 +611,5 @@ class FinderActivity : AppCompatActivity() {
         """.trimIndent()
         return largeIsccData
     }
-    
+
 }
