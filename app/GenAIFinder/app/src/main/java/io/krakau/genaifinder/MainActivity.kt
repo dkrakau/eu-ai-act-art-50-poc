@@ -2,7 +2,6 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -98,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //discoverBtn?.isEnabled = false
+        discoverBtn?.isEnabled = false
         webview?.setVisibility(View.GONE);
 
         webview?.settings?.javaScriptEnabled = true
@@ -137,16 +136,8 @@ class MainActivity : AppCompatActivity() {
                 ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
             }
             """.trimIndent()
-            //webview?.loadUrl("javascript:$javascript")
-            val sendDataIntent = Intent(this@MainActivity, FinderActivity::class.java).apply {
-               // putExtra("imageUrls", filterContent(imageUrls))
-            }
-            startActivity(sendDataIntent)
+            webview?.loadUrl("javascript:$javascript")
         }
-
-        /*val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)*/
     }
 
     private inner class MyJavaScriptInterface(private val ctx: Context) {
@@ -252,7 +243,7 @@ class MainActivity : AppCompatActivity() {
         }
         var uri = imageUrl.toUri()
         if(imageUrl.contains("data:image") && imageUrl.contains("base64")) {
-            uri = Uri.parse("${Base64RequestHandler.SCHEME_BASE64}://$imageUrl")
+            uri = "${Base64RequestHandler.SCHEME_BASE64}://$imageUrl".toUri()
             Log.d("OG:IMAGEURL:BASE64", imageUrl)
         } else {
             if(uri.host == null) {
