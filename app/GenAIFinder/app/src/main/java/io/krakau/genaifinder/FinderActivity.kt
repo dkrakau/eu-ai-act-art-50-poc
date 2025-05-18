@@ -1,5 +1,6 @@
 package io.krakau.genaifinder
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -189,7 +190,18 @@ class FinderActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this@FinderActivity, SettingsActivity::class.java).apply {
+                    putExtra("callingActivity", FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
+            R.id.action_information -> {
+                startActivity(Intent(this@FinderActivity, InformationActivity::class.java).apply {
+                    putExtra("callingActivity", FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
