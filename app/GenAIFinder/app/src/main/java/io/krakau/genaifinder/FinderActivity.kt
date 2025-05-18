@@ -45,9 +45,6 @@ class FinderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)*/
         setContentView(R.layout.activity_finder)
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -65,13 +62,14 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
+        val selectedImageUrl = intent.getStringExtra("selectedImageUrl")
+        Log.d("FinderActivity", "SelectedImageUrl: $selectedImageUrl")
+
         // Send request
         var genAiFinderData = JSONArray(isccData())
         // Disable loadingView on received data and enable finderView
         // render genaifinderdata
         renderData(genAiFinderData)
-
-
 
     }
 

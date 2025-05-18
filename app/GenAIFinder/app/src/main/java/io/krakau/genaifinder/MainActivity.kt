@@ -154,18 +154,17 @@ class MainActivity : AppCompatActivity() {
                         Log.d("imageUrls", imageUrl!!)
                         images += "$imageUrl; "
                     }
-                    // Stuff that updates the UI
+                    // Update the UI
                     textImages?.text = images
-
-                    val sendDataIntent = Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
+                    // Start activity
+                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
                         putExtra("imageUrls", filterContent(imageUrls))
-                    }
-                    /* If set, and the activity being launched is already running in the current task,
-                    then instead of launching a new instance of that activity, all of the other
-                    activities on top of it will be closed and this Intent will be delivered
-                    to the (now on top) old activity as a new Intent. */
-                    sendDataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(sendDataIntent)
+                    }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
+                    launched is already running in the current task, then instead of launching
+                    a new instance of that activity, all of the other activities on top of it
+                    will be closed and this Intent will be delivered to the (now on top) old
+                    activity as a new Intent. */
                 }
             }
         }

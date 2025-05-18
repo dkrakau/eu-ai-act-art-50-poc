@@ -60,10 +60,9 @@ class ImageGalleryActivity : AppCompatActivity() {
             Log.d("BUTTONS", "User tapped the findBtn")
             Log.d("DIALOG", selectedImageUrl)
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
-            val sendDataIntent = Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
-                //putExtra("imageUrls", filterContent(imageUrls))
-            }
-            startActivity(sendDataIntent)
+            startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
+                putExtra("selectedImageUrl", selectedImageUrl)
+            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
         // load image urls into flexboxLayout
