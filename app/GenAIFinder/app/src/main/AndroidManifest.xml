@@ -41,6 +41,9 @@
         <activity
             android:name=".InformationActivity"
             android:theme="@style/Theme.GenAIFinder" />
+        <activity
+            android:name=".InsightActivity"
+            android:theme="@style/Theme.GenAIFinder" />
     </application>
 
 </manifest>
