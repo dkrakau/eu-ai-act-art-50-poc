@@ -2,15 +2,13 @@ package io.krakau.genaifinder
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.AppBarConfiguration
 
 class InformationActivity  : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private lateinit var informationBack: ImageView
 
@@ -24,6 +22,7 @@ class InformationActivity  : AppCompatActivity() {
         informationBack = findViewById(R.id.informationBack)
 
         callingActivity = intent.getStringExtra("callingActivity")!!
+        Log.d("InformationActivity", "callingActivity $callingActivity")
 
         informationBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
@@ -31,15 +30,15 @@ class InformationActivity  : AppCompatActivity() {
     }
 
     fun goBackIntent(sourceActivity: String): Intent {
-        var intent = Intent(this@InformationActivity, FinderActivity::class.java)
-        if(sourceActivity.equals("io.krakau.genaifinder.MainActivity")) {
-            intent = Intent(this@InformationActivity, MainActivity::class.java)
-        }
+        var intent = Intent(this@InformationActivity, MainActivity::class.java)
         if(sourceActivity.equals("io.krakau.genaifinder.ImageGalleryActivity")) {
             intent = Intent(this@InformationActivity, ImageGalleryActivity::class.java)
         }
         if(sourceActivity.equals("io.krakau.genaifinder.FinderActivity")) {
             intent = Intent(this@InformationActivity, FinderActivity::class.java)
+        }
+        if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
+            intent = Intent(this@InformationActivity, InsightActivity::class.java)
         }
         return intent
     }

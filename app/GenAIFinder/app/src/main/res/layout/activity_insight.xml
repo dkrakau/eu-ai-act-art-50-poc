@@ -20,7 +20,7 @@
         app:titleTextColor="@android:color/transparent" />
 
     <ImageView
-        android:id="@+id/settingsBack"
+        android:id="@+id/insightBack"
         android:layout_width="50dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
@@ -39,7 +39,7 @@
         android:textSize="24sp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toEndOf="@+id/settingsBack"
+        app:layout_constraintStart_toEndOf="@+id/insightBack"
         app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <ScrollView

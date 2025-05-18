@@ -2,24 +2,19 @@ package io.krakau.genaifinder
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.navigation.ui.AppBarConfiguration
 
 class SettingsActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private lateinit var settingsBack: ImageView
     private lateinit var darkModeSwitch: Switch
@@ -39,6 +34,8 @@ class SettingsActivity : AppCompatActivity() {
 
         // Get calling activity
         callingActivity = intent.getStringExtra("callingActivity")!!
+        Log.d("SettingsActivity", "callingActivity $callingActivity")
+
         settingsBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
         }
@@ -68,15 +65,15 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun goBackIntent(sourceActivity: String): Intent {
-        var intent = Intent(this@SettingsActivity, FinderActivity::class.java)
-        if(sourceActivity.equals("io.krakau.genaifinder.MainActivity")) {
-            intent = Intent(this@SettingsActivity, MainActivity::class.java)
-        }
+        var intent = Intent(this@SettingsActivity, MainActivity::class.java)
         if(sourceActivity.equals("io.krakau.genaifinder.ImageGalleryActivity")) {
             intent = Intent(this@SettingsActivity, ImageGalleryActivity::class.java)
         }
         if(sourceActivity.equals("io.krakau.genaifinder.FinderActivity")) {
             intent = Intent(this@SettingsActivity, FinderActivity::class.java)
+        }
+        if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
+            intent = Intent(this@SettingsActivity, InsightActivity::class.java)
         }
         return intent
     }

@@ -100,6 +100,9 @@ class FinderActivity : AppCompatActivity() {
             listItem.setOnClickListener {
                 Log.d("BUTTONS", "User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@FinderActivity, InsightActivity::class.java).apply {
+                    //putExtra("callingActivity", FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
             if(i == genAiFinderData.length() - 1) {
