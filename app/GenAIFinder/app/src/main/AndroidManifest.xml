@@ -35,6 +35,12 @@
         <activity
             android:name=".FinderActivity"
             android:theme="@style/Theme.GenAIFinder" />
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/Theme.GenAIFinder" />
+        <activity
+            android:name=".InformationActivity"
+            android:theme="@style/Theme.GenAIFinder" />
     </application>
 
 </manifest>
