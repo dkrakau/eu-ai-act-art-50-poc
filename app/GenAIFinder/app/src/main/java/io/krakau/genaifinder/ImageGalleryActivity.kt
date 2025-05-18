@@ -144,7 +144,18 @@ class ImageGalleryActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this@ImageGalleryActivity, SettingsActivity::class.java).apply {
+                    putExtra("callingActivity", ImageGalleryActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
+            R.id.action_information -> {
+                startActivity(Intent(this@ImageGalleryActivity, InformationActivity::class.java).apply {
+                    putExtra("callingActivity", ImageGalleryActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
