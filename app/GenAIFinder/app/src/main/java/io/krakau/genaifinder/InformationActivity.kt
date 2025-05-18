@@ -7,10 +7,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.net.toUri
+
 
 class InformationActivity  : AppCompatActivity() {
 
     private lateinit var informationBack: ImageView
+    private lateinit var fabReddit: FloatingActionButton
+    private lateinit var fabFacebook: FloatingActionButton
+    private lateinit var fabInstagram: FloatingActionButton
+    private lateinit var fabTikTok: FloatingActionButton
+    private lateinit var fabX: FloatingActionButton
 
     private lateinit var callingActivity: String
 
@@ -20,12 +28,41 @@ class InformationActivity  : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         informationBack = findViewById(R.id.informationBack)
+        fabReddit = findViewById(R.id.fabReddit)
+        fabFacebook = findViewById(R.id.fabFacebook)
+        fabInstagram = findViewById(R.id.fabInstagram)
+        fabTikTok = findViewById(R.id.fabTikTok)
+        fabX = findViewById(R.id.fabX)
 
         callingActivity = intent.getStringExtra("callingActivity")!!
         Log.d("InformationActivity", "callingActivity $callingActivity")
 
         informationBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
+        }
+        fabReddit.setOnClickListener {
+            toAnotherAppOpen("https://www.reddit.com/user/Grizzlyboer", "com.reddit.android")
+        }
+        fabFacebook.setOnClickListener {
+            toAnotherAppOpen("https://www.facebook.com/dominik.kra.9", "com.facebook.android")
+        }
+        fabInstagram.setOnClickListener {
+            toAnotherAppOpen("https://www.instagram.com/krakiiiiiii", "com.instagram.android")
+        }
+        fabTikTok.setOnClickListener {
+            toAnotherAppOpen("https://www.tiktok.com/@roberthabeck", "com.tiktok.android")
+        }
+        fabX.setOnClickListener {
+            toAnotherAppOpen("https://x.com/Grizzlyboer4", "com.x.android")
+        }
+    }
+
+    private fun toAnotherAppOpen(profilePath: String, openAppPackageName: String) {
+        val uri = profilePath.toUri()
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri).setPackage(openAppPackageName))
+        } catch(e: Exception) {
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
     }
 

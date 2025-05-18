@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton6"
+            android:id="@+id/fabReddit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
@@ -60,11 +60,11 @@
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton5"
-            app:srcCompat="@android:drawable/ic_dialog_dialer" />
+            app:layout_constraintEnd_toStartOf="@+id/fabFacebook"
+            app:srcCompat="@drawable/reddit_icon" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton5"
+            android:id="@+id/fabFacebook"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
@@ -73,24 +73,11 @@
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
-            app:srcCompat="@android:drawable/ic_dialog_alert" />
+            app:layout_constraintEnd_toStartOf="@+id/fabInstagram"
+            app:srcCompat="@drawable/facebook_icon" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton3"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton3"
+            android:id="@+id/fabInstagram"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
@@ -98,11 +85,23 @@
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton2"
-            app:srcCompat="@android:drawable/ic_dialog_info" />
+            app:layout_constraintEnd_toStartOf="@+id/fabTikTok"
+            app:srcCompat="@drawable/instagram_icon" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+            android:id="@+id/fabTikTok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fabX"
+            app:srcCompat="@drawable/tiktok_icon" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabX"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
@@ -110,7 +109,7 @@
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_dialog_email" />
+            app:srcCompat="@drawable/x_icon" />
 
         <LinearLayout
             android:id="@+id/linearLayout3"
@@ -172,6 +171,7 @@
                             android:id="@+id/textAbstraktTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:lineSpacingExtra="4sp"
                             android:text="@string/text_Abstrakt" />
 
                     </LinearLayout>
@@ -205,6 +205,7 @@
                             android:id="@+id/textEigenleistungTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:lineSpacingExtra="4sp"
                             android:text="@string/text_Eigenleistung" />
 
                     </LinearLayout>
@@ -238,6 +239,7 @@
                             android:id="@+id/textISCCTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:lineSpacingExtra="4sp"
                             android:text="@string/text_ISCC" />
 
                     </LinearLayout>
