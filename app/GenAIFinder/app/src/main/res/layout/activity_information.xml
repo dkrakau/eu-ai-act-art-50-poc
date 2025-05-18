@@ -163,7 +163,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
-                            android:text="@string/title_Abstrakt"
+                            android:text="@string/title_abstract"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -172,7 +172,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="4sp"
-                            android:text="@string/text_Abstrakt" />
+                            android:text="@string/text_abstract" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -197,7 +197,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
-                            android:text="@string/title_Eigenleistung"
+                            android:text="@string/title_personal_contribution"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -206,7 +206,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="4sp"
-                            android:text="@string/text_Eigenleistung" />
+                            android:text="@string/text_personal_contribution" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

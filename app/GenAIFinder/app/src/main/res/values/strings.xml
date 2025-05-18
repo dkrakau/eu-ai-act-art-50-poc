@@ -13,35 +13,33 @@
         <item>https://genaifinder.krakau.io</item>
     </string-array>
 
-    <string name="title_Abstrakt">
-        Abstrakt
+    <string name="title_abstract">
+        Abstract
     </string>
 
-    <string name="text_Abstrakt">
-        Die EU hat 2024 den Artificial Intelligence Act verabschiedet, um die Nutzung und das
-        Bereitstellen von KI-Systeme zu regulieren. Neben den positiven Aspekten von KI-Systemen
-        können diese jedoch auch zur Verbreitung von Mis- und Desinformation genutzt werden. Diese
-        Arbeit befasst sich mit den technischen Umsetzungsmöglichkeiten für Anbieter von KI-Systemen
-        zur Wahrung der Transparenzpflicht von synthetisch generierten Inhalten. Die Verbreitung
-        von Mis- und Desinformationen im Internet wird als die größte Gefahr in den kommenden zwei
-        Jahren eingestuft.
+    <string name="text_abstract">
+        The EU passed the Artificial Intelligence Act in 2024 to regulate the use and provision of
+        AI systems. Despite the positive aspects of AI systems, they can also be used to spread
+        misinformation and disinformation. This paper examines the technical implementation options
+        for providers of AI systems to ensure compliance with the obligation to provide transparency
+        for synthetically generated content. The spread of misinformation and disinformation on the
+        internet is considered the greatest threat in the next two years.
     </string>
 
-    <string name="title_Eigenleistung">
-        Eigenleistung
+    <string name="title_personal_contribution">
+        Personal Contribution
     </string>
 
-    <string name="text_Eigenleistung">
-        In dieser Arbeit wird ein Proof of Concept entwickelt, um die praktische Umsetzung der
-        Anforderungen des EU Intelligence Acts Artikel 50 Absatz 2 u. 4 zu untersuchen. Die
-        Anforderungen werden für diese Arbeit nur auf das Generieren von Bildern beschränkt. Für die
-        Umsetzung werden verschiedene Methoden beleuchtet. Insbesondere wird die Umsetzung mit Hilfe
-        des International Standard Content Code (ISCC) genauer betrachtet. Dazu wird das Verfahren
-        zur Erstellung des ISCCs bei Bildern offengelegt und erklärt. Zudem soll die historische
-        Entwicklung der Bildgenerierung aufgezeigt und die Wichtigkeit zur Erkennung von synthetisch
-        generierten Inhalten herausgearbeitet werden. Abschließend werden mögliche Ansatzpunkte zur
-        Weiterentwicklung für die Erkennung von generierten Audio-, Video und Textinhalten
-        aufgezeigt.
+    <string name="text_personal_contribution">
+        This paper develops a proof of concept to investigate the practical implementation of the
+        requirements of Article 50, Paragraphs 2 and 4 of the EU Intelligence Act. For this paper,
+        the requirements are limited to image generation. Various methods for implementation are
+        examined. In particular, implementation using the International Standard Content Code (ISCC)
+        is examined in more detail. For this purpose, the procedure for generating the ISCC for
+        images is disclosed and explained. Furthermore, the historical development of image
+        generation is presented and its importance for the detection of synthetically generated
+        content is highlighted. Finally, possible starting points for further development for the
+        detection of generated audio, video, and text content are presented.
     </string>
 
     <string name="title_ISCC">
@@ -49,14 +47,13 @@
     </string>
 
     <string name="text_ISCC">
-        Der International Standard Content Code (ISCC) ist ein Verfahren, um digitale Medieninhalte
-        im Internet zu identifizieren und ist als ISO-Standard (ISO 24138:2024) zertifiziert. Titusz
-        Pan und die ISCC Foundation entwickelten 2019 den ISCC, der verschiedenste digitale
-        Medientypen wie Audio, Video, Bilder, exte und eine Vielzahl der gängigsten Dateiformate
-        unterstützt. Bei der Generierung des ISCCs werden vier HashWerte (Units) erstellt,
-        die zusammen eine 55-stellige Zeichenkette erzeugen (ISCC). Durch das Vergleichen der
-        Hash-Werte von zwei unterschiedlichen digitalen Medien, kann eine Aussage über deren
-        Ähnlichkeit getroffen werden.
+        The International Standard Content Code (ISCC) is a method for identifying digital media
+        content on the Internet and is certified as an ISO standard (ISO 24138:2024). Titusz Pan and
+        the ISCC Foundation developed the ISCC in 2019, which supports a wide variety of digital
+        media types such as audio, video, images, exts, and a variety of the most common file
+        formats. When generating the ISCC, four hash values (units) are created, which together
+        produce a 55-character character string (ISCC). By comparing the hash values of two
+        different digital media, a statement can be made about their similarity.
     </string>
 
     <string name="lorem_ipsum">
