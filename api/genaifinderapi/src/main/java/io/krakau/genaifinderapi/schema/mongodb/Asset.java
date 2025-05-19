@@ -22,7 +22,7 @@ public class Asset {
     @Field("nnsId")
     private Long nnsId;
     
-    private Float distance;
+    private Integer distance;
     
     public Asset() {
     }
@@ -44,7 +44,7 @@ public class Asset {
         return nnsId;
     }
 
-    public Float getDistance() {
+    public Integer getDistance() {
         return distance;
     }
 
@@ -56,7 +56,7 @@ public class Asset {
         this.nnsId = nnsId;
     }
 
-    public void setDistance(Float distance) {
+    public void setDistance(Integer distance) {
         this.distance = distance;
     }
 
