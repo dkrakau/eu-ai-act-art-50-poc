@@ -116,6 +116,7 @@ class FinderActivity : AppCompatActivity() {
         dateTextView.text = getDate(currentTimestamp)
         timeTextView.text = getTime(currentTimestamp)
         originTagTextView.text = "Unknown"
+
     }
 
     private fun renderFoundAssets(assets: List<Asset>) {
