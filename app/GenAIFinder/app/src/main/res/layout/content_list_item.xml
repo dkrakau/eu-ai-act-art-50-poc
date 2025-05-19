@@ -66,6 +66,7 @@
                 android:gravity="bottom|center"
                 android:maxLines="2"
                 android:text="98% Simularity"
+                android:textColor="@color/primary_color"
                 android:textSize="18sp" />
 
         </LinearLayout>
