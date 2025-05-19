@@ -1,10 +1,12 @@
-package io.krakau.genaifinder.service.api
+package io.krakau.genaifinder.service.api.model.view
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.krakau.genaifinder.service.api.RetrofitClient
+import io.krakau.genaifinder.service.api.model.data.Asset
 import kotlinx.coroutines.launch
 
 class AssetViewModel : ViewModel() {
@@ -15,7 +17,8 @@ class AssetViewModel : ViewModel() {
     private val _assets = MutableLiveData<List<Asset>>()
     val assets: LiveData<List<Asset>> = _assets
 
-    fun fetchImageAssets(url: String) {
+
+   fun fetchImageAssets(url: String) {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.apiService.getImageAssets(mapOf("accept" to "application/json"), url)

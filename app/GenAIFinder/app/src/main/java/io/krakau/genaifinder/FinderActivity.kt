@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,9 +18,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.animation.AnimationUtils
-import io.krakau.genaifinder.service.api.Asset
-import io.krakau.genaifinder.service.api.AssetViewModel
+import io.krakau.genaifinder.service.api.model.data.Asset
+import io.krakau.genaifinder.service.api.model.view.AssetViewModel
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

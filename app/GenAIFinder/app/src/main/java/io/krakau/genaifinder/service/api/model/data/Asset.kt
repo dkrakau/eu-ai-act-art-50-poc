@@ -1,7 +1,6 @@
-package io.krakau.genaifinder.service.api
+package io.krakau.genaifinder.service.api.model.data
 
 import com.google.gson.annotations.SerializedName
-import java.util.Date
 
 data class Asset(
     //@SerializedName("_id") val id: MongoId,

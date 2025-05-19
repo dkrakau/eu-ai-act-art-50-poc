@@ -1,5 +1,6 @@
 package io.krakau.genaifinder.service.api
 
+import io.krakau.genaifinder.service.api.model.data.Asset
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
