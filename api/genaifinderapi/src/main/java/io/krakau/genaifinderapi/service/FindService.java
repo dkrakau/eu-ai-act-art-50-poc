@@ -20,10 +20,13 @@ import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +39,7 @@ import org.springframework.stereotype.Service;
 public class FindService {
 
     private EnviromentVariables env;
-    
+
     private AssetService assetService;
     private DownloadService downloadService;
     private IsccWebService isccWebService;
@@ -67,7 +70,7 @@ public class FindService {
 
         List<Asset> assets = new ArrayList<>();
         List<Asset> foundAssets = new ArrayList<>();
-        
+
         File downloadedFile = null;
         Document iscc = null;
         ExplainedISCC explainedISCC = null;
@@ -115,13 +118,17 @@ public class FindService {
             nnsIds.addAll(nnsResultMap.keySet());
             foundAssets = this.assetService.findByNnsId(nnsIds);
             Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
-            // 9. Add distance to assets
-            for(Asset asset : assets) {
-                asset.setDistance(nnsResultMap.get(asset.getNnsId()));
+            // 9. Add distance to found assets
+            for (Asset asset : foundAssets) {
+                asset.setDistance(nnsResultMap.get(asset.getNnsId()).intValue());
             }
-            // 10. Create asset for url
+            // 10. Sort found assets by distance
+            List<Asset> sortedFoundAssets = foundAssets.stream()
+                    .sorted(Comparator.comparingInt(Asset::getDistance))
+                    .collect(Collectors.toList());
+            // 11. Create asset for url
             URI uri = new URI(url);
-            Asset assetForUrl = new Asset(
+            Asset assetFormUrl = new Asset(
                     new Metadata(
                             new Provider(
                                     uri.getHost(),
@@ -135,13 +142,13 @@ public class FindService {
                             )
                     ),
                     null);
-            // 11. Add url asset and found assets to assets
-            assets.add(assetForUrl);
-            assets.addAll(foundAssets);
+            // 12. Add url asset and found assets to assets
+            assets.add(assetFormUrl);
+            assets.addAll(sortedFoundAssets);
         } catch (Exception ex) {
             Logger.getLogger(FindService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // 12. Return assets
+        // 13. Return assets
         return assets;
     }
 
