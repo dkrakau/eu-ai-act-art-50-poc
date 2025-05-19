@@ -110,12 +110,12 @@ class FinderActivity : AppCompatActivity() {
             .load(thumbnail)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
             .into(itemImageView)
-        titleTextView.text = title
-        descriptionTextView.text = description
+        titleTextView.text = selectedImageUrl.substring(8)
+        descriptionTextView.text = title
         simularityTextView.text = ""
         dateTextView.text = getDate(currentTimestamp)
         timeTextView.text = getTime(currentTimestamp)
-        originTagTextView.text = selectedImageUrl.toUri().host
+        originTagTextView.text = "Unknown"
     }
 
     private fun renderFoundAssets(assets: List<Asset>) {
