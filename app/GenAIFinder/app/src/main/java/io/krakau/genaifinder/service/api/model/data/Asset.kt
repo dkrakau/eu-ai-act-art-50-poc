@@ -6,7 +6,7 @@ data class Asset(
     //@SerializedName("_id") val id: MongoId,
     val metadata: Metadata,
     val nnsId: Long,
-    val distance: Float
+    val distance: Int
     //@SerializedName("_class") val className: String
 )
 
