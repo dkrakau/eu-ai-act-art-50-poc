@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         discoverBtn?.isEnabled = false
-        webview?.setVisibility(View.GONE);
+        webview?.visibility = View.GONE;
 
         webview?.settings?.javaScriptEnabled = true
         webview?.settings?.domStorageEnabled = true
