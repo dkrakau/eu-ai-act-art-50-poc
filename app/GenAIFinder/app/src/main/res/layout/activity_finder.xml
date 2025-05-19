@@ -162,24 +162,32 @@
                         android:id="@+id/originTagCardView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="@color/accent_color"
                         app:cardCornerRadius="15dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintWidth_max="wrap">
 
-                        <TextView
-                            android:id="@+id/originTagTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
-                            android:ellipsize="end"
-                            android:maxWidth="90dp"
-                            android:maxLines="2"
-                            android:text="Tag"
-                            android:textAlignment="center"
-                            android:textSize="16sp" />
+                        <LinearLayout
+                            android:id="@+id/originTagBackgroundLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/accent_color"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/originTagTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="5dp"
+                                android:ellipsize="end"
+                                android:maxWidth="90dp"
+                                android:maxLines="2"
+                                android:text="Tag"
+                                android:textAlignment="center"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
                     </androidx.cardview.widget.CardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
