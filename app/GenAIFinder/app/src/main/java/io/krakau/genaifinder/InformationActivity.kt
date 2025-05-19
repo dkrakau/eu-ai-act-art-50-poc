@@ -13,6 +13,10 @@ import androidx.core.net.toUri
 
 class InformationActivity  : AppCompatActivity() {
 
+    // constants
+    private val LOG_INFORMATION_ACTIVITY: String = "InformationActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
+
     private lateinit var informationBack: ImageView
     private lateinit var fabReddit: FloatingActionButton
     private lateinit var fabFacebook: FloatingActionButton
@@ -34,8 +38,8 @@ class InformationActivity  : AppCompatActivity() {
         fabTikTok = findViewById(R.id.fabTikTok)
         fabX = findViewById(R.id.fabX)
 
-        callingActivity = intent.getStringExtra("callingActivity")!!
-        Log.d("InformationActivity", "callingActivity $callingActivity")
+        callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
+        Log.d(LOG_INFORMATION_ACTIVITY, "callingActivity $callingActivity")
 
         informationBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
@@ -93,13 +97,13 @@ class InformationActivity  : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@InformationActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", callingActivity)
+                    putExtra(CALLING_ACTIVITY, callingActivity)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@InformationActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", callingActivity)
+                    putExtra(CALLING_ACTIVITY, callingActivity)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

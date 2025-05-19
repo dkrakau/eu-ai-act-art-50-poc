@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
-import androidx.navigation.ui.AppBarConfiguration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.json.JSONArray
@@ -26,7 +25,11 @@ import java.time.format.DateTimeFormatter
 
 class FinderActivity : AppCompatActivity() {
 
-    // View variables
+    // constants
+    private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
+
+    // view variables
     private lateinit var finderLinearLayout: LinearLayout
     private lateinit var itemImageView: ImageView
     private lateinit var titleTextView: TextView
@@ -62,7 +65,7 @@ class FinderActivity : AppCompatActivity() {
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
         selectedImageUrl = intent.getStringExtra("selectedImageUrl")!!
-        Log.d("FinderActivity", "SelectedImageUrl: $selectedImageUrl")
+        Log.d(LOG_FINDER_ACTIVITY, "SelectedImageUrl: $selectedImageUrl")
 
         // Send request
         var genAiFinderData = JSONArray(isccData())
@@ -95,10 +98,10 @@ class FinderActivity : AppCompatActivity() {
                     getTime(currentTime),
                 )
             listItem.setOnClickListener {
-                Log.d("BUTTONS", "User tapped item in list")
+                Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@FinderActivity, InsightActivity::class.java).apply {
-                    //putExtra("callingActivity", FinderActivity::class.java.name)
+                    //putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
@@ -190,13 +193,13 @@ class FinderActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@FinderActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", FinderActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@FinderActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", FinderActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

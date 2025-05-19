@@ -22,11 +22,11 @@ class SettingsActivity : AppCompatActivity() {
 
     // constants
     private val LOG_SETTINGS_ACTIVITY: String = "SettingsActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
     private val PREF_APP_SETTINGS: String = "app_settings"
     private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
     private val PREF_APP_SETTINGS_SERVER: String = "server"
     private val PREF_APP_SETTINGS_SERVER_SELECTION_ID: String = "server_selection_id"
-    private val CALLING_ACTIVITY: String = "callingActivity"
 
     // shared preferences
     private lateinit var prefs: SharedPreferences

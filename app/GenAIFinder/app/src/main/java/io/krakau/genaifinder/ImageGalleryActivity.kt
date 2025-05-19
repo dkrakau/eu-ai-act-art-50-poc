@@ -23,6 +23,10 @@ import io.krakau.genaifinder.databinding.ActivityMainBinding
 
 class ImageGalleryActivity : AppCompatActivity() {
 
+    // constants
+    private val LOG_IMAGE_GALLERY_ACTIVITY: String = "ImageGalleryActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
@@ -57,8 +61,8 @@ class ImageGalleryActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_corners))
         findBtn = dialog.findViewById<Button>(R.id.findBtn)
         findBtn.setOnClickListener {
-            Log.d("BUTTONS", "User tapped the findBtn")
-            Log.d("DIALOG", selectedImageUrl)
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"BUTTONS: User tapped the findBtn")
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"DIALOG: $selectedImageUrl")
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
             startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
                 putExtra("selectedImageUrl", selectedImageUrl)
@@ -74,7 +78,7 @@ class ImageGalleryActivity : AppCompatActivity() {
     private fun debugImageUrlTexts() {
         var images = ""
         imageUrls?.forEach {
-            Log.d("ImageGallery", it)
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"ImageGallery $it")
             images += it + "; "
         }
         txt.text = images
@@ -143,13 +147,13 @@ class ImageGalleryActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@ImageGalleryActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", ImageGalleryActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, ImageGalleryActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@ImageGalleryActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", ImageGalleryActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, ImageGalleryActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 
 class InsightActivity : AppCompatActivity() {
 
+    // constants
+    private val LOG_INSIGHT_ACTIVITY: String = "InsightActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
+
     private lateinit var insightBack: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,13 +41,13 @@ class InsightActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@InsightActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", InsightActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, InsightActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@InsightActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", InsightActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, InsightActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

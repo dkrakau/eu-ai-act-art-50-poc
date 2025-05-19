@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var picasso: Picasso
 
     // constants
+    private val LOG_MAIN_ACTIVITY: String = "MainActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
     private val PREF_APP_SETTINGS: String = "app_settings"
     private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
 
@@ -254,16 +256,16 @@ class MainActivity : AppCompatActivity() {
         var uri = imageUrl.toUri()
         if(imageUrl.contains("data:image") && imageUrl.contains("base64")) {
             uri = "${Base64RequestHandler.SCHEME_BASE64}://$imageUrl".toUri()
-            Log.d("OG:IMAGEURL:BASE64", imageUrl)
+            Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURL:BASE64 $imageUrl")
         } else {
             if(uri.host == null) {
                 imageUrl = "https://" + url.toUri().authority + imageUrl
             }
         }
 
-        Log.d("extractUrlData", url)
-        Log.d("OG:IMAGEURL", uri.toString())
-        Log.d("OG:IMAGEURLAF", imageUrl)
+        Log.d(LOG_MAIN_ACTIVITY, "extractUrlData: $url")
+        Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURL " + uri.toString())
+        Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURLAF $imageUrl")
 
         runOnUiThread {
             /*picasso.load(uri)
@@ -280,9 +282,9 @@ class MainActivity : AppCompatActivity() {
             discoverBtn?.isEnabled = true
         }
 
-        Log.d("JSOUP", title)
-        Log.d("JSOUP", description)
-        Log.d("JSOUP", imageUrl)
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $title")
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $description")
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $imageUrl")
 
     }
 
@@ -316,13 +318,13 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", MainActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@MainActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", MainActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
