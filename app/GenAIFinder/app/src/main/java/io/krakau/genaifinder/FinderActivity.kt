@@ -1,10 +1,12 @@
 package io.krakau.genaifinder
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,12 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import org.json.JSONArray
+import io.krakau.genaifinder.service.api.model.data.Asset
+import io.krakau.genaifinder.service.api.model.view.AssetViewModel
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -27,10 +28,11 @@ import java.time.format.DateTimeFormatter
 
 class FinderActivity : AppCompatActivity() {
 
-    // Toolbar
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    // constants
+    private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // View variables
+    // view variables
     private lateinit var finderLinearLayout: LinearLayout
     private lateinit var itemImageView: ImageView
     private lateinit var titleTextView: TextView
@@ -44,11 +46,12 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var loadingConstraintLayout: ConstraintLayout
     private lateinit var loadingImageView: ImageView
 
+    private lateinit var selectedImageUrl: String
+
+    private lateinit var viewModel: AssetViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)*/
         setContentView(R.layout.activity_finder)
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -66,49 +69,89 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
-        // Send request
-        var genAiFinderData = JSONArray(isccData())
-        // Disable loadingView on received data and enable finderView
-        // render genaifinderdata
-        renderData(genAiFinderData)
+        loadingConstraintLayout.visibility = View.VISIBLE;
+        finderLinearLayout.visibility = View.GONE;
 
+        val rotateAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.animation_rotate)
+        loadingImageView.animation = rotateAnimation
+        loadingImageView.animation.start()
 
+        selectedImageUrl = intent.getStringExtra("selectedImageUrl")!!
+        Log.d(LOG_FINDER_ACTIVITY, "SelectedImageUrl: $selectedImageUrl")
+
+        viewModel = ViewModelProvider(this).get(AssetViewModel::class.java)
+        // Observe the LiveData
+        viewModel.assets.observe(this) { assets ->
+            // Update UI with the list of assets
+            renderInputAsset(assets[0])
+            if(assets.size > 1) {
+                renderFoundAssets(assets.subList(1, assets.size))
+            }
+            loadingConstraintLayout.visibility = View.GONE;
+            finderLinearLayout.visibility = View.VISIBLE;
+        }
+        // Fetch assets data
+        viewModel.fetchImageAssets(selectedImageUrl)
 
     }
 
-    fun renderData(genAiFinderData: JSONArray) {
-        for (i in 0 until genAiFinderData.length()) {
-            /*if(i == 0) {
-                // create search item
-            }
-            else {*/
+    private fun renderInputAsset(inputAsset: Asset) {
+        val metadata = inputAsset.metadata
+        val provider = inputAsset.metadata.provider
+        val iscc = inputAsset.metadata.iscc
 
-            var thumbnail = genAiFinderData.getJSONObject(i).getString("thumbnail")
-            var title = genAiFinderData.getJSONObject(i).getString("filename")
-            var description = genAiFinderData.getJSONObject(i).getString("name")
+        var thumbnail = inputAsset.metadata.iscc.data.thumbnail
+        var title = inputAsset.metadata.iscc.data.filename
+        var description = inputAsset.metadata.iscc.data.name
 
-            val currentTime = System.currentTimeMillis()
+        var currentTimestamp = System.currentTimeMillis()
+
+        Glide.with(this)
+            .load(thumbnail)
+            .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
+            .into(itemImageView)
+        titleTextView.text = title
+        descriptionTextView.text = description
+        simularityTextView.text = ""
+        dateTextView.text = getDate(currentTimestamp)
+        timeTextView.text = getTime(currentTimestamp)
+        originTagTextView.text = selectedImageUrl.toUri().host
+    }
+
+    private fun renderFoundAssets(assets: List<Asset>) {
+        for (i in assets.indices) {
+
+            val metadata = assets[i].metadata
+            val provider = assets[i].metadata.provider
+            val iscc = assets[i].metadata.iscc
+            val distance = assets[i].distance
+
+            var thumbnail = assets[i].metadata.iscc.data.thumbnail
+            var title = assets[i].metadata.iscc.data.filename
+            var description = assets[i].metadata.iscc.data.name
 
             var listItem = createListItem(
                     thumbnail,
                     title,
                     description,
-                    "100% Simularity",
-                    "Midjourney",
-                    getDate(currentTime),
-                    getTime(currentTime),
+                "" + (distance * 100 / 64) + "% Simularity",
+                    provider.name,
+                    getDate(provider.timestamp),
+                    getTime(provider.timestamp),
                 )
             listItem.setOnClickListener {
-                Log.d("BUTTONS", "User tapped item in list")
+                Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@FinderActivity, InsightActivity::class.java).apply {
+                    //putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
-            if(i == genAiFinderData.length() - 1) {
+            if(i == assets.size - 1) {
                 listItem.background = null
             }
 
             resultLinearLayout.addView(listItem)
-            //}
         }
     }
 
@@ -189,15 +232,20 @@ class FinderActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this@FinderActivity, SettingsActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
+            R.id.action_information -> {
+                startActivity(Intent(this@FinderActivity, InformationActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
     }
 
     fun isccData(): String {
@@ -607,4 +655,5 @@ class FinderActivity : AppCompatActivity() {
         """.trimIndent()
         return largeIsccData
     }
+
 }
