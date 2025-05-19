@@ -1,6 +1,10 @@
 package io.krakau.genaifinder
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +28,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import androidx.core.graphics.toColorInt
 
 
 class FinderActivity : AppCompatActivity() {
@@ -41,6 +46,7 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var dateTextView: TextView
     private lateinit var timeTextView: TextView
     private lateinit var originTagCardView: CardView
+    private lateinit var originTagBackgroundLayout: LinearLayout
     private lateinit var originTagTextView: TextView
     private lateinit var resultLinearLayout: LinearLayout
     private lateinit var loadingConstraintLayout: ConstraintLayout
@@ -64,6 +70,7 @@ class FinderActivity : AppCompatActivity() {
         dateTextView = findViewById<TextView>(R.id.dateTextView)
         timeTextView = findViewById<TextView>(R.id.timeTextView)
         originTagCardView = findViewById<CardView>(R.id.originTagCardView)
+        originTagBackgroundLayout = findViewById<LinearLayout>(R.id.originTagBackgroundLayout)
         originTagTextView = findViewById<TextView>(R.id.originTagTextView)
         resultLinearLayout = findViewById<LinearLayout>(R.id.resultLinearLayout)
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
@@ -116,7 +123,8 @@ class FinderActivity : AppCompatActivity() {
         dateTextView.text = getDate(currentTimestamp)
         timeTextView.text = getTime(currentTimestamp)
         originTagTextView.text = "Unknown"
-
+        originTagTextView.setTextColor(getTagTextColor("Unknown"))
+        originTagBackgroundLayout.setBackgroundColor(getTagBackgroundColor("Unknown"))
     }
 
     private fun renderFoundAssets(assets: List<Asset>) {
@@ -156,24 +164,6 @@ class FinderActivity : AppCompatActivity() {
         }
     }
 
-    fun createSearchItem(imageUrl: String, title: String, description: String) {
-        /*Picasso.get().load(imageData)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(itemImageView)*/
-        Glide.with(this)
-            .load(imageUrl)
-            .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
-            .into(itemImageView)
-        titleTextView.text = title
-        descriptionTextView.text = description
-
-        val currentTime = System.currentTimeMillis()
-        dateTextView.hint = getDate(currentTime)
-        timeTextView.hint = getTime(currentTime)
-
-        originTagTextView.text = imageUrl.toUri().host
-    }
-
     fun createListItem(imageData: String, title: String, description: String, simularity: String, origin: String, date: String, time: String): LinearLayout {
         // Load LinearLayout for items
         val inflater = LayoutInflater.from(this) // or getLayoutInflater()
@@ -186,6 +176,7 @@ class FinderActivity : AppCompatActivity() {
         var dateTextView = listItemLinearLayout.findViewById<TextView>(R.id.dateTextView)
         var timeTextView = listItemLinearLayout.findViewById<TextView>(R.id.timeTextView)
         var originTagCardView = listItemLinearLayout.findViewById<CardView>(R.id.originTagCardView)
+        var originTagBackgroundLayout = listItemLinearLayout.findViewById<LinearLayout>(R.id.originTagBackgroundLayout)
         var originTagTextView = listItemLinearLayout.findViewById<TextView>(R.id.originTagTextView)
 
         // Set values
@@ -204,6 +195,8 @@ class FinderActivity : AppCompatActivity() {
         timeTextView.hint = time
 
         originTagTextView.text = origin
+        originTagTextView.setTextColor(getTagTextColor(origin))
+        originTagBackgroundLayout.setBackgroundColor(getTagBackgroundColor(origin))
 
         return listItemLinearLayout
     }
@@ -220,6 +213,24 @@ class FinderActivity : AppCompatActivity() {
         val dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
         return dateTime.format(formatter)
+    }
+
+    fun getTagTextColor(provider: String): Int {
+        return when (provider) {
+            "Unknown" -> "#ffffff".toColorInt()
+            "OpenAI" -> "#ffffff".toColorInt()
+            "LeonardoAI"-> "#ffffff".toColorInt()
+            else -> "#ffffff".toColorInt()
+        }
+    }
+
+    fun getTagBackgroundColor(provider: String): Int {
+        return when (provider) {
+            "Unknown" -> "#636363".toColorInt()
+            "OpenAI" -> "#0F9E7B".toColorInt()
+            "LeonardoAI"-> "#3A1059".toColorInt()
+            else -> "#707070".toColorInt()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
