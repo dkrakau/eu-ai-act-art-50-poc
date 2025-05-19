@@ -57,7 +57,7 @@ class InformationActivity  : AppCompatActivity() {
             toAnotherAppOpen("https://www.tiktok.com/@roberthabeck", "com.tiktok.android")
         }
         fabX.setOnClickListener {
-            toAnotherAppOpen("https://x.com/Grizzlyboer4", "com.x.android")
+            toAnotherAppOpen("https://x.com/genaifinder", "com.x.android")
         }
     }
 
