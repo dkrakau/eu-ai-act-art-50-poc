@@ -29,6 +29,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.core.graphics.toColorInt
+import java.math.BigDecimal
 import java.math.RoundingMode
 
 
@@ -144,7 +145,7 @@ class FinderActivity : AppCompatActivity() {
                     thumbnail,
                     title,
                     description,
-                "" + (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN) + "% simular",
+                "${calculateSimularity(distance)}% simular",
                     provider.name,
                     getDate(provider.timestamp),
                     getTime(provider.timestamp),
@@ -163,6 +164,10 @@ class FinderActivity : AppCompatActivity() {
 
             resultLinearLayout.addView(listItem)
         }
+    }
+
+    private fun calculateSimularity(distance: Int): BigDecimal {
+        return (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN)
     }
 
     fun createListItem(imageData: String, title: String, description: String, simularity: String, origin: String, date: String, time: String): LinearLayout {
