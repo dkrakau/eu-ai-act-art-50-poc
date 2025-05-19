@@ -29,6 +29,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.core.graphics.toColorInt
+import java.math.RoundingMode
 
 
 class FinderActivity : AppCompatActivity() {
@@ -143,7 +144,7 @@ class FinderActivity : AppCompatActivity() {
                     thumbnail,
                     title,
                     description,
-                "" + (100.0 - (distance * 100.0 / 64.0)) + "% Simularity",
+                "" + (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN) + "% simular",
                     provider.name,
                     getDate(provider.timestamp),
                     getTime(provider.timestamp),

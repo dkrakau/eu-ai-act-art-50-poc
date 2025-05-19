@@ -65,7 +65,7 @@
                 android:fontFamily="monospace"
                 android:gravity="bottom|center"
                 android:maxLines="2"
-                android:text="98% Simularity"
+                android:text="98% simular"
                 android:textColor="@color/primary_color"
                 android:textSize="18sp" />
 
