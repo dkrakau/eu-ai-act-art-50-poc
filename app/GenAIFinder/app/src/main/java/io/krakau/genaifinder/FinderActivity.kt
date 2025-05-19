@@ -134,7 +134,7 @@ class FinderActivity : AppCompatActivity() {
                     thumbnail,
                     title,
                     description,
-                "" + (distance * 100 / 64) + "% Simularity",
+                "" + (100 - (distance * 100 / 64)) + "% Simularity",
                     provider.name,
                     getDate(provider.timestamp),
                     getTime(provider.timestamp),
