@@ -26,9 +26,6 @@ import java.time.format.DateTimeFormatter
 
 class FinderActivity : AppCompatActivity() {
 
-    // Toolbar
-    private lateinit var appBarConfiguration: AppBarConfiguration
-
     // View variables
     private lateinit var finderLinearLayout: LinearLayout
     private lateinit var itemImageView: ImageView
@@ -42,6 +39,8 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var resultLinearLayout: LinearLayout
     private lateinit var loadingConstraintLayout: ConstraintLayout
     private lateinit var loadingImageView: ImageView
+
+    private lateinit var selectedImageUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +61,7 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
-        val selectedImageUrl = intent.getStringExtra("selectedImageUrl")
+        selectedImageUrl = intent.getStringExtra("selectedImageUrl")!!
         Log.d("FinderActivity", "SelectedImageUrl: $selectedImageUrl")
 
         // Send request

@@ -2,6 +2,7 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -28,10 +29,15 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.picassso.Base64RequestHandler
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var picasso: Picasso
+
+    // constants
+    private val PREF_APP_SETTINGS: String = "app_settings"
+    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -71,6 +77,11 @@ class MainActivity : AppCompatActivity() {
             .build()
             // Set this instance as the singleton
         Picasso.setSingletonInstance(picasso)
+
+        // get shared prefs
+        val prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
+        // check if app is using night mode resources
+        prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, isUsingNightModeResources()) }
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -273,6 +284,15 @@ class MainActivity : AppCompatActivity() {
         Log.d("JSOUP", description)
         Log.d("JSOUP", imageUrl)
 
+    }
+
+    private fun isUsingNightModeResources(): Boolean {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+            else -> false
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
