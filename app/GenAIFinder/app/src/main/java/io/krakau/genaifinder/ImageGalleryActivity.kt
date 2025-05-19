@@ -15,15 +15,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexboxLayout
 import io.krakau.genaifinder.databinding.ActivityMainBinding
 
 class ImageGalleryActivity : AppCompatActivity() {
+
+    // constants
+    private val LOG_IMAGE_GALLERY_ACTIVITY: String = "ImageGalleryActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -59,13 +61,12 @@ class ImageGalleryActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_corners))
         findBtn = dialog.findViewById<Button>(R.id.findBtn)
         findBtn.setOnClickListener {
-            Log.d("BUTTONS", "User tapped the findBtn")
-            Log.d("DIALOG", selectedImageUrl)
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"BUTTONS: User tapped the findBtn")
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"DIALOG: $selectedImageUrl")
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
-            val sendDataIntent = Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
-                //putExtra("imageUrls", filterContent(imageUrls))
-            }
-            startActivity(sendDataIntent)
+            startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
+                putExtra("selectedImageUrl", selectedImageUrl)
+            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
         // load image urls into flexboxLayout
@@ -77,7 +78,7 @@ class ImageGalleryActivity : AppCompatActivity() {
     private fun debugImageUrlTexts() {
         var images = ""
         imageUrls?.forEach {
-            Log.d("ImageGallery", it)
+            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"ImageGallery $it")
             images += it + "; "
         }
         txt.text = images
@@ -144,14 +145,20 @@ class ImageGalleryActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this@ImageGalleryActivity, SettingsActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, ImageGalleryActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
+            R.id.action_information -> {
+                startActivity(Intent(this@ImageGalleryActivity, InformationActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, ImageGalleryActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
 }
