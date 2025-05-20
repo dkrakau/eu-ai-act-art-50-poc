@@ -10,6 +10,7 @@
     <string name="previous">Previous</string>
 
     <string-array name="serverUrls">
+        <item>http://10.35.1.167</item>
         <item>http://localhost</item>
         <item>https://genaifinder.krakau.io</item>
     </string-array>

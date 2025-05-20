@@ -1,6 +1,8 @@
 package io.krakau.genaifinder
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -19,6 +21,7 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.krakau.genaifinder.service.api.RetrofitClient
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.view.AssetViewModel
@@ -38,6 +41,11 @@ class FinderActivity : AppCompatActivity() {
     // constants
     private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
+    private val PREF_APP_SETTINGS: String = "app_settings"
+    private val PREF_APP_SETTINGS_SERVER: String = "server"
+
+    // shared preferences
+    private lateinit var prefs: SharedPreferences
 
     // view variables
     private lateinit var finderLinearLayout: LinearLayout
@@ -87,6 +95,9 @@ class FinderActivity : AppCompatActivity() {
 
         selectedImageUrl = intent.getStringExtra("selectedImageUrl")!!
         Log.d(LOG_FINDER_ACTIVITY, "SelectedImageUrl: $selectedImageUrl")
+
+        prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
+        RetrofitClient.url = prefs.getString(PREF_APP_SETTINGS_SERVER, "http://loachost")!!
 
         viewModel = ViewModelProvider(this).get(AssetViewModel::class.java)
         // Observe the LiveData
