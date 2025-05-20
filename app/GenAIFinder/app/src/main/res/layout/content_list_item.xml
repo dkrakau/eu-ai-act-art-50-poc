@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/listItemLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -126,6 +127,15 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/verificationImageView"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            app:layout_constraintBottom_toTopOf="@+id/originTagCardView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateLinearLayout"
+            app:srcCompat="@drawable/verification_missing" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
