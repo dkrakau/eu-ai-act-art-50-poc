@@ -57,6 +57,7 @@
             android:layout_marginRight="12dp"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
+            android:background="@color/primary_color"
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -82,23 +83,25 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="20dp"
+            android:background="@color/primary_color"
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fabTikTok"
+            app:layout_constraintEnd_toStartOf="@+id/fabBluesky"
             app:srcCompat="@drawable/instagram_icon" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabTikTok"
+            android:id="@+id/fabBluesky"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="20dp"
+            android:background="@color/primary_color"
             android:clickable="true"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fabX"
-            app:srcCompat="@drawable/tiktok_icon" />
+            app:srcCompat="@drawable/bluesky_icon" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabX"
@@ -106,6 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
+            android:background="@color/primary_color"
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
