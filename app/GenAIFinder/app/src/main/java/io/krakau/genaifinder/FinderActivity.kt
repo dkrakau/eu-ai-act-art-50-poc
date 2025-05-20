@@ -184,6 +184,7 @@ class FinderActivity : AppCompatActivity() {
         var timeTextView = listItemLinearLayout.findViewById<TextView>(R.id.timeTextView)
         var originTagBackgroundLayout = listItemLinearLayout.findViewById<LinearLayout>(R.id.originTagBackgroundLayout)
         var originTagTextView = listItemLinearLayout.findViewById<TextView>(R.id.originTagTextView)
+        var verificationTextView = listItemLinearLayout.findViewById<TextView>(R.id.verificationTextView)
         var verificationImageView = listItemLinearLayout.findViewById<ImageView>(R.id.verificationImageView)
 
         // Set values
@@ -206,8 +207,12 @@ class FinderActivity : AppCompatActivity() {
         originTagBackgroundLayout.setBackgroundColor(getTagBackgroundColor(origin))
 
         if(isCredentialVerified(credentials)) {
+            verificationTextView.text = "verified"
+            verificationTextView.setTextColor("#3DB974".toColorInt())
             verificationImageView.setImageResource(R.drawable.verification_success)
         } else {
+            verificationTextView.text = "unverified"
+            verificationTextView.setTextColor("#FF5858".toColorInt())
             verificationImageView.setImageResource(R.drawable.verification_error)
         }
 
@@ -215,21 +220,27 @@ class FinderActivity : AppCompatActivity() {
     }
 
     private fun isCredentialVerified(credentials: Credentials): Boolean {
-        // get public key object
-        val specPublicKey = X509EncodedKeySpec(Base64.decode(credentials.publicKey, Base64.DEFAULT))
-        val kf = KeyFactory.getInstance("RSA")
-        val publicKey = kf.generatePublic(specPublicKey)
-        // decrypt encryptedMessage
-        val byteEncryptedMessage: ByteArray = Base64.decode(credentials.encryptedMessage, Base64.DEFAULT)
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        cipher.init(Cipher.DECRYPT_MODE, publicKey)
-        cipher.update(byteEncryptedMessage)
-        val decryptedBytes: ByteArray = cipher.doFinal()
-        val decryptedMessage = String(decryptedBytes)
-        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: publicKey = >>" + credentials.publicKey + "<<")
-        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: encryptedMessage = >>" + credentials.encryptedMessage + "<<")
-        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: message = >>" + credentials.message + "<<")
-        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: decryptedMessage = >>$decryptedMessage<<")
+        var decryptedMessage = "Exception"
+        try {
+            // get public key object
+            val specPublicKey =
+                X509EncodedKeySpec(Base64.decode(credentials.publicKey, Base64.DEFAULT))
+            val kf = KeyFactory.getInstance("RSA")
+            val publicKey = kf.generatePublic(specPublicKey)
+            // decrypt encryptedMessage
+            val byteEncryptedMessage: ByteArray = Base64.decode(credentials.encryptedMessage, Base64.DEFAULT)
+            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            cipher.init(Cipher.DECRYPT_MODE, publicKey)
+            cipher.update(byteEncryptedMessage)
+            val decryptedBytes: ByteArray = cipher.doFinal()
+            decryptedMessage = String(decryptedBytes)
+            Log.d(LOG_FINDER_ACTIVITY,"isCredentialVerified: publicKey = >>" + credentials.publicKey + "<<")
+            Log.d(LOG_FINDER_ACTIVITY,"isCredentialVerified: encryptedMessage = >>" + credentials.encryptedMessage + "<<")
+            Log.d(LOG_FINDER_ACTIVITY,"isCredentialVerified: message = >>" + credentials.message + "<<")
+            Log.d(LOG_FINDER_ACTIVITY,"isCredentialVerified: decryptedMessage = >>$decryptedMessage<<")
+        } catch (e: Exception) {
+            Log.d(LOG_FINDER_ACTIVITY, e.message.toString())
+        }
         // check if credential message equals to decrypted message
         return credentials.message == decryptedMessage
     }
