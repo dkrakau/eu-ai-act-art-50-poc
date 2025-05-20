@@ -45,7 +45,7 @@ class InformationActivity  : AppCompatActivity() {
             startActivity(goBackIntent(callingActivity))
         }
         fabReddit.setOnClickListener {
-            toAnotherAppOpen("https://www.reddit.com/user/Grizzlyboer", "com.reddit.android")
+            toAnotherAppOpen("https://www.reddit.com/user/genaifinder", "com.reddit.android")
         }
         fabFacebook.setOnClickListener {
             toAnotherAppOpen("https://www.facebook.com/dominik.kra.9", "com.facebook.android")
@@ -54,7 +54,7 @@ class InformationActivity  : AppCompatActivity() {
             toAnotherAppOpen("https://www.instagram.com/krakiiiiiii", "com.instagram.android")
         }
         fabTikTok.setOnClickListener {
-            toAnotherAppOpen("https://www.tiktok.com/@roberthabeck", "com.tiktok.android")
+            toAnotherAppOpen("https://www.tiktok.com/@genaifinder", "com.tiktok.android")
         }
         fabX.setOnClickListener {
             toAnotherAppOpen("https://x.com/genaifinder", "com.x.android")
