@@ -15,6 +15,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,7 @@ public class Cryptographer {
                 .replaceAll(System.lineSeparator(), "")
                 .replace("-----END PRIVATE KEY-----", "");
         // load private key
-        PKCS8EncodedKeySpec specPrivateKey = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKeyPEM));
+        PKCS8EncodedKeySpec specPrivateKey = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyPEM));
 
         String publicKeyBytes = new String(Files.readAllBytes(publicKeyFile.toPath()), Charset.defaultCharset());
         String publicKeyPEM = publicKeyBytes
@@ -89,7 +89,7 @@ public class Cryptographer {
                 .replaceAll(System.lineSeparator(), "")
                 .replace("-----END PUBLIC KEY-----", "");
         // load public key
-        X509EncodedKeySpec specPublicKey = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyPEM));
+        X509EncodedKeySpec specPublicKey = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyPEM));
 
         // extract private and public key
         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -110,14 +110,14 @@ public class Cryptographer {
         this.cipher.update(byteMessage);
         byte[] ciphertext = this.cipher.doFinal();
 
-        return Base64.encodeBase64String(ciphertext);
+        return Base64.getEncoder().encodeToString(ciphertext);
     }
 
     private String decrypt(String provider, String encryptedMessage) throws IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException {
 
         PublicKey publicKey = this.publicKeys.get(provider);
 
-        byte[] byteEncryptedMessage = Base64.decodeBase64(encryptedMessage);
+        byte[] byteEncryptedMessage = Base64.getDecoder().decode(encryptedMessage);
         this.cipher.init(Cipher.DECRYPT_MODE, publicKey);
         this.cipher.update(byteEncryptedMessage);
         byte[] decrypted = this.cipher.doFinal();
@@ -128,7 +128,7 @@ public class Cryptographer {
     public Credentials getCredentials(String provider, String message) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException {
         PublicKey publicKey = this.publicKeys.get(provider);
         String encryptedMessage = encrypt(provider, message);
-        return new Credentials(message, encryptedMessage, Base64.encodeBase64String(publicKey.getEncoded()));
+        return new Credentials(message, encryptedMessage, Base64.getEncoder().encodeToString(publicKey.getEncoded()));
     }
 
 }
