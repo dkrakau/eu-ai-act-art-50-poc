@@ -52,7 +52,7 @@ public class Cryptographer {
 
         this.keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         this.keyPairGenerator.initialize(2048);
-        this.cipher = Cipher.getInstance("RSA/ECB/NoPadding");
+        this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
         try {
             this.loadKeyPair(
