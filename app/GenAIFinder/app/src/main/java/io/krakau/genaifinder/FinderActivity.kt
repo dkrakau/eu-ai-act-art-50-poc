@@ -1,11 +1,8 @@
 package io.krakau.genaifinder
 
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -18,19 +15,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.net.toUri
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.service.api.model.data.Asset
+import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.view.AssetViewModel
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.security.KeyFactory
+import java.security.spec.X509EncodedKeySpec
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import androidx.core.graphics.toColorInt
-import java.math.BigDecimal
-import java.math.RoundingMode
+import javax.crypto.Cipher
 
 
 class FinderActivity : AppCompatActivity() {
@@ -149,6 +149,7 @@ class FinderActivity : AppCompatActivity() {
                     provider.name,
                     getDate(provider.timestamp),
                     getTime(provider.timestamp),
+                    provider.credentials
                 )
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
@@ -170,7 +171,7 @@ class FinderActivity : AppCompatActivity() {
         return (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN)
     }
 
-    fun createListItem(imageData: String, title: String, description: String, simularity: String, origin: String, date: String, time: String): LinearLayout {
+    fun createListItem(imageData: String, title: String, description: String, simularity: String, origin: String, date: String, time: String, credentials: Credentials): LinearLayout {
         // Load LinearLayout for items
         val inflater = LayoutInflater.from(this) // or getLayoutInflater()
         var listItemLinearLayout = inflater.inflate(R.layout.content_list_item, resultLinearLayout, false) as LinearLayout
@@ -181,9 +182,9 @@ class FinderActivity : AppCompatActivity() {
         var simularityTextView = listItemLinearLayout.findViewById<TextView>(R.id.simularityTextView)
         var dateTextView = listItemLinearLayout.findViewById<TextView>(R.id.dateTextView)
         var timeTextView = listItemLinearLayout.findViewById<TextView>(R.id.timeTextView)
-        var originTagCardView = listItemLinearLayout.findViewById<CardView>(R.id.originTagCardView)
         var originTagBackgroundLayout = listItemLinearLayout.findViewById<LinearLayout>(R.id.originTagBackgroundLayout)
         var originTagTextView = listItemLinearLayout.findViewById<TextView>(R.id.originTagTextView)
+        var verificationImageView = listItemLinearLayout.findViewById<ImageView>(R.id.verificationImageView)
 
         // Set values
         /*Picasso.get().load(imageData)
@@ -204,24 +205,50 @@ class FinderActivity : AppCompatActivity() {
         originTagTextView.setTextColor(getTagTextColor(origin))
         originTagBackgroundLayout.setBackgroundColor(getTagBackgroundColor(origin))
 
+        if(isCredentialVerified(credentials)) {
+            verificationImageView.setImageResource(R.drawable.verification_success)
+        } else {
+            verificationImageView.setImageResource(R.drawable.verification_error)
+        }
+
         return listItemLinearLayout
     }
 
-    fun getDate(currentTime: Long): String {
+    private fun isCredentialVerified(credentials: Credentials): Boolean {
+        // get public key object
+        val specPublicKey = X509EncodedKeySpec(Base64.decode(credentials.publicKey, Base64.DEFAULT))
+        val kf = KeyFactory.getInstance("RSA")
+        val publicKey = kf.generatePublic(specPublicKey)
+        // decrypt encryptedMessage
+        val byteEncryptedMessage: ByteArray = Base64.decode(credentials.encryptedMessage, Base64.DEFAULT)
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        cipher.init(Cipher.DECRYPT_MODE, publicKey)
+        cipher.update(byteEncryptedMessage)
+        val decryptedBytes: ByteArray = cipher.doFinal()
+        val decryptedMessage = String(decryptedBytes)
+        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: publicKey = >>" + credentials.publicKey + "<<")
+        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: encryptedMessage = >>" + credentials.encryptedMessage + "<<")
+        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: message = >>" + credentials.message + "<<")
+        Log.d(LOG_FINDER_ACTIVITY, "isCredentialVerified: decryptedMessage = >>$decryptedMessage<<")
+        // check if credential message equals to decrypted message
+        return credentials.message == decryptedMessage
+    }
+
+    private fun getDate(currentTime: Long): String {
         val instant = Instant.ofEpochMilli(currentTime)
         val dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         return dateTime.format(formatter)
     }
 
-    fun getTime(currentTime: Long): String {
+    private fun getTime(currentTime: Long): String {
         val instant = Instant.ofEpochMilli(currentTime)
         val dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
         return dateTime.format(formatter)
     }
 
-    fun getTagTextColor(provider: String): Int {
+    private fun getTagTextColor(provider: String): Int {
         return when (provider) {
             "Unknown" -> "#ffffff".toColorInt()
             "OpenAI" -> "#ffffff".toColorInt()
@@ -230,7 +257,7 @@ class FinderActivity : AppCompatActivity() {
         }
     }
 
-    fun getTagBackgroundColor(provider: String): Int {
+    private fun getTagBackgroundColor(provider: String): Int {
         return when (provider) {
             "Unknown" -> "#636363".toColorInt()
             "OpenAI" -> "#0F9E7B".toColorInt()
