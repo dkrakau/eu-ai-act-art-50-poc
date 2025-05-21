@@ -12,7 +12,15 @@ import io.krakau.genaifinderapi.schema.mongodb.Metadata;
 import io.krakau.genaifinderapi.schema.mongodb.Provider;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.InsertParam.Field;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +74,8 @@ public class CreateService {
         Long snowflakeId = this.snowflaker.id();        
 
         try {
+            // 0. Save image file
+            saveImage(imageFile);
             // 1. Send image to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getOriginalFilename());
             // 2. Send iscc to iscc-web to explain iscc
@@ -134,6 +144,19 @@ public class CreateService {
         }
         // 6. Return asset that was inserted into mongodb
         return asset;
+    }
+    
+    
+    private String saveImage(MultipartFile file) throws IOException {
+        Path uploadPath = Paths.get(env.RESOURCE_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Path filePath = uploadPath.resolve(file.getOriginalFilename());
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        Logger.getLogger(CreateService.class.getName()).log(Level.INFO, "File " + filePath + " saved.");
+
+        return filePath.toString();
     }
 
 }
