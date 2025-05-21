@@ -165,7 +165,7 @@ class FinderActivity : AppCompatActivity() {
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this@FinderActivity, InsightActivity::class.java).apply {
+                startActivity(Intent(this@FinderActivity, InsightsActivity::class.java).apply {
                     //putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".InsightActivity">
+    tools:context=".InsightsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -33,7 +33,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insight"
+        android:text="Insights"
         android:textColor="@color/text_color"
         android:textColorLink="#F60707"
         android:textSize="24sp"
@@ -63,7 +63,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Insight" />
+                android:text="Insights" />
         </LinearLayout>
     </ScrollView>
 

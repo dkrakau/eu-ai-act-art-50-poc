@@ -79,7 +79,7 @@ class InformationActivity  : AppCompatActivity() {
             intent = Intent(this@InformationActivity, FinderActivity::class.java)
         }
         if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
-            intent = Intent(this@InformationActivity, InsightActivity::class.java)
+            intent = Intent(this@InformationActivity, InsightsActivity::class.java)
         }
         return intent
     }

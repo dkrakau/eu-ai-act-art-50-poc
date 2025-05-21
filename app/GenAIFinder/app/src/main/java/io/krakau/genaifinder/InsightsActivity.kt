@@ -7,7 +7,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
-class InsightActivity : AppCompatActivity() {
+class InsightsActivity : AppCompatActivity() {
 
     // constants
     private val LOG_INSIGHT_ACTIVITY: String = "InsightActivity"
@@ -17,13 +17,13 @@ class InsightActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_insight)
+        setContentView(R.layout.activity_insights)
         setSupportActionBar(findViewById(R.id.toolbar))
 
         insightBack = findViewById(R.id.insightBack)
 
         insightBack.setOnClickListener {
-            startActivity(Intent(this@InsightActivity, FinderActivity::class.java))
+            startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
         }
 
     }
@@ -40,14 +40,14 @@ class InsightActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> {
-                startActivity(Intent(this@InsightActivity, SettingsActivity::class.java).apply {
-                    putExtra(CALLING_ACTIVITY, InsightActivity::class.java.name)
+                startActivity(Intent(this@InsightsActivity, SettingsActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, InsightsActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
-                startActivity(Intent(this@InsightActivity, InformationActivity::class.java).apply {
-                    putExtra(CALLING_ACTIVITY, InsightActivity::class.java.name)
+                startActivity(Intent(this@InsightsActivity, InformationActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, InsightsActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

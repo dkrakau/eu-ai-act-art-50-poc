@@ -98,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
             intent = Intent(this@SettingsActivity, FinderActivity::class.java)
         }
         if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
-            intent = Intent(this@SettingsActivity, InsightActivity::class.java)
+            intent = Intent(this@SettingsActivity, InsightsActivity::class.java)
         }
         return intent
     }
