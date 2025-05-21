@@ -1,6 +1,7 @@
 package io.krakau.genaifinderapi.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EnviromentVariables {
+    
+    // ### GENAIFINDER API ###
+    @Value("${spring.storage.dir}")
+    public String RESOURCE_DIR;
     
     // ### SECURITY ###
     public String SECURITY_LOCALHOST;
