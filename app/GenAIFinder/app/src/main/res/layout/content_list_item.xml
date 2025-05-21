@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/listItemLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -65,7 +66,8 @@
                 android:fontFamily="monospace"
                 android:gravity="bottom|center"
                 android:maxLines="2"
-                android:text="98% Simularity"
+                android:text="98% simular"
+                android:textColor="@color/primary_color"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -98,25 +100,52 @@
             android:id="@+id/originTagCardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/accent_color"
             app:cardCornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_max="wrap">
 
-            <TextView
-                android:id="@+id/originTagTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:ellipsize="end"
-                android:maxWidth="90dp"
-                android:maxLines="2"
-                android:text="Midjourney"
-                android:textAlignment="center"
-                android:textSize="16sp" />
+            <LinearLayout
+                android:id="@+id/originTagBackgroundLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/accent_color"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/originTagTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:ellipsize="end"
+                    android:maxWidth="90dp"
+                    android:maxLines="2"
+                    android:text="Midjourney"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
         </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/verificationImageView"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/originTagCardView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateLinearLayout"
+            app:srcCompat="@drawable/verification_success" />
+
+        <TextView
+            android:id="@+id/verificationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="verified"
+            android:textColor="#3DB974"
+            app:layout_constraintBottom_toTopOf="@+id/originTagCardView"
+            app:layout_constraintEnd_toStartOf="@+id/verificationImageView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
