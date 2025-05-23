@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -50,7 +49,7 @@ public class CreateController {
         @ApiResponse(responseCode = "201",
                 description = "Asset have been created.",
                 content = {
-                    @Content(schema = @Schema(implementation = Slice.class),
+                    @Content(schema = @Schema(implementation = Asset.class),
                             mediaType = "application/json")
                 }),
         @ApiResponse(responseCode = "400",

@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,18 +48,14 @@ public class ResourceController {
             tags = {"Resources"})
     @ApiResponses({
         @ApiResponse(responseCode = "200",
-                description = "Resources that have been served.",
-                content = {
-                    @Content(schema = @Schema(implementation = Slice.class), mediaType = "application/octet-stream")}),
+                description = "Resources that have been served"),
         @ApiResponse(responseCode = "400",
-                description = "Error message if the request failed.",
+                description = "Error message if the request failed",
                 content = {
                     @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
     })
     @GetMapping("/images/{filename}")
-    public ResponseEntity<Resource> getImage(
-            @Parameter(description = "filename of an image resource.", example = "Zerstoertes Haus in Berlin.png")
-            @PathVariable String filename) throws Exception {
+    public ResponseEntity<Resource> getImage(@Parameter(description = "Filename of an image resource", example = "Zerstoertes Haus in Berlin.png") @PathVariable String filename) throws Exception {
         
         Resource resource = null;
         logger.log(Level.INFO, "Accessing file: " + filename);

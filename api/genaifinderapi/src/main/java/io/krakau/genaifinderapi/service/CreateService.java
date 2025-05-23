@@ -6,6 +6,7 @@ import io.krakau.genaifinderapi.component.Snowflaker;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.dto.ProviderDto;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
+import io.krakau.genaifinderapi.schema.iscc.ISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
 import io.krakau.genaifinderapi.schema.mongodb.IsccData;
 import io.krakau.genaifinderapi.schema.mongodb.Metadata;
@@ -22,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,7 +67,7 @@ public class CreateService {
     public Asset createImage(ProviderDto provider, MultipartFile imageFile) {
 
         Asset asset = null;
-        Document iscc = null;
+        ISCC iscc = null;
         ExplainedISCC explainedISCC = null;
         Long snowflakeId = this.snowflaker.id();        
 
@@ -77,7 +77,7 @@ public class CreateService {
             // 1. Send image to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getOriginalFilename());
             // 2. Send iscc to iscc-web to explain iscc
-            explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
+            explainedISCC = this.isccWebService.explainISCC(iscc.getIscc());
             // 3. Insert units to milvus collection
             List<Field> metaFields = new ArrayList<>();
             metaFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
@@ -123,7 +123,7 @@ public class CreateService {
                                     provider.getTimestamp(),
                                     this.cryptographer.getCredentials( 
                                             provider.getName(),
-                                            provider.getName() + "-" + iscc.getString("iscc") + "-" + provider.getTimestamp()
+                                            provider.getName() + "-" + iscc.getIscc() + "-" + provider.getTimestamp()
                                     )
                             ),
                             new IsccData(
