@@ -59,11 +59,17 @@
             android:backgroundTint="@color/dialog_bg"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView2"
+            <ImageView
+                android:id="@+id/inputAssetImageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Insights" />
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/selectedAssetImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
     </ScrollView>
 

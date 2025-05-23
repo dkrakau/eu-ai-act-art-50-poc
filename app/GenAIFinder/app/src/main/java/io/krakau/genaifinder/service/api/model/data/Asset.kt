@@ -32,11 +32,11 @@ data class Credentials(
 )
 
 data class IsccData(
-    val data: IsccImageData,
-    val explained: IsccExplained
+    val data: Iscc,
+    val explained: ExplainedIscc
 )
 
-data class IsccImageData(
+data class Iscc(
     val thumbnail: String,
     @SerializedName("\$schema") val schema: String,
     @SerializedName("@type") val type: String,
@@ -55,15 +55,15 @@ data class IsccImageData(
     val height: Int
 )
 
-data class IsccExplained(
+data class ExplainedIscc(
     val iscc: String,
     val readable: String,
     val multiformat: String,
     val decomposed: String,
-    val units: List<IsccUnit>
+    val units: List<Unit>
 )
 
-data class IsccUnit(
+data class Unit(
     val readable: String,
     val hash_hex: String,
     val iscc_unit: String,

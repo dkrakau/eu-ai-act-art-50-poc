@@ -24,7 +24,9 @@ import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.service.api.RetrofitClient
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
-import io.krakau.genaifinder.service.api.model.view.AssetViewModel
+import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
+import io.krakau.genaifinder.service.api.model.data.Iscc
+import io.krakau.genaifinder.service.api.model.view.ApiViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.security.KeyFactory
@@ -64,7 +66,10 @@ class FinderActivity : AppCompatActivity() {
 
     private lateinit var selectedImageUrl: String
 
-    private lateinit var viewModel: AssetViewModel
+    private lateinit var viewModel: ApiViewModel
+
+    private lateinit var iscc: Iscc
+    private lateinit var explainedIscc: ExplainedIscc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,39 +104,37 @@ class FinderActivity : AppCompatActivity() {
         prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
         RetrofitClient.url = prefs.getString(PREF_APP_SETTINGS_SERVER, "http://loachost")!!
 
-        viewModel = ViewModelProvider(this).get(AssetViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ApiViewModel::class.java)
         // Observe the LiveData
+        viewModel.iscc.observe(this) { iscc ->
+            // Update UI with the iscc
+            viewModel.fetchGetExplainedIscc(iscc.iscc)
+        }
+        viewModel.explainedIscc.observe(this) { explainedIscc ->
+            // Update UI with the explainedIscc
+            viewModel.fetchGetImageAssets(explainedIscc.iscc)
+        }
         viewModel.assets.observe(this) { assets ->
             // Update UI with the list of assets
-            renderInputAsset(assets[0])
-            if(assets.size > 1) {
-                renderFoundAssets(assets.subList(1, assets.size))
-            }
+            iscc = viewModel.iscc.value!!
+            explainedIscc = viewModel.explainedIscc.value!!
+            renderInputAsset()
+            renderFoundAssets(assets)
             loadingConstraintLayout.visibility = View.GONE;
             finderLinearLayout.visibility = View.VISIBLE;
         }
-        // Fetch assets data
-        viewModel.fetchImageAssets(selectedImageUrl)
-
+        // Fetch iscc data from selected url
+        viewModel.fetchCreateIsccFromUrl(selectedImageUrl)
     }
 
-    private fun renderInputAsset(inputAsset: Asset) {
-        val metadata = inputAsset.metadata
-        val provider = inputAsset.metadata.provider
-        val iscc = inputAsset.metadata.iscc
-
-        var thumbnail = inputAsset.metadata.iscc.data.thumbnail
-        var title = inputAsset.metadata.iscc.data.filename
-        var description = inputAsset.metadata.iscc.data.name
-
+    private fun renderInputAsset() {
         var currentTimestamp = System.currentTimeMillis()
-
         Glide.with(this)
-            .load(thumbnail)
+            .load(iscc.thumbnail)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
             .into(itemImageView)
         titleTextView.text = selectedImageUrl.substring(8)
-        descriptionTextView.text = title
+        descriptionTextView.text = iscc.filename
         simularityTextView.text = ""
         dateTextView.text = getDate(currentTimestamp)
         timeTextView.text = getTime(currentTimestamp)
@@ -142,6 +145,8 @@ class FinderActivity : AppCompatActivity() {
 
     private fun renderFoundAssets(assets: List<Asset>) {
         for (i in assets.indices) {
+
+            Log.d(LOG_FINDER_ACTIVITY, "RENDERING ASSETS-" + i)
 
             val metadata = assets[i].metadata
             val provider = assets[i].metadata.provider
@@ -166,7 +171,11 @@ class FinderActivity : AppCompatActivity() {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@FinderActivity, InsightsActivity::class.java).apply {
-                    //putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
+                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
+                    putExtra("inputAssetUrl", selectedImageUrl)
+                    putExtra("inputAssetContentCode", explainedIscc.units[0].hash_bits)
+                    putExtra("selectedAssetFilename", assets[i].metadata.iscc.data.filename)
+                    putExtra("selectedAssetContentCode", assets[i].metadata.iscc.explained.units[0].hash_bits)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
