@@ -34,6 +34,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class IsccWebService {
     
+    private static Logger logger = Logger.getLogger(IsccWebService.class.getName());
+    
     private EnvironmentVariables env;
     
     @Autowired
@@ -54,7 +56,7 @@ public class IsccWebService {
 
         httpPost.setEntity(entityRequest);
 
-        Logger.getLogger(IsccWebService.class.getName()).log(Level.INFO, httpPost.getFirstHeader("X-Upload-Filename").toString() + " <- " + filename);
+        logger.log(Level.INFO, httpPost.getFirstHeader("X-Upload-Filename").toString() + " <- " + filename);
 
         String response = null;
         HttpResponse httpresponse = client.execute(httpPost); // still errors
@@ -73,7 +75,7 @@ public class IsccWebService {
 
         client.close();
         
-        Logger.getLogger(IsccWebService.class.getName()).log(Level.INFO, "ISCC created: " + iscc.toString());
+        logger.log(Level.INFO, "ISCC created: " + iscc.toString());
 
         return iscc;
     }
@@ -134,7 +136,7 @@ public class IsccWebService {
 
         client.close();
         
-        Logger.getLogger(IsccWebService.class.getName()).log(Level.INFO, explainedISCC.toString());
+        logger.log(Level.INFO, explainedISCC.toString());
 
         return explainedISCC;
     }

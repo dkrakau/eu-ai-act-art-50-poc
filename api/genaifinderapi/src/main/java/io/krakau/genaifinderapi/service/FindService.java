@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindService {
 
+    private static Logger logger = Logger.getLogger(FindService.class.getName());
+    
     private EnvironmentVariables env;
 
     private AssetService assetService;
@@ -109,15 +110,15 @@ public class FindService {
                 Long nnsId = fieldDataNnsId.get(i);
                 Float distance = idScores.get(i).getScore();
                 nnsResultMap.put(nnsId, distance);
-                Logger.getLogger(FindService.class.getName()).log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
+                logger.log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
             }
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, nnsResultMap.toString());
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus with distance " + env.MILVUS_DISTANCE);
+            logger.log(Level.INFO, nnsResultMap.toString());
+            logger.log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus with distance " + env.MILVUS_DISTANCE);
             // 8. Find assets by nnsIds from mongodb
             List<Long> nnsIds = new ArrayList<>();
             nnsIds.addAll(nnsResultMap.keySet());
             foundAssets = this.assetService.findByNnsId(nnsIds);
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
+            logger.log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
             // 9. Add distance to found assets
             for (Asset asset : foundAssets) {
                 asset.setDistance(nnsResultMap.get(asset.getNnsId()).intValue());
@@ -146,7 +147,7 @@ public class FindService {
             assets.add(assetFormUrl);
             assets.addAll(sortedFoundAssets);
         } catch (Exception ex) {
-            Logger.getLogger(FindService.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         // 13. Return assets
         return assets;

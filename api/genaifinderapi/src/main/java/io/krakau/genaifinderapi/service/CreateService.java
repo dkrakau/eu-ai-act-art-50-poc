@@ -12,11 +12,7 @@ import io.krakau.genaifinderapi.schema.mongodb.Metadata;
 import io.krakau.genaifinderapi.schema.mongodb.Provider;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.InsertParam.Field;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class CreateService {
+    
+    private static Logger logger = Logger.getLogger(CreateService.class.getName());
 
     private EnvironmentVariables env;
     
@@ -138,9 +136,9 @@ public class CreateService {
             this.assetService.insert(asset);
 
         } catch (IOException ioe) {
-            Logger.getLogger(CreateService.class.getName()).log(Level.SEVERE, null, ioe);
+            logger.log(Level.SEVERE, null, ioe);
         } catch (Exception ex) {
-            Logger.getLogger(CreateService.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         // 6. Return asset that was inserted into mongodb
         return asset;
