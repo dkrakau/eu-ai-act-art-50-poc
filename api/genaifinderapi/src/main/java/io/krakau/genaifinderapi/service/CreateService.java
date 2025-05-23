@@ -1,7 +1,7 @@
 package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.component.Cryptographer;
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.krakau.genaifinderapi.component.Snowflaker;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.dto.ProviderDto;
@@ -38,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class CreateService {
 
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
     
     private AssetService assetService;
     private IsccWebService isccWebService;
@@ -49,7 +49,7 @@ public class CreateService {
 
     @Autowired
     public CreateService(
-            EnviromentVariables env,
+            EnvironmentVariables env,
             AssetService assetService,
             IsccWebService isccWebService,
             VectorConverter vectorConverter,

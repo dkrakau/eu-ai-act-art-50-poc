@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.service;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindService {
 
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
 
     private AssetService assetService;
     private DownloadService downloadService;
@@ -48,7 +48,7 @@ public class FindService {
 
     @Autowired
     public FindService(
-            EnviromentVariables env,
+            EnvironmentVariables env,
             AssetService assetService,
             DownloadService downloadService,
             IsccWebService isccWebService,

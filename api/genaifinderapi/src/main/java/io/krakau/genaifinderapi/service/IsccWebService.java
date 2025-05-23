@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.service;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.iscc.Unit;
 import java.io.IOException;
@@ -34,10 +34,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class IsccWebService {
     
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
     
     @Autowired
-    public IsccWebService(EnviromentVariables env) {
+    public IsccWebService(EnvironmentVariables env) {
         this.env = env;
     }
     

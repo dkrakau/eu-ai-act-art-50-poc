@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @author Dominik
  */
 @Component
-public class EnviromentVariables {
+public class EnvironmentVariables {
     
     // ### OPENAPI ###
     @Value("${springdoc.api-docs.path}")
