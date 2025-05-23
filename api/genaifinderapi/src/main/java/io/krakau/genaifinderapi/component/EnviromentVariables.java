@@ -1,8 +1,6 @@
 package io.krakau.genaifinderapi.component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,142 +10,127 @@ import org.springframework.stereotype.Component;
 @Component
 public class EnviromentVariables {
     
-    // ### GENAIFINDER API ###
+    // ### OPENAPI ###
+    @Value("${springdoc.api-docs.path}")
+    public String OPENAPI_PAHT;
+    @Value("${springdoc.api-docs.server.url}")
+    public String OPENAPI_SERVER_URL;
+    @Value("${springdoc.api-docs.server.description}")
+    public String OPENAPI_SERVER_DESCRIPTION;
+    @Value("${springdoc.api-docs.contact.name}")
+    public String OPENAPI_CONTRACT_NAME;
+    @Value("${springdoc.api-docs.contact.email}")
+    public String OPENAPI_CONTRACT_EMAIL;
+    @Value("${springdoc.api-docs.contact.url}")
+    public String OPENAPI_CONTRACT_URL;
+    @Value("${springdoc.api-docs.licence.name}")
+    public String OPENAPI_LICENCE_NAME;
+    @Value("${springdoc.api-docs.licence.identifier}")
+    public String OPENAPI_LICENCE_IDENTIFIER;
+    @Value("${springdoc.api-docs.licence.url}")
+    public String OPENAPI_LICENCE_URL;
+    @Value("${springdoc.api-docs.info.title}")
+    public String OPENAPI_INFO_TITLE;
+    @Value("${springdoc.api-docs.info.description}")
+    public String OPENAPI_INFO_DESCRIPTION;
+    @Value("${springdoc.api-docs.info.summary}")
+    public String OPENAPI_INFO_SUMMARY;
+    @Value("${springdoc.api-docs.info.vision}")
+    public String OPENAPI_INFO_VERSION;
+    @Value("${springdoc.api-docs.info.terms-of-service}")
+    public String OPENAPI_INFO_TOS;
+    
+    
+    // ### APPLICATION ###
     @Value("${spring.storage.dir}")
     public String RESOURCE_DIR;
     
+    
     // ### SECURITY ###
+    @Value("${spring.security.allowed.localhost}")
     public String SECURITY_LOCALHOST;
+    @Value("${spring.security.allowed.domain}")
     public String SECURITY_DOMAIN;
+    @Value("${spring.security.allowed.ip}")
     public String SECURITY_IP;
     
-    // ### OPENAPI ###
-    public String OPENAPI_PAHT;
-    public String OPENAPI_SERVER_URL;
-    public String OPENAPI_SERVER_DESCRIPTION;
-    public String OPENAPI_CONTRACT_EMAIL;
-    public String OPENAPI_CONTRACT_NAME;
-    public String OPENAPI_CONTRACT_URL;
-    public String OPENAPI_LICENCE_NAME;
-    public String OPENAPI_LICENCE_IDENTIFIER;
-    public String OPENAPI_LICENCE_URL;
-    public String OPENAPI_INFO_TITLE;
-    public String OPENAPI_INFO_SUMMARY;
-    public String OPENAPI_INFO_VERSION;
-    public String OPENAPI_INFO_TOS;
-    public String OPENAPI_INFO_DESCRIPTION;
     
     // ### MONGODB ###
+    @Value("${spring.data.mongodb.host}")
     public String MONGODB_HOST;
+    @Value("${spring.data.mongodb.port}")
     public String MONGODB_PORT;
+    @Value("${spring.data.mongodb.authentication-database}")
     public String MONGODB_AUTH_DB;
+    @Value("${spring.data.mongodb.username}")
     public String MONGODB_AUTH_USERNAME;
+    @Value("${spring.data.mongodb.password}")
     public String MONGODB_AUTH_PASSWORD;
+    @Value("${spring.data.mongodb.database}")
     public String MONGODB_DATABASE;
     
+    
     // ### MILVUS ###
+    @Value("${spring.data.milvus.uri}")
     public String MILVUS_URL;
+    @Value("${spring.data.milvus.auth.username}")
     public String MILVUS_AUTH_USERNAME;
+    @Value("${spring.data.milvus.auth.password}")
     public String MILVUS_AUTH_PASSWORD;
+    @Value("${spring.data.milvus.distance}")
     public String MILVUS_DISTANCE;
+    @Value("${spring.data.milvus.topK}")
     public String MILVUS_TOP_K;
+    @Value("${spring.data.milvus.nlist}")
     public String MILVUS_NLIST;
+    @Value("${spring.data.milvus.nprobe}")
     public String MILVUS_NPROBE;
+    @Value("${spring.data.milvus.database}")
     public String MILVUS_DATABASE;
+    @Value("${spring.data.milvus.collection.description}")
     public String MILVUS_COLLECTION_DESCRIPTION;
+    @Value("${spring.data.milvus.collection.name.units.meta}")
     public String MILVUS_COLLECTION_UNIT_META;
+    @Value("${spring.data.milvus.collection.name.units.content}")
     public String MILVUS_COLLECTION_UNIT_CONTENT;
+    @Value("${spring.data.milvus.collection.name.units.data}")
     public String MILVUS_COLLECTION_UNIT_DATA;
+    @Value("${spring.data.milvus.collection.name.units.instance}")
     public String MILVUS_COLLECTION_UNIT_INSTANCE;
+    @Value("${spring.data.milvus.collection.field.id}")
     public String MILVUS_COLLECITON_FIELD_ID;
+    @Value("${spring.data.milvus.collection.field.vector}")
     public String MILVUS_COLLECTION_FIELD_VECTOR;
+    @Value("${spring.data.milvus.collection.field.nnsId}")
     public String MILVUS_COLLECTION_FIELD_NNSID;
+    @Value("${spring.data.milvus.partition.name.audio}")
     public String MILVUS_PARTITION_AUDIO;
+    @Value("${spring.data.milvus.partition.name.image}")
     public String MILVUS_PARTITION_IMAGE;
+    @Value("${spring.data.milvus.partition.name.text}")
     public String MILVUS_PARTITION_TEXT;
+    @Value("${spring.data.milvus.partition.name.video}")
     public String MILVUS_PARTITION_VIDEO;
+    
    
     // ### Cryptographer ###
+    @Value("${spring.data.cryptographer.proivider.openai}")
     public String CRYPTOGRAPHER_OPENAI;
+    @Value("${spring.data.cryptographer.proivider.openai.key.private}")
     public String CRYPTOGRAPHER_OPENAI_KEY_PRIVATE;
+    @Value("${spring.data.cryptographer.proivider.openai.key.public}")
     public String CRYPTOGRAPHER_OPENAI_KEY_PUBLIC;
+    @Value("${spring.data.cryptographer.proivider.leonardoai}")
     public String CRYPTOGRAPHER_LEONARDOAI;
+    @Value("${spring.data.cryptographer.proivider.leonardoai.key.private}")
     public String CRYPTOGRAPHER_LEONARDOAI_KEY_PRIVATE;
+    @Value("${spring.data.cryptographer.proivider.leonardoai.key.public}")
     public String CRYPTOGRAPHER_LEONARDOAI_KEY_PUBLIC;
     
     // ### APIs ###
+    @Value("${spring.api.iscc-web-create}")
     public String API_ISCCWEB_CREATE;
+    @Value("${spring.api.iscc-web-explain}")
     public String API_ISCCWEB_EXPLAIN;
-    
-    @Autowired
-    public EnviromentVariables(Environment env) {
-        
-        // ### SECURITY ###
-        this.SECURITY_LOCALHOST = env.getProperty("spring.security.allowed.localhost");
-        this.SECURITY_DOMAIN = env.getProperty("spring.security.allowed.domain");
-        this.SECURITY_IP = env.getProperty("spring.security.allowed.ip");
-        
-        // ### OPENAPI ###
-        this.OPENAPI_PAHT = env.getProperty("springdoc.api-docs.path");
-        this.OPENAPI_SERVER_URL = env.getProperty("springdoc.api-docs.server.url");
-        this.OPENAPI_SERVER_DESCRIPTION = env.getProperty("springdoc.api-docs.server.description");
-        this.OPENAPI_CONTRACT_NAME = env.getProperty("springdoc.api-docs.contact.name");
-        this.OPENAPI_CONTRACT_EMAIL = env.getProperty("springdoc.api-docs.contact.email");
-        this.OPENAPI_CONTRACT_URL = env.getProperty("springdoc.api-docs.contact.url");
-        this.OPENAPI_LICENCE_NAME = env.getProperty("springdoc.api-docs.licence.name");
-        this.OPENAPI_LICENCE_IDENTIFIER = env.getProperty("springdoc.api-docs.licence.identifier");
-        this.OPENAPI_LICENCE_URL = env.getProperty("springdoc.api-docs.licence.url");
-        this.OPENAPI_INFO_TITLE = env.getProperty("springdoc.api-docs.info.title");
-        this.OPENAPI_INFO_DESCRIPTION = env.getProperty("springdoc.api-docs.info.description");
-        this.OPENAPI_INFO_SUMMARY = env.getProperty("springdoc.api-docs.info.summary");
-        this.OPENAPI_INFO_VERSION = env.getProperty("springdoc.api-docs.info.vision");
-        this.OPENAPI_INFO_TOS = env.getProperty("springdoc.api-docs.info.terms-of-service");
-        
-        
-        // ### MONGODB ###
-        this.MONGODB_HOST = env.getProperty("spring.data.mongodb.host");
-        this.MONGODB_PORT = env.getProperty("spring.data.mongodb.port");
-        this.MONGODB_AUTH_DB = env.getProperty("spring.data.mongodb.authentication-database");
-        this.MONGODB_AUTH_USERNAME = env.getProperty("spring.data.mongodb.username");
-        this.MONGODB_AUTH_PASSWORD = env.getProperty("spring.data.mongodb.password");
-        this.MONGODB_DATABASE = env.getProperty("spring.data.mongodb.database");
-        
-        
-        // ### MILVUS ###
-        this.MILVUS_URL = env.getProperty("spring.data.milvus.uri");
-        this.MILVUS_AUTH_USERNAME = env.getProperty("spring.data.milvus.auth.username");
-        this.MILVUS_AUTH_PASSWORD = env.getProperty("spring.data.milvus.auth.password");
-        this.MILVUS_DISTANCE = env.getProperty("spring.data.milvus.distance");
-        this.MILVUS_TOP_K = env.getProperty("spring.data.milvus.topK");
-        this.MILVUS_NLIST = env.getProperty("spring.data.milvus.nlist");
-        this.MILVUS_NPROBE = env.getProperty("spring.data.milvus.nprobe");
-        this.MILVUS_DATABASE = env.getProperty("spring.data.milvus.database");
-        this.MILVUS_COLLECTION_DESCRIPTION = env.getProperty("spring.data.milvus.collection.description");
-        this.MILVUS_COLLECTION_UNIT_META = env.getProperty("spring.data.milvus.collection.name.units.meta");
-        this.MILVUS_COLLECTION_UNIT_CONTENT = env.getProperty("spring.data.milvus.collection.name.units.content");
-        this.MILVUS_COLLECTION_UNIT_DATA = env.getProperty("spring.data.milvus.collection.name.units.data");
-        this.MILVUS_COLLECTION_UNIT_INSTANCE = env.getProperty("spring.data.milvus.collection.name.units.instance");
-        this.MILVUS_COLLECITON_FIELD_ID = env.getProperty("spring.data.milvus.collection.field.id");
-        this.MILVUS_COLLECTION_FIELD_VECTOR = env.getProperty("spring.data.milvus.collection.field.vector");
-        this.MILVUS_COLLECTION_FIELD_NNSID = env.getProperty("spring.data.milvus.collection.field.nnsId");
-        this.MILVUS_PARTITION_AUDIO = env.getProperty("spring.data.milvus.partition.name.audio");
-        this.MILVUS_PARTITION_IMAGE = env.getProperty("spring.data.milvus.partition.name.image");
-        this.MILVUS_PARTITION_TEXT = env.getProperty("spring.data.milvus.partition.name.text");
-        this.MILVUS_PARTITION_VIDEO = env.getProperty("spring.data.milvus.partition.name.video");
-        
-        
-        // ### Cryptographer ###
-        this.CRYPTOGRAPHER_OPENAI = env.getProperty("spring.data.cryptographer.proivider.openai");
-        this.CRYPTOGRAPHER_OPENAI_KEY_PRIVATE = env.getProperty("spring.data.cryptographer.proivider.openai.key.private");
-        this.CRYPTOGRAPHER_OPENAI_KEY_PUBLIC = env.getProperty("spring.data.cryptographer.proivider.openai.key.public");
-        this.CRYPTOGRAPHER_LEONARDOAI = env.getProperty("spring.data.cryptographer.proivider.leonardoai");
-        this.CRYPTOGRAPHER_LEONARDOAI_KEY_PRIVATE = env.getProperty("spring.data.cryptographer.proivider.leonardoai.key.private");
-        this.CRYPTOGRAPHER_LEONARDOAI_KEY_PUBLIC = env.getProperty("spring.data.cryptographer.proivider.leonardoai.key.public");
-        
-        
-        // ### APIs ###
-        this.API_ISCCWEB_CREATE = env.getProperty("spring.api.iscc-web-create");
-        this.API_ISCCWEB_EXPLAIN = env.getProperty("spring.api.iscc-web-explain");
-    }
     
 }
