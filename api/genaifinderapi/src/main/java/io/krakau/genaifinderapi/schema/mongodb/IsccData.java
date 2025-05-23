@@ -21,7 +21,7 @@ public class IsccData {
     public IsccData() {
     }
 
-    public IsccData(ISCC iscc, ExplainedISCC explained) {
+    public IsccData(ISCC data, ExplainedISCC explained) {
         this.data = data;
         this.explained = explained;
     }

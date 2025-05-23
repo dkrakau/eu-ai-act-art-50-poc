@@ -13,6 +13,8 @@ import io.krakau.genaifinderapi.schema.mongodb.Metadata;
 import io.krakau.genaifinderapi.schema.mongodb.Provider;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.InsertParam.Field;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
