@@ -1,6 +1,7 @@
 package io.krakau.genaifinderapi.schema.mongodb;
 
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
+import io.krakau.genaifinderapi.schema.iscc.ISCC;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class IsccData {
     
     @Field("data")
-    private org.bson.Document data;
+    private ISCC data;
     
     @Field("explained")
     private ExplainedISCC explained;
@@ -20,12 +21,12 @@ public class IsccData {
     public IsccData() {
     }
 
-    public IsccData(org.bson.Document data, ExplainedISCC explained) {
+    public IsccData(ISCC data, ExplainedISCC explained) {
         this.data = data;
         this.explained = explained;
     }
 
-    public org.bson.Document getData() {
+    public ISCC getData() {
         return data;
     }
 
@@ -33,7 +34,7 @@ public class IsccData {
         return explained;
     }
 
-    public void setData(org.bson.Document data) {
+    public void setData(ISCC data) {
         this.data = data;
     }
 

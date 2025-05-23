@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.configuration;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,10 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Configuration
 public class OpenAPIConfig {
     
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
     
     @Autowired
-    public OpenAPIConfig(EnviromentVariables env) {
+    public OpenAPIConfig(EnvironmentVariables env) {
         this.env = env;
     }
 

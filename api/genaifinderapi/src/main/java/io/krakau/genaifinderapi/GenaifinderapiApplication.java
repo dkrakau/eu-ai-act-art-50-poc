@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GenaifinderapiApplication {
 
-    public static EnviromentVariables env;
+    public static EnvironmentVariables env;
 
     @Autowired
-    public GenaifinderapiApplication(EnviromentVariables env) {
+    public GenaifinderapiApplication(EnvironmentVariables env) {
         GenaifinderapiApplication.env = env;
     }
 
