@@ -2,13 +2,13 @@ package io.krakau.genaifinderapi.service;
 
 import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
-import io.krakau.genaifinderapi.schema.iscc.Unit;
+import io.krakau.genaifinderapi.schema.iscc.ISCC;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
@@ -21,8 +21,6 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.bson.Document;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,18 +31,23 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class IsccWebService {
-    
+
     private static Logger logger = Logger.getLogger(IsccWebService.class.getName());
-    
+
     private EnvironmentVariables env;
-    
+
+    private DownloadService downloadService;
+
     @Autowired
-    public IsccWebService(EnvironmentVariables env) {
+    public IsccWebService(
+            EnvironmentVariables env,
+            DownloadService downloadService
+    ) {
         this.env = env;
+        this.downloadService = downloadService;
     }
-    
-    
-    public Document createISCC(InputStream binaryData, String filename) throws IOException, Exception {
+
+    public ISCC createISCC(InputStream binaryData, String filename) throws IOException, Exception {
 
         CloseableHttpClient client = HttpClients.createDefault();
 
@@ -62,11 +65,11 @@ public class IsccWebService {
         HttpResponse httpresponse = client.execute(httpPost); // still errors
         HttpEntity entityResponse = httpresponse.getEntity();
 
-        Document iscc = null;
+        ISCC iscc = null;
         if (httpresponse.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_CREATED) {
             response = EntityUtils.toString(entityResponse);
             EntityUtils.consume(httpresponse.getEntity());
-            iscc = Document.parse(new JSONObject(response).toString());
+            iscc = ISCC.parse(new JSONObject(response));
 
         } else {
 //            System.out.println("Error createISCC code -> " + httpresponse.getStatusLine().getStatusCode() + " " + httpresponse.getStatusLine().getReasonPhrase());
@@ -74,9 +77,22 @@ public class IsccWebService {
         }
 
         client.close();
-        
+
         logger.log(Level.INFO, "ISCC created: " + iscc.toString());
 
+        return iscc;
+    }
+
+    public ISCC createIsccFromUrl(String urlBase64) throws IOException, Exception {
+        // Decode urlBase64 to string
+        String url = new String(Base64.getDecoder().decode(urlBase64.getBytes()));
+        // Download file
+        File downloadedFile = this.downloadService.download(url);
+        // Create ISCC from downloaded file
+        ISCC iscc = this.createISCC(new FileInputStream(downloadedFile), downloadedFile.getName());
+        // Delete downloaded file
+        downloadedFile.delete();
+        // Return ISCC
         return iscc;
     }
 
@@ -107,27 +123,7 @@ public class IsccWebService {
 
             JSONObject json = new JSONObject(response);
 
-            JSONArray unitsJson = json.getJSONArray("units");
-
-            List<Unit> units = new ArrayList<>();
-            for (int i = 0; i < unitsJson.length(); i++) {
-                units.add(
-                        new Unit(
-                                unitsJson.getJSONObject(i).getString("readable"),
-                                unitsJson.getJSONObject(i).getString("hash_hex"),
-                                unitsJson.getJSONObject(i).getString("iscc_unit"),
-                                unitsJson.getJSONObject(i).getString("hash_bits"),
-                                unitsJson.getJSONObject(i).getString("hash_uint")
-                        )
-                );
-            }
-
-            explainedISCC = new ExplainedISCC(
-                    json.getString("iscc"),
-                    json.getString("readable"),
-                    json.getString("multiformat"),
-                    json.getString("decomposed"),
-                    units);
+            explainedISCC = ExplainedISCC.parse(json);
 
         } else {
 //            System.out.println("ISCC Explain ERROR: " + httpStatusCode);
@@ -135,10 +131,10 @@ public class IsccWebService {
         }
 
         client.close();
-        
+
         logger.log(Level.INFO, explainedISCC.toString());
 
         return explainedISCC;
     }
-    
+
 }
