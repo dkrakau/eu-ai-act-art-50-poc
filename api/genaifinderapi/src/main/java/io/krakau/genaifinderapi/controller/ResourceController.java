@@ -42,6 +42,9 @@ public class ResourceController {
     @Value("${spring.storage.dir}")
     private String resourcesDir;
     
+    @Value("${spring.storage.dir.images}")
+    private String resourcesImageDir;
+    
     @Operation(
             summary = "Endpoint to get image data",
             description = "This api endpoint is beeing used for getting image resources.",
@@ -67,7 +70,7 @@ public class ResourceController {
         }
 
         try {
-            Path fileLocation = Paths.get(resourcesDir).normalize().toAbsolutePath();
+            Path fileLocation = Paths.get(resourcesDir + "/" + resourcesImageDir).normalize().toAbsolutePath();
             Path filePath = fileLocation.resolve(filename).normalize();
 
             // Security check - make sure the resolved path is within the storage directory

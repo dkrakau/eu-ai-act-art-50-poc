@@ -44,6 +44,8 @@ public class EnvironmentVariables {
     // ### APPLICATION ###
     @Value("${spring.storage.dir}")
     public String RESOURCE_DIR;
+    @Value("${spring.storage.dir.images}")
+    public String RESOURCE_IMAGE_DIR;
     
     
     // ### SECURITY ###

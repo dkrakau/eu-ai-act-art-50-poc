@@ -74,13 +74,13 @@ public class CreateService {
         Long snowflakeId = this.snowflaker.id();        
 
         try {
-            // 0. Save image file
-            saveImage(imageFile);
             // 1. Send image to iscc-web to create iscc
             iscc = this.isccWebService.createISCC(imageFile.getInputStream(), imageFile.getOriginalFilename());
             // 2. Send iscc to iscc-web to explain iscc
             explainedISCC = this.isccWebService.explainISCC(iscc.getIscc());
-            // 3. Insert units to milvus collection
+            // 3. Save image file
+            saveImage(imageFile);
+            // 4. Insert units to milvus collection
             List<Field> metaFields = new ArrayList<>();
             metaFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(0).getHash_bits()))));
             metaFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
@@ -116,7 +116,7 @@ public class CreateService {
                     env.MILVUS_COLLECTION_UNIT_INSTANCE,
                     env.MILVUS_PARTITION_IMAGE,
                     instanceFields);
-            // 4. Append cryptographic credentials to asset and insert asset into mongodb
+            // 5. Append cryptographic credentials to asset and insert asset into mongodb
             asset = new Asset(
                     new Metadata(
                             new Provider(
@@ -134,7 +134,7 @@ public class CreateService {
                             )
                     ),
                     snowflakeId);
-            // 5. Insert asset into mongodb
+            // 6. Insert asset into mongodb
             this.assetService.insert(asset);
 
         } catch (IOException ioe) {
@@ -142,13 +142,13 @@ public class CreateService {
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-        // 6. Return asset that was inserted into mongodb
+        // 7. Return asset that was inserted into mongodb
         return asset;
     }
     
     
     private String saveImage(MultipartFile file) throws IOException {
-        Path uploadPath = Paths.get(env.RESOURCE_DIR);
+        Path uploadPath = Paths.get(env.RESOURCE_DIR + "/" + env.RESOURCE_IMAGE_DIR);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
