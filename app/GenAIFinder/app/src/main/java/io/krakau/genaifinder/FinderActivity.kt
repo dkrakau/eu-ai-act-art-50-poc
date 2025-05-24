@@ -173,9 +173,9 @@ class FinderActivity : AppCompatActivity() {
                 startActivity(Intent(this@FinderActivity, InsightsActivity::class.java).apply {
                     putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
                     putExtra("inputAssetUrl", selectedImageUrl)
-                    putExtra("inputAssetContentCode", explainedIscc.units[0].hash_bits)
+                    putExtra("inputAssetContentCode", explainedIscc.units[1].hash_bits)
                     putExtra("selectedAssetFilename", assets[i].metadata.iscc.data.filename)
-                    putExtra("selectedAssetContentCode", assets[i].metadata.iscc.explained.units[0].hash_bits)
+                    putExtra("selectedAssetContentCode", assets[i].metadata.iscc.explained.units[1].hash_bits)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
