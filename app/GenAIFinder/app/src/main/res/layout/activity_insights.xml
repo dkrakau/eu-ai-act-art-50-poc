@@ -57,19 +57,70 @@
             android:layout_margin="10dp"
             android:background="@drawable/rounded_corners"
             android:backgroundTint="@color/dialog_bg"
-            android:orientation="vertical">
+            android:foregroundGravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/inputAssetImageView"
+            <TextView
+                android:id="@+id/insightsSimularityTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:layout_marginBottom="15dp"
+                android:text="100% simular"
+                android:textAlignment="center"
+                android:textColor="@color/primary_color"
+                android:textSize="24sp"
+                android:textStyle="italic"
+                android:typeface="monospace" />
 
-            <ImageView
-                android:id="@+id/selectedAssetImageView"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:layout_height="match_parent"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/inputAssetImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:background="@color/image_bg_color"
+                            android:backgroundTint="@color/image_bg_color"
+                            android:scaleType="centerInside"
+                            tools:srcCompat="@tools:sample/avatars" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:id="@+id/contentCodeLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/selectedAssetImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:background="@color/image_bg_color"
+                            android:backgroundTint="@color/image_bg_color"
+                            android:scaleType="centerInside"
+                            tools:srcCompat="@tools:sample/avatars" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
     </ScrollView>
 

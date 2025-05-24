@@ -1,16 +1,28 @@
 package io.krakau.genaifinder
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.toColor
+import androidx.core.graphics.toColorInt
+import androidx.core.graphics.toColorLong
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayout
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
+import org.w3c.dom.Text
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class InsightsActivity : AppCompatActivity() {
 
@@ -20,8 +32,10 @@ class InsightsActivity : AppCompatActivity() {
     private val API_IMAGE_RESOURCE_ENDPOINT: String ="http://10.35.1.167/resources/images"
 
     private lateinit var insightBack: ImageView
+    private lateinit var insightsSimularityTextView: TextView
     private lateinit var inputAssetImageView: ImageView
     private lateinit var selectedAssetImageView: ImageView
+    private lateinit var contentCodeLinearLayout: LinearLayout
 
     private lateinit var viewModel: ApiViewModel
 
@@ -38,6 +52,8 @@ class InsightsActivity : AppCompatActivity() {
         insightBack = findViewById<ImageView>(R.id.insightBack)
         inputAssetImageView = findViewById<ImageView>(R.id.inputAssetImageView)
         selectedAssetImageView = findViewById<ImageView>(R.id.selectedAssetImageView)
+        contentCodeLinearLayout = findViewById<LinearLayout>(R.id.contentCodeLinearLayout)
+        insightsSimularityTextView = findViewById<TextView>(R.id.insightsSimularityTextView)
 
         insightBack.setOnClickListener {
             startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
@@ -53,6 +69,8 @@ class InsightsActivity : AppCompatActivity() {
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetFilename: $selectedAssetFilename")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetContentCode: $selectedAssetContentCode")
 
+        insightsSimularityTextView.text = "" + calculateSimularity() + "% simular"
+
         Glide.with(this)
             .load(inputAssetUrl)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
@@ -67,7 +85,45 @@ class InsightsActivity : AppCompatActivity() {
         }
         viewModel.fetchGetImageResource(selectedAssetFilename)
 
+        renderContentCode()
+    }
 
+    private fun calculateSimularity(): BigDecimal {
+        var distance = 0
+        for (i in inputAssetUrl.indices) {
+            if(i < 64 && inputAssetUrl[i] != selectedAssetContentCode[i]) {
+                distance++
+            }
+        }
+        return (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN)
+    }
+
+    private fun renderContentCode() {
+        val steps = 8
+        var stepsCounter = steps
+        var i = 0
+        while(i < 64) {
+            var flexboxLayot = FlexboxLayout(this)
+            flexboxLayot.flexDirection = FlexDirection.ROW
+            while(i < stepsCounter) {
+                val cell = LinearLayout(this)
+                cell.layoutParams = ViewGroup.LayoutParams(dpToPx(50), dpToPx(50))
+                if(inputAssetContentCode[i] == selectedAssetContentCode[i]) {
+                    cell.setBackgroundResource(R.drawable.border_box_primary)
+                } else {
+                    cell.setBackgroundResource(R.drawable.border_box_secondary)
+                }
+                flexboxLayot.addView(cell)
+                i++
+            }
+            contentCodeLinearLayout.addView(flexboxLayot)
+            stepsCounter += steps
+        }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        val scale = this.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
