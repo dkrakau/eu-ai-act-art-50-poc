@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        discoverBtn?.isEnabled = true
+        discoverBtn?.isEnabled = false
         webview?.visibility = View.GONE;
 
         webview?.settings?.javaScriptEnabled = true
@@ -149,14 +149,14 @@ class MainActivity : AppCompatActivity() {
                 ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
             }
             """.trimIndent()
-            //webview?.loadUrl("javascript:$javascript")
-            startActivity(Intent(this@MainActivity, InsightsActivity::class.java).apply {
+            webview?.loadUrl("javascript:$javascript")
+            /*startActivity(Intent(this@MainActivity, InsightsActivity::class.java).apply {
                 putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                 putExtra("inputAssetUrl", "https://pbs.twimg.com/media/GrWOyQqWUAAxGM0?format=jpg&name=120x120")
                 putExtra("inputAssetContentCode", "1101110111010000011000001011011000100111000100111111000100100100")
                 putExtra("selectedAssetFilename", "Flux_Dev_Narendra_Modi_wearing_a_traditional_Indian_attire_wit_2.jpg")
                 putExtra("selectedAssetContentCode","1111001110111110110101100011010001110000101001010001011111100101")
-            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))*/
         }
     }
 

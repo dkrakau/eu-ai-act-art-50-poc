@@ -90,8 +90,8 @@ class InsightsActivity : AppCompatActivity() {
 
     private fun calculateSimularity(): BigDecimal {
         var distance = 0
-        for (i in inputAssetUrl.indices) {
-            if(i < 64 && inputAssetUrl[i] != selectedAssetContentCode[i]) {
+        for (i in inputAssetContentCode.indices) {
+            if(i < 64 && inputAssetContentCode[i] != selectedAssetContentCode[i]) {
                 distance++
             }
         }
