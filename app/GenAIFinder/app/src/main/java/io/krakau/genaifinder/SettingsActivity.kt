@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -22,6 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -79,7 +81,9 @@ class SettingsActivity : AppCompatActivity() {
         for(i in serverUrls.indices) {
             val textView = TextView(this)
             textView.text = serverUrls[i]
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            textView.setTextColor(this.resources.getColor(R.color.primary_color))
+            textView.setTypeface(Typeface.MONOSPACE)
             serverListLinearLayout.addView(textView)
         }
     }
