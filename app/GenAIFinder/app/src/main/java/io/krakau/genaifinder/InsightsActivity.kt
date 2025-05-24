@@ -1,5 +1,6 @@
 package io.krakau.genaifinder
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -29,7 +30,10 @@ class InsightsActivity : AppCompatActivity() {
     // constants
     private val LOG_INSIGHTS_ACTIVITY: String = "InsightsActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-    private val API_IMAGE_RESOURCE_ENDPOINT: String ="http://10.35.1.167/resources/images"
+
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     private lateinit var insightBack: ImageView
     private lateinit var insightsSimularityTextView: TextView
@@ -55,14 +59,16 @@ class InsightsActivity : AppCompatActivity() {
         contentCodeLinearLayout = findViewById<LinearLayout>(R.id.contentCodeLinearLayout)
         insightsSimularityTextView = findViewById<TextView>(R.id.insightsSimularityTextView)
 
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        inputAssetUrl = dataManager.getInputImageUrl()
+        inputAssetContentCode = dataManager.getInputImageContentCode()
+        selectedAssetFilename = dataManager.getSelectedImageFilename()
+        selectedAssetContentCode = dataManager.getSelectedImageContentCode()
+
         insightBack.setOnClickListener {
             startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
         }
-
-        inputAssetUrl = intent.getStringExtra("inputAssetUrl")!!
-        inputAssetContentCode = intent.getStringExtra("inputAssetContentCode")!!
-        selectedAssetFilename = intent.getStringExtra("selectedAssetFilename")!!
-        selectedAssetContentCode = intent.getStringExtra("selectedAssetContentCode")!!
 
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetUrl")
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetContentCode")

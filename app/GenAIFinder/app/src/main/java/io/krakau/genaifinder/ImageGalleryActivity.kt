@@ -1,6 +1,7 @@
 package io.krakau.genaifinder
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -34,12 +35,16 @@ class ImageGalleryActivity : AppCompatActivity() {
 
     private lateinit var scrollView: ScrollView
     private lateinit var flexboxLayout: FlexboxLayout
-    private var imageUrls: Array<String>? = emptyArray()
+    private var imageUrls: List<String>? = emptyList()
     private var selectedImageUrl: String = "null"
 
     private lateinit var dialog: Dialog
     private lateinit var dialogImageView: ImageView
     private lateinit var findBtn: Button
+
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +55,11 @@ class ImageGalleryActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         txt = findViewById<TextView>(R.id.testIntent)
-
         scrollView = findViewById<ScrollView>(R.id.scrollview)
         flexboxLayout = findViewById<FlexboxLayout>(R.id.flexboxLayout)
+
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
 
         // Dialog for image url selection
         dialog = Dialog(this)
@@ -64,13 +71,12 @@ class ImageGalleryActivity : AppCompatActivity() {
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"BUTTONS: User tapped the findBtn")
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"DIALOG: $selectedImageUrl")
             Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
-            startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java).apply {
-                putExtra("selectedImageUrl", selectedImageUrl)
-            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            dataManager.setInputImageUrl(selectedImageUrl)
+            startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java))
         }
 
         // load image urls into flexboxLayout
-        imageUrls = intent?.getStringArrayExtra("imageUrls")
+        imageUrls = dataManager.getImageUrls().toList()
         debugImageUrlTexts()
         displayImages()
     }

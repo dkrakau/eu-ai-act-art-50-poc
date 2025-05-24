@@ -21,7 +21,6 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import io.krakau.genaifinder.service.api.RetrofitClient
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
@@ -43,11 +42,10 @@ class FinderActivity : AppCompatActivity() {
     // constants
     private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-    private val PREF_APP_SETTINGS: String = "app_settings"
-    private val PREF_APP_SETTINGS_SERVER: String = "server"
 
-    // shared preferences
-    private lateinit var prefs: SharedPreferences
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     // view variables
     private lateinit var finderLinearLayout: LinearLayout
@@ -64,7 +62,7 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var loadingConstraintLayout: ConstraintLayout
     private lateinit var loadingImageView: ImageView
 
-    private lateinit var selectedImageUrl: String
+    private lateinit var inputImageUrl: String
 
     private lateinit var viewModel: ApiViewModel
 
@@ -91,6 +89,9 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+
         loadingConstraintLayout.visibility = View.VISIBLE;
         finderLinearLayout.visibility = View.GONE;
 
@@ -98,11 +99,8 @@ class FinderActivity : AppCompatActivity() {
         loadingImageView.animation = rotateAnimation
         loadingImageView.animation.start()
 
-        selectedImageUrl = intent.getStringExtra("selectedImageUrl")!!
-        Log.d(LOG_FINDER_ACTIVITY, "SelectedImageUrl: $selectedImageUrl")
-
-        prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
-        RetrofitClient.url = prefs.getString(PREF_APP_SETTINGS_SERVER, "http://loachost")!!
+        inputImageUrl = dataManager.getInputImageUrl()
+        Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
 
         viewModel = ViewModelProvider(this).get(ApiViewModel::class.java)
         // Observe the LiveData
@@ -124,7 +122,7 @@ class FinderActivity : AppCompatActivity() {
             finderLinearLayout.visibility = View.VISIBLE;
         }
         // Fetch iscc data from selected url
-        viewModel.fetchCreateIsccFromUrl(selectedImageUrl)
+        viewModel.fetchCreateIsccFromUrl(inputImageUrl)
     }
 
     private fun renderInputAsset() {
@@ -133,7 +131,7 @@ class FinderActivity : AppCompatActivity() {
             .load(iscc.thumbnail)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
             .into(itemImageView)
-        titleTextView.text = selectedImageUrl.substring(8)
+        titleTextView.text = inputImageUrl.substring(8)
         descriptionTextView.text = iscc.filename
         simularityTextView.text = ""
         dateTextView.text = getDate(currentTimestamp)
@@ -170,13 +168,11 @@ class FinderActivity : AppCompatActivity() {
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
                 Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this@FinderActivity, InsightsActivity::class.java).apply {
-                    putExtra(CALLING_ACTIVITY, FinderActivity::class.java.name)
-                    putExtra("inputAssetUrl", selectedImageUrl)
-                    putExtra("inputAssetContentCode", explainedIscc.units[1].hash_bits)
-                    putExtra("selectedAssetFilename", assets[i].metadata.iscc.data.filename)
-                    putExtra("selectedAssetContentCode", assets[i].metadata.iscc.explained.units[1].hash_bits)
-                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                dataManager.setInputImageUrl(inputImageUrl)
+                dataManager.setInputImageContentCode(explainedIscc.units[1].hash_bits)
+                dataManager.setSelectedImageFilename(assets[i].metadata.iscc.data.filename)
+                dataManager.setSelectedImageContentCode(assets[i].metadata.iscc.explained.units[1].hash_bits)
+                startActivity(Intent(this@FinderActivity, InsightsActivity::class.java))
             }
 
             if(i == assets.size - 1) {

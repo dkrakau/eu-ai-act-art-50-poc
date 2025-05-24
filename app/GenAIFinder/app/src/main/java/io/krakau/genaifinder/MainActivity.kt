@@ -2,6 +2,7 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
@@ -38,8 +39,10 @@ class MainActivity : AppCompatActivity() {
     // constants
     private val LOG_MAIN_ACTIVITY: String = "MainActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-    private val PREF_APP_SETTINGS: String = "app_settings"
-    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
+/*    private val PREF_APP_SETTINGS: String = "app_settings"
+    private val PREF_APP_DATA: String = "app_data"
+    private val PREF_APP_DATA_IMAGE_URLS: String ="imageUrls"
+    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"*/
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -69,6 +72,10 @@ class MainActivity : AppCompatActivity() {
     //private var url: String = "https://www.tagesschau.de/"
     //private var url: String = "https://web.de/"
 
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -80,10 +87,10 @@ class MainActivity : AppCompatActivity() {
             // Set this instance as the singleton
         Picasso.setSingletonInstance(picasso)
 
-        // get shared prefs
-        val prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
         // check if app is using night mode resources
-        prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, isUsingNightModeResources()) }
+        dataManager.setDarkMode(isUsingNightModeResources())
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -176,9 +183,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     // Update the UI
                     textImages?.text = images
+                    // Add data to shared preferences
+                    dataManager.setImageUrls(filterContent(imageUrls).toList())
                     // Start activity
                     startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
-                        putExtra("imageUrls", filterContent(imageUrls))
+                        putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                     }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                     /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
                     launched is already running in the current task, then instead of launching
