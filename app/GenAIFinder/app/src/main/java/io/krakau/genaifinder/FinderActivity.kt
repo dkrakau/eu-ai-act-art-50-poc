@@ -167,7 +167,7 @@ class FinderActivity : AppCompatActivity() {
                 )
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
-                Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
                 dataManager.setInputImageUrl(inputImageUrl)
                 dataManager.setInputImageContentCode(explainedIscc.units[1].hash_bits)
                 dataManager.setSelectedImageFilename(assets[i].metadata.iscc.data.filename)

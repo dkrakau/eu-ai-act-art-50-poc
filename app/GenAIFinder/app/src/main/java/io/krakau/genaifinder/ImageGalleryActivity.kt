@@ -70,7 +70,7 @@ class ImageGalleryActivity : AppCompatActivity() {
         findBtn.setOnClickListener {
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"BUTTONS: User tapped the findBtn")
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"DIALOG: $selectedImageUrl")
-            Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
             dataManager.setInputImageUrl(selectedImageUrl)
             startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java))
         }

@@ -34,25 +34,16 @@ import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var picasso: Picasso
-
     // constants
     private val LOG_MAIN_ACTIVITY: String = "MainActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-/*    private val PREF_APP_SETTINGS: String = "app_settings"
-    private val PREF_APP_DATA: String = "app_data"
-    private val PREF_APP_DATA_IMAGE_URLS: String ="imageUrls"
-    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"*/
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
-
-    // tasks
-    private lateinit var coroutineScope: CoroutineScope
-    private lateinit var mainScope: CoroutineScope
-    private lateinit var mJob: Job
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     // bindings
+    private lateinit var binding: ActivityMainBinding
     private var previewImage: ImageView? = null
     private var previewTitle: TextView? = null
     private var previewDescription: TextView? = null
@@ -62,7 +53,13 @@ class MainActivity : AppCompatActivity() {
     private var discoverBtn: Button? = null
     private var webview: WebView? = null
 
+    // tasks
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var mainScope: CoroutineScope
+    private lateinit var mJob: Job
+
     // data
+    private lateinit var picasso: Picasso
     private var imageUrls: Array<String?> = emptyArray()
     private var url: String = "";
     //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
@@ -71,10 +68,6 @@ class MainActivity : AppCompatActivity() {
     //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
     //private var url: String = "https://www.tagesschau.de/"
     //private var url: String = "https://web.de/"
-
-    // shared preferences via data manager
-    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
-    private lateinit var dataManager: DataManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,8 +82,10 @@ class MainActivity : AppCompatActivity() {
 
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
-        // check if app is using night mode resources
+        // Check if app is using night mode resources
         dataManager.setDarkMode(isUsingNightModeResources())
+        // Set server urls
+        dataManager.setServerUrls(this.resources.getStringArray(R.array.serverUrls).toList())
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -157,13 +152,6 @@ class MainActivity : AppCompatActivity() {
             }
             """.trimIndent()
             webview?.loadUrl("javascript:$javascript")
-            /*startActivity(Intent(this@MainActivity, InsightsActivity::class.java).apply {
-                putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
-                putExtra("inputAssetUrl", "https://pbs.twimg.com/media/GrWOyQqWUAAxGM0?format=jpg&name=120x120")
-                putExtra("inputAssetContentCode", "1101110111010000011000001011011000100111000100111111000100100100")
-                putExtra("selectedAssetFilename", "Flux_Dev_Narendra_Modi_wearing_a_traditional_Indian_attire_wit_2.jpg")
-                putExtra("selectedAssetContentCode","1111001110111110110101100011010001110000101001010001011111100101")
-            }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))*/
         }
     }
 
@@ -186,14 +174,7 @@ class MainActivity : AppCompatActivity() {
                     // Add data to shared preferences
                     dataManager.setImageUrls(filterContent(imageUrls).toList())
                     // Start activity
-                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
-                        putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
-                    }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                    /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
-                    launched is already running in the current task, then instead of launching
-                    a new instance of that activity, all of the other activities on top of it
-                    will be closed and this Intent will be delivered to the (now on top) old
-                    activity as a new Intent. */
+                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java))
                 }
             }
         }
@@ -336,6 +317,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java).apply {
                     putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
+                    launched is already running in the current task, then instead of launching
+                    a new instance of that activity, all of the other activities on top of it
+                    will be closed and this Intent will be delivered to the (now on top) old
+                    activity as a new Intent. */
                 true
             }
             R.id.action_information -> {
