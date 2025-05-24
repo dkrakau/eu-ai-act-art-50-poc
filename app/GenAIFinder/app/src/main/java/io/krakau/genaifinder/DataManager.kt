@@ -6,7 +6,8 @@ import androidx.core.content.edit
 class DataManager(private val prefs: SharedPreferences) {
 
     // shared preferences keys
-    private val PREF_DARK_MODE: String = "dark_mode"
+    private val PREF_DARK_MODE: String = "darkMode"
+    private val PREF_SERVER_URLS: String = "serverUrls"
 
     private val PREFS_IMAGE_URLS: String ="imageUrls"
 
@@ -20,6 +21,13 @@ class DataManager(private val prefs: SharedPreferences) {
     }
     fun getDarkMode(): Boolean {
         return this.prefs.getBoolean(PREF_DARK_MODE, false)
+    }
+
+    fun setServerUrls(serverUrls: List<String>) {
+        this.prefs.edit() {putStringSet(PREF_SERVER_URLS, serverUrls.toSet())}
+    }
+    fun getServerUrls(): Set<String> {
+        return this.prefs.getStringSet(PREF_SERVER_URLS, emptySet()) ?: emptySet()
     }
 
     fun setImageUrls(imageUrls: List<String>) {
