@@ -2,7 +2,6 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,16 +11,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.toColor
 import androidx.core.graphics.toColorInt
-import androidx.core.graphics.toColorLong
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayout
+import com.google.android.flexbox.JustifyContent
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
-import org.w3c.dom.Text
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -109,8 +107,10 @@ class InsightsActivity : AppCompatActivity() {
         var stepsCounter = steps
         var i = 0
         while(i < 64) {
-            var flexboxLayot = FlexboxLayout(this)
-            flexboxLayot.flexDirection = FlexDirection.ROW
+            var flexboxLayout = FlexboxLayout(this)
+            flexboxLayout.flexDirection = FlexDirection.ROW
+            flexboxLayout.flexWrap = FlexWrap.NOWRAP
+            flexboxLayout.justifyContent = JustifyContent.CENTER
             while(i < stepsCounter) {
                 val cell = LinearLayout(this)
                 cell.layoutParams = ViewGroup.LayoutParams(dpToPx(50), dpToPx(50))
@@ -119,10 +119,10 @@ class InsightsActivity : AppCompatActivity() {
                 } else {
                     cell.setBackgroundResource(R.drawable.border_box_secondary)
                 }
-                flexboxLayot.addView(cell)
+                flexboxLayout.addView(cell)
                 i++
             }
-            contentCodeLinearLayout.addView(flexboxLayot)
+            contentCodeLinearLayout.addView(flexboxLayout)
             stepsCounter += steps
         }
     }
