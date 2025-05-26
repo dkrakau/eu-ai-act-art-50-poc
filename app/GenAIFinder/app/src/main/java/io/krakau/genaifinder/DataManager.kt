@@ -7,6 +7,7 @@ class DataManager(private val prefs: SharedPreferences) {
 
     // shared preferences keys
     private val PREF_DARK_MODE: String = "darkMode"
+    private val PREF_SERVER_PROVIDER: String = "serverProvider"
     private val PREF_SERVER_URLS: String = "serverUrls"
 
     private val PREFS_IMAGE_URLS: String ="imageUrls"
@@ -14,6 +15,7 @@ class DataManager(private val prefs: SharedPreferences) {
     private val PREF_INPUT_IMAGE_URL: String = "inputImageUrl"
     private val PREF_INPUT_IMAGE_CONTENTCODE: String = "inputImageContentCode"
     private val PREF_SELECTED_IMAGE_FILENAME: String = "selectedImageFilename"
+    private val PREF_SELECTED_IMAGE_PROVIDER: String = "selectedImageProvider"
     private val PREF_SELECTED_IMAGE_CONTENTCODE: String = "selectedImageContentCode"
 
     fun setDarkMode(darkMode: Boolean) {
@@ -23,11 +25,18 @@ class DataManager(private val prefs: SharedPreferences) {
         return this.prefs.getBoolean(PREF_DARK_MODE, false)
     }
 
-    fun setServerUrls(serverUrls: List<String>) {
-        this.prefs.edit() {putStringSet(PREF_SERVER_URLS, serverUrls.toSet())}
+    fun setServerProviderList(serverProviderList: String) {
+        this.prefs.edit() {putString(PREF_SERVER_PROVIDER, serverProviderList)}
     }
-    fun getServerUrls(): Set<String> {
-        return this.prefs.getStringSet(PREF_SERVER_URLS, emptySet()) ?: emptySet()
+    fun getServerProviderList(): String {
+        return this.prefs.getString(PREF_SERVER_PROVIDER, "") ?: ""
+    }
+
+    fun setServerUrlsList(serverUrlsList: String) {
+        this.prefs.edit() {putString(PREF_SERVER_URLS, serverUrlsList)}
+    }
+    fun getServerUrlsList(): String {
+        return this.prefs.getString(PREF_SERVER_URLS, "") ?: ""
     }
 
     fun setImageUrls(imageUrls: List<String>) {
@@ -58,10 +67,34 @@ class DataManager(private val prefs: SharedPreferences) {
         return this.prefs.getString(PREF_SELECTED_IMAGE_FILENAME, "") ?: ""
     }
 
+    fun setSelectedImageProvider(selectedImageProvider: String) {
+        this.prefs.edit() { putString(PREF_SELECTED_IMAGE_PROVIDER, selectedImageProvider) }
+    }
+    fun getSelectedImageProvider(): String {
+        return this.prefs.getString(PREF_SELECTED_IMAGE_PROVIDER, "") ?: ""
+    }
+
     fun setSelectedImageContentCode(selectedImageContentCode: String) {
         this.prefs.edit() { putString(PREF_SELECTED_IMAGE_CONTENTCODE, selectedImageContentCode) }
     }
     fun getSelectedImageContentCode(): String {
         return this.prefs.getString(PREF_SELECTED_IMAGE_CONTENTCODE, "") ?: ""
     }
+
+    fun arrayToString(array: Array<String>): String {
+        var string = ""
+        for(i in array.indices) {
+            if(i == array.size - 1) {
+                string += array[i]
+            } else {
+                string += array[i] + ","
+            }
+        }
+        return string
+    }
+
+    fun stringToList(listString: String): List<String> {
+        return listString.split(",")
+    }
+
 }
