@@ -2,9 +2,11 @@
 <network-security-config>
     <!-- Allow cleartext traffic to localhost -->
     <domain-config cleartextTrafficPermitted="true">
+        <!-- Development hosts -->
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">10.0.2.2</domain> <!-- Android emulator localhost alias -->
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">10.35.1.167</domain>
+        <domain includeSubdomains="true">10.35.1.158</domain>
     </domain-config>
 </network-security-config>
