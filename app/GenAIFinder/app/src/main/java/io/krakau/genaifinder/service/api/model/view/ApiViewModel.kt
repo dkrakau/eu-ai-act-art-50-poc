@@ -8,18 +8,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import io.krakau.genaifinder.service.api.ApiService
 import io.krakau.genaifinder.service.api.RetrofitClient
+import io.krakau.genaifinder.service.api.RetrofitClientFactory
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.processNextEventInCurrentThread
 import java.io.InputStream
 import java.util.Base64
 
-class ApiViewModel : ViewModel() {
+class ApiViewModel(
+    private var serverProvider: List<String>,
+    private var serverUrls: List<String>
+) : ViewModel() {
 
     // constants
     private val LOG_API_VIEW_MODEL: String = "ApiViewModel"
+
+    private var apiServices: MutableList<ApiService> = mutableListOf()
 
     private val _assets = MutableLiveData<List<Asset>>()
     val assets: LiveData<List<Asset>> = _assets
@@ -33,16 +44,26 @@ class ApiViewModel : ViewModel() {
     private val _explainedIscc = MutableLiveData<ExplainedIscc>()
     val explainedIscc: LiveData<ExplainedIscc> = _explainedIscc
 
+    init {
+        for(serverUrl in serverUrls) {
+            apiServices.add(RetrofitClientFactory.getClient(serverUrl).create(ApiService::class.java))
+        }
+    }
+
    fun fetchGetImageAssets(iscc: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.getImageAssets(mapOf("accept" to "application/json"), iscc)
-                if (response.isSuccessful) {
-                    _assets.value = response.body()
-                } else {
-                    // Handle error
-                    Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Error: ${response.code()} - ${response.message()}")
+                for(apiService in apiServices) {
+                    val response = apiService.getImageAssets(mapOf("accept" to "application/json"), iscc)
+                    if (response.isSuccessful) {
+                        Log.d(LOG_API_VIEW_MODEL, "" + response.body())
+                        _assets.value = response.body()
+                    } else {
+                        // Handle error
+                        Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Error: ${response.code()} - ${response.message()}")
+                    }
                 }
+                Log.d(LOG_API_VIEW_MODEL, "" + _assets.value.toString())
             } catch (e: Exception) {
                 // Handle exception
                 Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Exception: ${e.message}")
@@ -50,19 +71,20 @@ class ApiViewModel : ViewModel() {
         }
     }
 
-    fun fetchGetImageResource(filename: String) {
+    fun fetchGetImageResource(provider: String, filename: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.getImageResource(mapOf("accept" to "*/*"), filename)
+                val providerApiService = apiServices[serverProvider.indexOf(provider)]
+                val response = providerApiService.getImageResource(mapOf("accept" to "*/*"), filename)
                 if (response.isSuccessful) {
                     _imageResource.value = BitmapFactory.decodeStream(response.body()?.byteStream())
                 } else {
                     // Handle error
-                    Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Error: ${response.code()} - ${response.message()}")
+                    Log.e(LOG_API_VIEW_MODEL, "API: getImageResource Error: ${response.code()} - ${response.message()}")
                 }
             } catch (e: Exception) {
                 // Handle exception
-                Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Exception: ${e.message}")
+                Log.e(LOG_API_VIEW_MODEL, "API: getImageResource Exception: ${e.message}")
             }
         }
     }
@@ -70,7 +92,8 @@ class ApiViewModel : ViewModel() {
     fun fetchCreateIsccFromUrl(url: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.createIsccFromUrl(mapOf("accept" to "application/json"), Base64.getEncoder().encodeToString(url.encodeToByteArray()))
+                val randomApiService = apiServices[(0 until apiServices.size).random()]
+                val response = randomApiService.createIsccFromUrl(mapOf("accept" to "application/json"), Base64.getEncoder().encodeToString(url.encodeToByteArray()))
                 if (response.isSuccessful) {
                     _iscc.value = response.body()
                 } else {
@@ -87,7 +110,8 @@ class ApiViewModel : ViewModel() {
     fun fetchGetExplainedIscc(iscc: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.getExplainedIscc(mapOf("accept" to "application/json"), iscc)
+                val randomApiService = apiServices[(0 until apiServices.size).random()]
+                val response = randomApiService.getExplainedIscc(mapOf("accept" to "application/json"), iscc)
                 if (response.isSuccessful) {
                     _explainedIscc.value = response.body()
                 } else {
