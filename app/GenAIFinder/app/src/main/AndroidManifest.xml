@@ -43,7 +43,7 @@
             android:name=".FinderActivity"
             android:theme="@style/Theme.GenAIFinder" />
         <activity
-            android:name=".InsightActivity"
+            android:name=".InsightsActivity"
             android:theme="@style/Theme.GenAIFinder" />
     </application>
 

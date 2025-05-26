@@ -1,22 +1,21 @@
 <resources>
-    <string name="app_name">GenAI Finder</string>
+    <!-- String used for app name -->
+    <string name="app_name">GenAI·Finder</string>
+
+    <!-- Strings used for menu -->
     <string name="action_settings">Settings</string>
     <string name="action_information">Information</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
+    <!-- Strings used for api calls -->
     <string-array name="serverUrls">
-        <item>http://localhost</item>
-        <item>https://genaifinder.krakau.io</item>
+        <item>http://10.35.1.167</item>
+        <item>http://10.35.1.158</item>
     </string-array>
 
+    <!-- Strings used for information activity -->
     <string name="title_abstract">
         Abstract
     </string>
-
     <string name="text_abstract">
         The EU passed the Artificial Intelligence Act in 2024 to regulate the use and provision of
         AI systems. Despite the positive aspects of AI systems, they can also be used to spread
@@ -25,11 +24,9 @@
         for synthetically generated content. The spread of misinformation and disinformation on the
         internet is considered the greatest threat in the next two years.
     </string>
-
     <string name="title_personal_contribution">
         Personal Contribution
     </string>
-
     <string name="text_personal_contribution">
         This paper develops a proof of concept to investigate the practical implementation of the
         requirements of Article 50, Paragraphs 2 and 4 of the EU Intelligence Act. For this paper,
@@ -41,11 +38,9 @@
         content is highlighted. Finally, possible starting points for further development for the
         detection of generated audio, video, and text content are presented.
     </string>
-
     <string name="title_ISCC">
         ISCC
     </string>
-
     <string name="text_ISCC">
         The International Standard Content Code (ISCC) is a method for identifying digital media
         content on the Internet and is certified as an ISO standard (ISO 24138:2024). Titusz Pan and
@@ -55,7 +50,6 @@
         produce a 55-character character string (ISCC). By comparing the hash values of two
         different digital media, a statement can be made about their similarity.
     </string>
-
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus

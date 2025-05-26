@@ -35,7 +35,7 @@ class InformationActivity  : AppCompatActivity() {
         fabReddit = findViewById(R.id.fabReddit)
         fabFacebook = findViewById(R.id.fabFacebook)
         fabInstagram = findViewById(R.id.fabInstagram)
-        fabTikTok = findViewById(R.id.fabTikTok)
+        fabTikTok = findViewById(R.id.fabBluesky)
         fabX = findViewById(R.id.fabX)
 
         callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
@@ -45,19 +45,19 @@ class InformationActivity  : AppCompatActivity() {
             startActivity(goBackIntent(callingActivity))
         }
         fabReddit.setOnClickListener {
-            toAnotherAppOpen("https://www.reddit.com/user/Grizzlyboer", "com.reddit.android")
+            toAnotherAppOpen("https://www.reddit.com/user/genaifinder", "com.reddit.android")
         }
         fabFacebook.setOnClickListener {
-            toAnotherAppOpen("https://www.facebook.com/dominik.kra.9", "com.facebook.android")
+            toAnotherAppOpen("https://www.facebook.com/profile.php?id=61576267299269", "com.facebook.android")
         }
         fabInstagram.setOnClickListener {
-            toAnotherAppOpen("https://www.instagram.com/krakiiiiiii", "com.instagram.android")
+            toAnotherAppOpen("https://www.instagram.com/genai.finder", "com.instagram.android")
         }
         fabTikTok.setOnClickListener {
-            toAnotherAppOpen("https://www.tiktok.com/@roberthabeck", "com.tiktok.android")
+            toAnotherAppOpen("https://bsky.app/profile/genaifinder.bsky.social", "com.bluesky.android")
         }
         fabX.setOnClickListener {
-            toAnotherAppOpen("https://x.com/Grizzlyboer4", "com.x.android")
+            toAnotherAppOpen("https://x.com/genaifinder", "com.x.android")
         }
     }
 
@@ -78,8 +78,8 @@ class InformationActivity  : AppCompatActivity() {
         if(sourceActivity.equals("io.krakau.genaifinder.FinderActivity")) {
             intent = Intent(this@InformationActivity, FinderActivity::class.java)
         }
-        if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
-            intent = Intent(this@InformationActivity, InsightActivity::class.java)
+        if(sourceActivity.equals("io.krakau.genaifinder.InsightsActivity")) {
+            intent = Intent(this@InformationActivity, InsightsActivity::class.java)
         }
         return intent
     }

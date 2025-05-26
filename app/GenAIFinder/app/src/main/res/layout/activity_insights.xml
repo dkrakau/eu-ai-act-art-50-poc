@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".SettingsActivity">
+    tools:context=".InsightsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -20,7 +20,7 @@
         app:titleTextColor="@android:color/transparent" />
 
     <ImageView
-        android:id="@+id/settingsBack"
+        android:id="@+id/insightBack"
         android:layout_width="50dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
@@ -33,13 +33,13 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="Insights"
         android:textColor="@color/text_color"
         android:textColorLink="#F60707"
         android:textSize="24sp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toEndOf="@+id/settingsBack"
+        app:layout_constraintStart_toEndOf="@+id/insightBack"
         app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <ScrollView
@@ -48,10 +48,8 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,55 +57,67 @@
             android:layout_margin="10dp"
             android:background="@drawable/rounded_corners"
             android:backgroundTint="@color/dialog_bg"
-            android:orientation="vertical">
+            android:foregroundGravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/insightsSimularityTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:text="100% simular"
+                android:textAlignment="center"
+                android:textColor="@color/primary_color"
+                android:textSize="24sp"
+                android:textStyle="italic"
+                android:typeface="monospace" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardCornerRadius="15dp">
+                app:cardCornerRadius="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/bg"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="vertical">
 
-                    <Switch
-                        android:id="@+id/darkModeSwitch"
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:text="Dark Mode"
-                        android:textColor="@color/text_color"
-                        android:textSize="16sp" />
+                        android:layout_height="match_parent">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                        <ImageView
+                            android:id="@+id/inputAssetImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:background="@color/image_bg_color"
+                            android:backgroundTint="@color/image_bg_color"
+                            android:scaleType="centerInside"
+                            tools:srcCompat="@tools:sample/avatars" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:id="@+id/contentCodeLinearLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="wrap_content"
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/selectedAssetImageView"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Servers"
-                            android:textColor="@color/text_color"
-                            android:textSize="17sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <LinearLayout
-                            android:id="@+id/serverListLinearLayout"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="24dp"
-                            android:orientation="vertical"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/textView5"
-                            app:layout_constraintTop_toTopOf="parent"></LinearLayout>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
+                            android:adjustViewBounds="true"
+                            android:background="@color/image_bg_color"
+                            android:backgroundTint="@color/image_bg_color"
+                            android:scaleType="centerInside"
+                            tools:srcCompat="@tools:sample/avatars" />
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

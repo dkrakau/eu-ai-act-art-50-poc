@@ -1,33 +1,24 @@
 package io.krakau.genaifinderapi.service;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.krakau.genaifinderapi.component.VectorConverter;
 import io.krakau.genaifinderapi.schema.iscc.ExplainedISCC;
 import io.krakau.genaifinderapi.schema.mongodb.Asset;
-import io.krakau.genaifinderapi.schema.mongodb.IsccData;
-import io.krakau.genaifinderapi.schema.mongodb.Metadata;
-import io.krakau.genaifinderapi.schema.mongodb.Provider;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.SearchResults;
 import io.milvus.param.MetricType;
 import io.milvus.param.R;
 import io.milvus.response.SearchResultsWrapper;
 import io.milvus.response.SearchResultsWrapper.IDScore;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URI;
 import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +29,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindService {
 
-    private EnviromentVariables env;
+    private static Logger logger = Logger.getLogger(FindService.class.getName());
+    
+    private EnvironmentVariables env;
 
     private AssetService assetService;
     private DownloadService downloadService;
@@ -48,7 +41,7 @@ public class FindService {
 
     @Autowired
     public FindService(
-            EnviromentVariables env,
+            EnvironmentVariables env,
             AssetService assetService,
             DownloadService downloadService,
             IsccWebService isccWebService,
@@ -63,27 +56,27 @@ public class FindService {
         this.milvusService = milvusService;
     }
 
-    public List<Asset> findImage(String url) {
+    public List<Asset> findImage(String isccString) {
 
-        Instant instant = Instant.now();
-        Long timestamp = instant.toEpochMilli();
+//        Instant instant = Instant.now();
+//        Long timestamp = instant.toEpochMilli();
 
-        List<Asset> assets = new ArrayList<>();
+        List<Asset> sortedFoundAssets = new ArrayList<>();
         List<Asset> foundAssets = new ArrayList<>();
 
-        File downloadedFile = null;
-        Document iscc = null;
+//        File downloadedFile = null;
+//        ISCC iscc = null;
         ExplainedISCC explainedISCC = null;
 
         try {
             // 1. Download asset by url link
-            downloadedFile = this.downloadService.download(url);
+            //downloadedFile = this.downloadService.download(url);
             // 2. Send asset to iscc-web to create iscc
-            iscc = this.isccWebService.createISCC(new FileInputStream(downloadedFile), downloadedFile.getName());
+            //iscc = this.isccWebService.createISCC(new FileInputStream(downloadedFile), downloadedFile.getName());
             // 3. Send iscc to iscc-web to explain iscc
-            explainedISCC = this.isccWebService.explainISCC(iscc.getString("iscc"));
+            explainedISCC = this.isccWebService.explainISCC(isccString);
             // 4. Delete downloaded file
-            downloadedFile.delete();
+            //downloadedFile.delete();
             // 5. Nearest neighbour vector search for content unit on assets iscc code
             List<ByteBuffer> searchVector = Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()));
             List<String> outFields = Arrays.asList(env.MILVUS_COLLECTION_FIELD_NNSID);
@@ -109,47 +102,47 @@ public class FindService {
                 Long nnsId = fieldDataNnsId.get(i);
                 Float distance = idScores.get(i).getScore();
                 nnsResultMap.put(nnsId, distance);
-                Logger.getLogger(FindService.class.getName()).log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
+                logger.log(Level.INFO, "nnsId: " + nnsId + ", " + "distance: " + distance);
             }
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, nnsResultMap.toString());
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus with distance " + env.MILVUS_DISTANCE);
+            logger.log(Level.INFO, nnsResultMap.toString());
+            logger.log(Level.INFO, "Found " + nnsResultMap.size() + " nnsIds in milvus with distance " + env.MILVUS_DISTANCE);
             // 8. Find assets by nnsIds from mongodb
             List<Long> nnsIds = new ArrayList<>();
             nnsIds.addAll(nnsResultMap.keySet());
             foundAssets = this.assetService.findByNnsId(nnsIds);
-            Logger.getLogger(FindService.class.getName()).log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
+            logger.log(Level.INFO, "Found " + foundAssets.size() + " assets in mongodb");
             // 9. Add distance to found assets
             for (Asset asset : foundAssets) {
                 asset.setDistance(nnsResultMap.get(asset.getNnsId()).intValue());
             }
             // 10. Sort found assets by distance
-            List<Asset> sortedFoundAssets = foundAssets.stream()
+            sortedFoundAssets = foundAssets.stream()
                     .sorted(Comparator.comparingInt(Asset::getDistance))
                     .collect(Collectors.toList());
             // 11. Create asset for url
-            URI uri = new URI(url);
-            Asset assetFormUrl = new Asset(
-                    new Metadata(
-                            new Provider(
-                                    uri.getHost(),
-                                    null,
-                                    timestamp,
-                                    null
-                            ),
-                            new IsccData(
-                                    iscc,
-                                    explainedISCC
-                            )
-                    ),
-                    null);
+            //URI uri = new URI(url);
+//            Asset assetFormUrl = new Asset(
+//                    new Metadata(
+//                            new Provider(
+//                                    null,
+//                                    null,
+//                                    timestamp,
+//                                    null
+//                            ),
+//                            new IsccData(
+//                                    iscc,
+//                                    explainedISCC
+//                            )
+//                    ),
+//                    null);
             // 12. Add url asset and found assets to assets
-            assets.add(assetFormUrl);
-            assets.addAll(sortedFoundAssets);
+//            assets.add(assetFormUrl);
+//            assets.addAll(sortedFoundAssets);
         } catch (Exception ex) {
-            Logger.getLogger(FindService.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         // 13. Return assets
-        return assets;
+        return sortedFoundAssets;
     }
 
 }

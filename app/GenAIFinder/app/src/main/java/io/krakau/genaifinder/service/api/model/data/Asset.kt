@@ -3,20 +3,15 @@ package io.krakau.genaifinder.service.api.model.data
 import com.google.gson.annotations.SerializedName
 
 data class Asset(
-    //@SerializedName("_id") val id: MongoId,
+    @SerializedName("_id") val id: MongoId,
     val metadata: Metadata,
     val nnsId: Long,
     val distance: Int
-    //@SerializedName("_class") val className: String
 )
 
-/*data class MongoId(
+data class MongoId(
     @SerializedName("\$oid") val oid: String
-)*/
-
-/*data class LongValue(
-    @SerializedName("\$numberLong") val value: String
-)*/
+)
 
 data class Metadata(
     val provider: Provider,
@@ -37,11 +32,11 @@ data class Credentials(
 )
 
 data class IsccData(
-    val data: IsccImageData,
-    val explained: IsccExplained
+    val data: Iscc,
+    val explained: ExplainedIscc
 )
 
-data class IsccImageData(
+data class Iscc(
     val thumbnail: String,
     @SerializedName("\$schema") val schema: String,
     @SerializedName("@type") val type: String,
@@ -60,15 +55,15 @@ data class IsccImageData(
     val height: Int
 )
 
-data class IsccExplained(
+data class ExplainedIscc(
     val iscc: String,
     val readable: String,
     val multiformat: String,
     val decomposed: String,
-    val units: List<IsccUnit>
+    val units: List<Unit>
 )
 
-data class IsccUnit(
+data class Unit(
     val readable: String,
     val hash_hex: String,
     val iscc_unit: String,

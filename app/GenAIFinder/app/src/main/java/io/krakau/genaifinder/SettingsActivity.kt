@@ -3,38 +3,42 @@ package io.krakau.genaifinder
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 
 class SettingsActivity : AppCompatActivity() {
 
     // constants
     private val LOG_SETTINGS_ACTIVITY: String = "SettingsActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-    private val PREF_APP_SETTINGS: String = "app_settings"
-    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
-    private val PREF_APP_SETTINGS_SERVER: String = "server"
-    private val PREF_APP_SETTINGS_SERVER_SELECTION_ID: String = "server_selection_id"
 
-    // shared preferences
-    private lateinit var prefs: SharedPreferences
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     // view binding
     private lateinit var settingsBack: ImageView
     private lateinit var darkModeSwitch: Switch
-    private lateinit var serverUrlSpinner: Spinner
+    private lateinit var serverListLinearLayout: LinearLayout
 
     private lateinit var callingActivity: String
 
@@ -44,9 +48,12 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         val applicationContext = this;
 
-        settingsBack = findViewById(R.id.settingsBack)
-        darkModeSwitch = findViewById(R.id.darkModeSwitch)
-        serverUrlSpinner = findViewById(R.id.serverUrlSpinner)
+        settingsBack = findViewById<ImageView>(R.id.settingsBack)
+        darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
+        serverListLinearLayout = findViewById<LinearLayout>(R.id.serverListLinearLayout)
+
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
 
         // Get calling activity
         callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
@@ -56,37 +63,29 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(goBackIntent(callingActivity))
         }
 
-        // get shared prefs
-        prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
-
         // Setup dark mode switch
-        darkModeSwitch.isChecked = prefs.getBoolean(PREF_APP_SETTINGS_DARK_MODE, false)
+        darkModeSwitch.isChecked = dataManager.getDarkMode()
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, true) }
+                dataManager.setDarkMode(true)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, false) }
+                dataManager.setDarkMode(false)
             }
             recreate()
         }
 
-        // Setup server url spinner
-        val adapter = ArrayAdapter.createFromResource(applicationContext, R.array.serverUrls, android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        serverUrlSpinner.adapter = adapter
-        serverUrlSpinner.setSelection(prefs.getInt(PREF_APP_SETTINGS_SERVER_SELECTION_ID, 0))
-        serverUrlSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                prefs.edit() { putString(PREF_APP_SETTINGS_SERVER, selectedItem) }
-                prefs.edit() { putInt(PREF_APP_SETTINGS_SERVER_SELECTION_ID, position) }
-                Toast.makeText(applicationContext, "Selected: $selectedItem", Toast.LENGTH_SHORT).show()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {/* Another interface callback */}
+        // Setup server url list
+        var serverUrls = dataManager.getServerUrls().toList()
+        for(i in serverUrls.indices) {
+            val textView = TextView(this)
+            textView.text = serverUrls[i]
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            textView.setTextColor(this.resources.getColor(R.color.primary_color))
+            textView.setTypeface(Typeface.MONOSPACE)
+            serverListLinearLayout.addView(textView)
         }
-
     }
 
     fun goBackIntent(sourceActivity: String): Intent {
@@ -97,8 +96,8 @@ class SettingsActivity : AppCompatActivity() {
         if(sourceActivity.equals("io.krakau.genaifinder.FinderActivity")) {
             intent = Intent(this@SettingsActivity, FinderActivity::class.java)
         }
-        if(sourceActivity.equals("io.krakau.genaifinder.InsightActivity")) {
-            intent = Intent(this@SettingsActivity, InsightActivity::class.java)
+        if(sourceActivity.equals("io.krakau.genaifinder.InsightsActivity")) {
+            intent = Intent(this@SettingsActivity, InsightsActivity::class.java)
         }
         return intent
     }

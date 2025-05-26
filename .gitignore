@@ -7,3 +7,5 @@ app/GenAIFinder/.gradle/
 app/GenAIFinder/.idea/deploymentTargetSelector.xml
 
 app/GenAIFinder/.idea/
+
+api/genaifinderapi/resources/

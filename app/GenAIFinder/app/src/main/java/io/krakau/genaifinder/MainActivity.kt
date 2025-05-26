@@ -2,6 +2,7 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
@@ -33,23 +34,16 @@ import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var picasso: Picasso
-
     // constants
     private val LOG_MAIN_ACTIVITY: String = "MainActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
-    private val PREF_APP_SETTINGS: String = "app_settings"
-    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
-
-    // tasks
-    private lateinit var coroutineScope: CoroutineScope
-    private lateinit var mainScope: CoroutineScope
-    private lateinit var mJob: Job
+    // shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
     // bindings
+    private lateinit var binding: ActivityMainBinding
     private var previewImage: ImageView? = null
     private var previewTitle: TextView? = null
     private var previewDescription: TextView? = null
@@ -59,7 +53,13 @@ class MainActivity : AppCompatActivity() {
     private var discoverBtn: Button? = null
     private var webview: WebView? = null
 
+    // tasks
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var mainScope: CoroutineScope
+    private lateinit var mJob: Job
+
     // data
+    private lateinit var picasso: Picasso
     private var imageUrls: Array<String?> = emptyArray()
     private var url: String = "";
     //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
@@ -80,10 +80,12 @@ class MainActivity : AppCompatActivity() {
             // Set this instance as the singleton
         Picasso.setSingletonInstance(picasso)
 
-        // get shared prefs
-        val prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
-        // check if app is using night mode resources
-        prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, isUsingNightModeResources()) }
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        // Check if app is using night mode resources
+        dataManager.setDarkMode(isUsingNightModeResources())
+        // Set server urls
+        dataManager.setServerUrls(this.resources.getStringArray(R.array.serverUrls).toList())
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -169,15 +171,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     // Update the UI
                     textImages?.text = images
+                    // Add data to shared preferences
+                    dataManager.setImageUrls(filterContent(imageUrls).toList())
                     // Start activity
-                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
-                        putExtra("imageUrls", filterContent(imageUrls))
-                    }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                    /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
-                    launched is already running in the current task, then instead of launching
-                    a new instance of that activity, all of the other activities on top of it
-                    will be closed and this Intent will be delivered to the (now on top) old
-                    activity as a new Intent. */
+                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java))
                 }
             }
         }
@@ -320,6 +317,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java).apply {
                     putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
+                    launched is already running in the current task, then instead of launching
+                    a new instance of that activity, all of the other activities on top of it
+                    will be closed and this Intent will be delivered to the (now on top) old
+                    activity as a new Intent. */
                 true
             }
             R.id.action_information -> {

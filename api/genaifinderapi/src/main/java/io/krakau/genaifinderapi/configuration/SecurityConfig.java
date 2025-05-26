@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.configuration;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
     
     @Autowired
-    public SecurityConfig(EnviromentVariables env) {
+    public SecurityConfig(EnvironmentVariables env) {
         this.env = env;
     }
 
