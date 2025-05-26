@@ -77,7 +77,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Setup server url list
-        var serverUrls = dataManager.getServerUrls().toList()
+        val serverUrls = this.resources.getStringArray(R.array.serverUrls)
         for(i in serverUrls.indices) {
             val textView = TextView(this)
             textView.text = serverUrls[i]

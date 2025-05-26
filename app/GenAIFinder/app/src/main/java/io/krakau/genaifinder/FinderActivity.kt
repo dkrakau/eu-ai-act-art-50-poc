@@ -21,11 +21,14 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.JsonArray
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
+import io.krakau.genaifinder.service.api.model.view.ApiViewModelFactory
+import org.json.JSONArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.security.KeyFactory
@@ -68,6 +71,7 @@ class FinderActivity : AppCompatActivity() {
 
     private lateinit var iscc: Iscc
     private lateinit var explainedIscc: ExplainedIscc
+    private var resultList: MutableList<Asset> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +106,11 @@ class FinderActivity : AppCompatActivity() {
         inputImageUrl = dataManager.getInputImageUrl()
         Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
 
-        viewModel = ViewModelProvider(this).get(ApiViewModel::class.java)
+        val factory = ApiViewModelFactory(
+            dataManager.stringToList(dataManager.getServerProviderList()),
+            dataManager.stringToList(dataManager.getServerUrlsList()))
+        viewModel = ViewModelProvider(this, factory)[ApiViewModel::class.java]
+
         // Observe the LiveData
         viewModel.iscc.observe(this) { iscc ->
             // Update UI with the iscc
@@ -111,18 +119,34 @@ class FinderActivity : AppCompatActivity() {
         viewModel.explainedIscc.observe(this) { explainedIscc ->
             // Update UI with the explainedIscc
             viewModel.fetchGetImageAssets(explainedIscc.iscc)
+
         }
         viewModel.assets.observe(this) { assets ->
             // Update UI with the list of assets
             iscc = viewModel.iscc.value!!
             explainedIscc = viewModel.explainedIscc.value!!
             renderInputAsset()
-            renderFoundAssets(assets)
+            for(asset in assets) {
+                resultList.add(asset)
+            }
+            renderFoundAssets(resultList.sortedWith(compareBy({it.distance})))
             loadingConstraintLayout.visibility = View.GONE;
             finderLinearLayout.visibility = View.VISIBLE;
+
         }
         // Fetch iscc data from selected url
         viewModel.fetchCreateIsccFromUrl(inputImageUrl)
+    }
+
+    private fun sortedMergedList(assetData: List<List<Asset>>): List<Asset> {
+        val mergedList = mutableListOf<Asset>()
+         for (list in assetData) {
+             for (item in list) {
+                 mergedList.add(item)
+             }
+         }
+        return mergedList
+        //return mergedList.toList()
     }
 
     private fun renderInputAsset() {
@@ -139,9 +163,11 @@ class FinderActivity : AppCompatActivity() {
         originTagTextView.text = "Unknown"
         originTagTextView.setTextColor(getTagTextColor("Unknown"))
         originTagBackgroundLayout.setBackgroundColor(getTagBackgroundColor("Unknown"))
+        Log.d(LOG_FINDER_ACTIVITY, "RENDERED INPUT ASSET")
     }
 
     private fun renderFoundAssets(assets: List<Asset>) {
+        resultLinearLayout.removeAllViews()
         for (i in assets.indices) {
 
             Log.d(LOG_FINDER_ACTIVITY, "RENDERING ASSETS-" + i)
@@ -171,6 +197,7 @@ class FinderActivity : AppCompatActivity() {
                 dataManager.setInputImageUrl(inputImageUrl)
                 dataManager.setInputImageContentCode(explainedIscc.units[1].hash_bits)
                 dataManager.setSelectedImageFilename(assets[i].metadata.iscc.data.filename)
+                dataManager.setSelectedImageProvider(assets[i].metadata.provider.name)
                 dataManager.setSelectedImageContentCode(assets[i].metadata.iscc.explained.units[1].hash_bits)
                 startActivity(Intent(this@FinderActivity, InsightsActivity::class.java))
             }
