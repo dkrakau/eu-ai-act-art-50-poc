@@ -2,28 +2,19 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -82,7 +73,7 @@ class SettingsActivity : AppCompatActivity() {
             val textView = TextView(this)
             textView.text = serverUrls[i]
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            textView.setTextColor(this.resources.getColor(R.color.primary_color))
+            textView.setTextColor(ContextCompat.getColor(this, R.color.primary_color))
             textView.setTypeface(Typeface.MONOSPACE)
             serverListLinearLayout.addView(textView)
         }
