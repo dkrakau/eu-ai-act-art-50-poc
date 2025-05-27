@@ -1,6 +1,5 @@
 package io.krakau.genaifinder.glide
 
-import android.graphics.Picture
 import android.graphics.drawable.PictureDrawable
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.engine.Resource

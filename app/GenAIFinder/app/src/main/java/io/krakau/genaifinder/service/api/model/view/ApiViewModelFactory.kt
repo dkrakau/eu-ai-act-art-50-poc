@@ -2,8 +2,6 @@ package io.krakau.genaifinder.service.api.model.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 
 class ApiViewModelFactory(
     private val serverProvider: List<String>,

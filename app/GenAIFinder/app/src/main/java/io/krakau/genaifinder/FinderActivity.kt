@@ -2,7 +2,6 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -13,7 +12,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,14 +19,12 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.JsonArray
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
 import io.krakau.genaifinder.service.api.model.view.ApiViewModelFactory
-import org.json.JSONArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.security.KeyFactory
@@ -38,7 +34,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.crypto.Cipher
-
 
 class FinderActivity : AppCompatActivity() {
 

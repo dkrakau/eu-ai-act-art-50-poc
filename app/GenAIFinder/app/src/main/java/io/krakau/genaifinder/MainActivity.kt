@@ -28,8 +28,6 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.picassso.Base64RequestHandler
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 
 class MainActivity : AppCompatActivity() {
 

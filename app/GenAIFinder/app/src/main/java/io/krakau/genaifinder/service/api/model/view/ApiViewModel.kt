@@ -1,6 +1,5 @@
 package io.krakau.genaifinder.service.api.model.view
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -8,18 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import io.krakau.genaifinder.service.api.ApiService
-import io.krakau.genaifinder.service.api.RetrofitClient
 import io.krakau.genaifinder.service.api.RetrofitClientFactory
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.processNextEventInCurrentThread
-import java.io.InputStream
 import java.util.Base64
 
 class ApiViewModel(
