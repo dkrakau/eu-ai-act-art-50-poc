@@ -18,38 +18,43 @@ import androidx.core.content.ContextCompat
 
 class SettingsActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_SETTINGS_ACTIVITY: String = "SettingsActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
-    // view binding
+    // View variables
     private lateinit var settingsBack: ImageView
     private lateinit var darkModeSwitch: Switch
     private lateinit var serverListLinearLayout: LinearLayout
 
+    // Data
     private lateinit var callingActivity: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_settings)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val applicationContext = this;
-
-        settingsBack = findViewById<ImageView>(R.id.settingsBack)
-        darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
-        serverListLinearLayout = findViewById<LinearLayout>(R.id.serverListLinearLayout)
 
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
 
-        // Get calling activity
+        // Get intent from calling activity
         callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
         Log.d(LOG_SETTINGS_ACTIVITY, "callingActivity $callingActivity")
 
+        // Bindings
+        settingsBack = findViewById<ImageView>(R.id.settingsBack)
+        darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
+        serverListLinearLayout = findViewById<LinearLayout>(R.id.serverListLinearLayout)
+
+        /*
+         * View manipulation
+         */
         settingsBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
         }

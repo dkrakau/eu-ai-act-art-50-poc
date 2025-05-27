@@ -37,15 +37,15 @@ import javax.crypto.Cipher
 
 class FinderActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
-    // view variables
+    // View variables
     private lateinit var finderLinearLayout: LinearLayout
     private lateinit var itemImageView: ImageView
     private lateinit var titleTextView: TextView
@@ -60,20 +60,26 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var loadingConstraintLayout: ConstraintLayout
     private lateinit var loadingImageView: ImageView
 
+    // Data
     private lateinit var inputImageUrl: String
-
     private lateinit var viewModel: ApiViewModel
-
     private lateinit var iscc: Iscc
     private lateinit var explainedIscc: ExplainedIscc
     private var resultList: MutableList<Asset> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_finder)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        // bindings
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        // Get input image url
+        inputImageUrl = dataManager.getInputImageUrl()
+        Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
+
+        // Bindings
         finderLinearLayout = findViewById<LinearLayout>(R.id.finderLinearLayout)
         itemImageView = findViewById<ImageView>(R.id.itemImageView)
         titleTextView = findViewById<TextView>(R.id.titleTextView)
@@ -88,9 +94,9 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
-        // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
-
+        /*
+         * View manipulation
+         */
         loadingConstraintLayout.visibility = View.VISIBLE;
         finderLinearLayout.visibility = View.GONE;
 
@@ -98,14 +104,13 @@ class FinderActivity : AppCompatActivity() {
         loadingImageView.animation = rotateAnimation
         loadingImageView.animation.start()
 
-        inputImageUrl = dataManager.getInputImageUrl()
-        Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
-
+        /*
+         * Fetching data
+         */
         val factory = ApiViewModelFactory(
             dataManager.stringToList(dataManager.getServerProviderList()),
             dataManager.stringToList(dataManager.getServerUrlsList()))
         viewModel = ViewModelProvider(this, factory)[ApiViewModel::class.java]
-
         // Observe the LiveData
         viewModel.iscc.observe(this) { iscc ->
             // Update UI with the iscc
@@ -131,17 +136,6 @@ class FinderActivity : AppCompatActivity() {
         }
         // Fetch iscc data from selected url
         viewModel.fetchCreateIsccFromUrl(inputImageUrl)
-    }
-
-    private fun sortedMergedList(assetData: List<List<Asset>>): List<Asset> {
-        val mergedList = mutableListOf<Asset>()
-         for (list in assetData) {
-             for (item in list) {
-                 mergedList.add(item)
-             }
-         }
-        return mergedList
-        //return mergedList.toList()
     }
 
     private fun renderInputAsset() {
@@ -188,7 +182,6 @@ class FinderActivity : AppCompatActivity() {
                 )
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
-                //Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
                 dataManager.setInputImageUrl(inputImageUrl)
                 dataManager.setInputImageContentCode(explainedIscc.units[1].hash_bits)
                 dataManager.setSelectedImageFilename(assets[i].metadata.iscc.data.filename)
@@ -226,9 +219,6 @@ class FinderActivity : AppCompatActivity() {
         var verificationImageView = listItemLinearLayout.findViewById<ImageView>(R.id.verificationImageView)
 
         // Set values
-        /*Picasso.get().load(imageData)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(itemImageView)*/
         Glide.with(this)
             .load(imageData)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))

@@ -13,10 +13,11 @@ import androidx.core.net.toUri
 
 class InformationActivity  : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_INFORMATION_ACTIVITY: String = "InformationActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
+    // View variables
     private lateinit var informationBack: ImageView
     private lateinit var fabReddit: FloatingActionButton
     private lateinit var fabFacebook: FloatingActionButton
@@ -24,13 +25,20 @@ class InformationActivity  : AppCompatActivity() {
     private lateinit var fabTikTok: FloatingActionButton
     private lateinit var fabX: FloatingActionButton
 
+    // Data
     private lateinit var callingActivity: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_information)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        // Get intent of calling activity
+        callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
+        Log.d(LOG_INFORMATION_ACTIVITY, "callingActivity $callingActivity")
+
+        // Bindings
         informationBack = findViewById(R.id.informationBack)
         fabReddit = findViewById(R.id.fabReddit)
         fabFacebook = findViewById(R.id.fabFacebook)
@@ -38,9 +46,9 @@ class InformationActivity  : AppCompatActivity() {
         fabTikTok = findViewById(R.id.fabBluesky)
         fabX = findViewById(R.id.fabX)
 
-        callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
-        Log.d(LOG_INFORMATION_ACTIVITY, "callingActivity $callingActivity")
-
+        /*
+         * View manipulation
+         */
         informationBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
         }
