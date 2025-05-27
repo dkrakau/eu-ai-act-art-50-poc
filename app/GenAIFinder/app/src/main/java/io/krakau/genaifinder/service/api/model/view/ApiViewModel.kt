@@ -20,7 +20,6 @@ class ApiViewModel(
     private var serverUrls: List<String>
 ) : ViewModel() {
 
-    // constants
     private val LOG_API_VIEW_MODEL: String = "ApiViewModel"
 
     private var apiServices: MutableList<ApiService> = mutableListOf()
@@ -74,7 +73,10 @@ class ApiViewModel(
         viewModelScope.launch {
             try {
 
-                /* FOR DEVELOPMENT: One host simulating multiple provider */
+                /*
+                 * FOR DEVELOPMENT: One host simulating multiple provider.
+                 * Check also strings.xml in resources/values!
+                 */
                 val providerApiService = apiServices[serverProvider.indexOf("genaifinder")]
                 //val providerApiService = apiServices[serverProvider.indexOf(provider)]
 
