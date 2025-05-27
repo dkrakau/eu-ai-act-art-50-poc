@@ -44,7 +44,6 @@ public class CreateService {
     private IsccWebService isccWebService;
     private VectorConverter vectorConverter;
     private MilvusService milvusService;
-    private Cryptographer cryptographer;
     private Snowflaker snowflaker;
 
     @Autowired
@@ -54,7 +53,6 @@ public class CreateService {
             IsccWebService isccWebService,
             VectorConverter vectorConverter,
             MilvusService milvusService,
-            Cryptographer cryptographer,
             Snowflaker snowflaker
     ) {
         this.env = env;
@@ -62,7 +60,6 @@ public class CreateService {
         this.isccWebService = isccWebService;
         this.vectorConverter = vectorConverter;
         this.milvusService = milvusService;
-        this.cryptographer = cryptographer;
         this.snowflaker = snowflaker;
     }
 
@@ -89,7 +86,6 @@ public class CreateService {
                     env.MILVUS_COLLECTION_UNIT_META,
                     env.MILVUS_PARTITION_IMAGE,
                     metaFields);
-            
             List<Field> contentFields = new ArrayList<>();
             contentFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(1).getHash_bits()))));
             contentFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
@@ -98,7 +94,6 @@ public class CreateService {
                     env.MILVUS_COLLECTION_UNIT_CONTENT,
                     env.MILVUS_PARTITION_IMAGE,
                     contentFields);
-            
             List<Field> dataFields = new ArrayList<>();
             dataFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(2).getHash_bits()))));
             dataFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
@@ -107,7 +102,6 @@ public class CreateService {
                     env.MILVUS_COLLECTION_UNIT_DATA,
                     env.MILVUS_PARTITION_IMAGE,
                     dataFields);
-            
             List<Field> instanceFields = new ArrayList<>();
             instanceFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_VECTOR, Arrays.asList(this.vectorConverter.buildSearchVector64(explainedISCC.getUnits().get(3).getHash_bits()))));
             instanceFields.add(new InsertParam.Field(env.MILVUS_COLLECTION_FIELD_NNSID, Arrays.asList(snowflakeId)));
@@ -123,10 +117,7 @@ public class CreateService {
                                     provider.getName(),
                                     provider.getPrompt(),
                                     provider.getTimestamp(),
-                                    this.cryptographer.getCredentials( 
-                                            provider.getName(),
-                                            provider.getName() + "-" + iscc.getIscc() + "-" + provider.getTimestamp()
-                                    )
+                                    null
                             ),
                             new IsccData(
                                     iscc,
