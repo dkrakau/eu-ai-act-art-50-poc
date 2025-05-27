@@ -2,13 +2,11 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.AppBarConfiguration
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -30,7 +28,8 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.picassso.Base64RequestHandler
-import androidx.core.content.edit
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -84,8 +83,10 @@ class MainActivity : AppCompatActivity() {
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
         // Check if app is using night mode resources
         dataManager.setDarkMode(isUsingNightModeResources())
-        // Set server urls
-        dataManager.setServerUrls(this.resources.getStringArray(R.array.serverUrls).toList())
+        // Set server provider list string
+        dataManager.setServerProviderList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverProvider)))
+        // Set server urls list string
+        dataManager.setServerUrlsList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverUrls)))
 
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)

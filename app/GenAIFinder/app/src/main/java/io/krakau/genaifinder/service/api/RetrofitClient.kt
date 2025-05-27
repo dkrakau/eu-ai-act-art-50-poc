@@ -6,8 +6,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    var url = "http://10.35.1.167"
+
     private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+
+    var url: String = "http://localhost"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
@@ -24,4 +26,5 @@ object RetrofitClient {
     val apiService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
+
 }

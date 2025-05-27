@@ -20,6 +20,7 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.JustifyContent
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
+import io.krakau.genaifinder.service.api.model.view.ApiViewModelFactory
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -44,6 +45,7 @@ class InsightsActivity : AppCompatActivity() {
     private lateinit var inputAssetUrl: String
     private lateinit var inputAssetContentCode: String
     private lateinit var selectedAssetFilename: String
+    private lateinit var selectedAssetProvider: String
     private lateinit var selectedAssetContentCode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +64,7 @@ class InsightsActivity : AppCompatActivity() {
         inputAssetUrl = dataManager.getInputImageUrl()
         inputAssetContentCode = dataManager.getInputImageContentCode()
         selectedAssetFilename = dataManager.getSelectedImageFilename()
+        selectedAssetProvider = dataManager.getSelectedImageProvider()
         selectedAssetContentCode = dataManager.getSelectedImageContentCode()
 
         insightBack.setOnClickListener {
@@ -71,6 +74,7 @@ class InsightsActivity : AppCompatActivity() {
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetUrl")
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetContentCode")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetFilename: $selectedAssetFilename")
+        Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetProvider: $selectedAssetProvider")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetContentCode: $selectedAssetContentCode")
 
         insightsSimularityTextView.text = "" + calculateSimularity() + "% simular"
@@ -80,14 +84,18 @@ class InsightsActivity : AppCompatActivity() {
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
             .into(inputAssetImageView)
 
-        viewModel = ViewModelProvider(this).get(ApiViewModel::class.java)
+        val factory = ApiViewModelFactory(
+            dataManager.stringToList(dataManager.getServerProviderList()),
+            dataManager.stringToList(dataManager.getServerUrlsList()))
+        viewModel = ViewModelProvider(this, factory)[ApiViewModel::class.java]
+
         // Observe the LiveData
         viewModel.imageResource.observe(this) { bitmap ->
             // Update UI with the resource
             Log.d(LOG_INSIGHTS_ACTIVITY, "bitmap byteCount: " + bitmap.byteCount)
             selectedAssetImageView.setImageBitmap(bitmap)
         }
-        viewModel.fetchGetImageResource(selectedAssetFilename)
+        viewModel.fetchGetImageResource(selectedAssetProvider, selectedAssetFilename)
 
         renderContentCode()
     }
