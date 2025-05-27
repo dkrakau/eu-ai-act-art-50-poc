@@ -53,6 +53,10 @@ class ApiViewModel(
    fun fetchGetImageAssets(iscc: String) {
         viewModelScope.launch {
             try {
+                /*
+                 * this call will be executed multiple times and
+                 * gets combined as one sorted list inside activity
+                 */
                 for(apiService in apiServices) {
                     val response = apiService.getImageAssets(mapOf("accept" to "application/json"), iscc)
                     if (response.isSuccessful) {
@@ -61,12 +65,14 @@ class ApiViewModel(
                     } else {
                         // Handle error
                         Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Error: ${response.code()} - ${response.message()}")
+                        _assets.value = emptyList()
                     }
                 }
                 Log.d(LOG_API_VIEW_MODEL, "" + _assets.value.toString())
             } catch (e: Exception) {
                 // Handle exception
                 Log.e(LOG_API_VIEW_MODEL, "API: getImageAssets Exception: ${e.message}")
+                _assets.value = emptyList()
             }
         }
     }
@@ -74,7 +80,11 @@ class ApiViewModel(
     fun fetchGetImageResource(provider: String, filename: String) {
         viewModelScope.launch {
             try {
-                val providerApiService = apiServices[serverProvider.indexOf(provider)]
+
+                /* FOR DEVELOPMENT: One host simulating multiple provider */
+                val providerApiService = apiServices[serverProvider.indexOf("genaifinder")]
+                //val providerApiService = apiServices[serverProvider.indexOf(provider)]
+
                 val response = providerApiService.getImageResource(mapOf("accept" to "*/*"), filename)
                 if (response.isSuccessful) {
                     _imageResource.value = BitmapFactory.decodeStream(response.body()?.byteStream())
@@ -91,37 +101,67 @@ class ApiViewModel(
 
     fun fetchCreateIsccFromUrl(url: String) {
         viewModelScope.launch {
-            try {
-                val randomApiService = apiServices[(0 until apiServices.size).random()]
-                val response = randomApiService.createIsccFromUrl(mapOf("accept" to "application/json"), Base64.getEncoder().encodeToString(url.encodeToByteArray()))
-                if (response.isSuccessful) {
-                    _iscc.value = response.body()
-                } else {
-                    // Handle error
-                    Log.e(LOG_API_VIEW_MODEL, "API: createIsccFromUrl Error: ${response.code()} - ${response.message()}")
+            var abort = false
+            var randomIndex = getRandomIndex(apiServices.size)
+            while(!abort) {
+                try {
+                    val randomApiService = apiServices[randomIndex]
+                    val response = randomApiService.createIsccFromUrl(mapOf("accept" to "application/json"), Base64.getEncoder().encodeToString(url.encodeToByteArray()))
+                    if (response.isSuccessful) {
+                        _iscc.value = response.body()
+                        abort = true
+                    } else {
+                        // Handle error
+                        Log.e(LOG_API_VIEW_MODEL, "API: createIsccFromUrl Error: ${response.code()} - ${response.message()}")
+                    }
+                } catch (e: Exception) {
+                    // Handle exception
+                    Log.e(LOG_API_VIEW_MODEL, "API: createIsccFromUrl Exception: ${e.message}")
+                    if(apiServices.size > 0) {
+                        apiServices.removeAt(randomIndex)
+                        randomIndex = getRandomIndex(apiServices.size)
+                    } else {
+                        abort = true
+                    }
                 }
-            } catch (e: Exception) {
-                // Handle exception
-                Log.e(LOG_API_VIEW_MODEL, "API: createIsccFromUrl Exception: ${e.message}")
             }
         }
     }
 
     fun fetchGetExplainedIscc(iscc: String) {
         viewModelScope.launch {
-            try {
-                val randomApiService = apiServices[(0 until apiServices.size).random()]
-                val response = randomApiService.getExplainedIscc(mapOf("accept" to "application/json"), iscc)
-                if (response.isSuccessful) {
-                    _explainedIscc.value = response.body()
-                } else {
-                    // Handle error
-                    Log.e(LOG_API_VIEW_MODEL, "API: getExplainedIscc Error: ${response.code()} - ${response.message()}")
+            var abort = false
+            var randomIndex = getRandomIndex(apiServices.size)
+            while (!abort) {
+                try {
+                    val randomApiService = apiServices[randomIndex]
+                    val response = randomApiService.getExplainedIscc(mapOf("accept" to "application/json"), iscc)
+                    if (response.isSuccessful) {
+                        _explainedIscc.value = response.body()
+                        abort = true
+                    } else {
+                        // Handle error
+                        Log.e(LOG_API_VIEW_MODEL,"API: getExplainedIscc Error: ${response.code()} - ${response.message()}")
+                    }
+                } catch (e: Exception) {
+                    // Handle exception
+                    Log.e(LOG_API_VIEW_MODEL, "API: getExplainedIscc Exception: ${e.message}")
+                    if(apiServices.size > 0) {
+                        apiServices.removeAt(randomIndex)
+                        randomIndex = getRandomIndex(apiServices.size)
+                    } else {
+                        abort = true
+                    }
                 }
-            } catch (e: Exception) {
-                // Handle exception
-                Log.e(LOG_API_VIEW_MODEL, "API: getExplainedIscc Exception: ${e.message}")
             }
         }
+    }
+
+    private fun getRandomIndex(apiServicesSize: Int): Int {
+        var randomIndex = 0
+        if(apiServicesSize > 0) {
+            randomIndex = (0 until apiServicesSize).random()
+        }
+        return randomIndex
     }
 }
