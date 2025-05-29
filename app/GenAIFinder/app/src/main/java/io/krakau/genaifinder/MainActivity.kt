@@ -17,7 +17,6 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import io.krakau.genaifinder.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,21 +26,18 @@ import org.jsoup.Jsoup
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import io.krakau.genaifinder.picassso.Base64RequestHandler
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 
 class MainActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_MAIN_ACTIVITY: String = "MainActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
-    // bindings
+    // View variables
     private lateinit var binding: ActivityMainBinding
     private var previewImage: ImageView? = null
     private var previewTitle: TextView? = null
@@ -52,13 +48,12 @@ class MainActivity : AppCompatActivity() {
     private var discoverBtn: Button? = null
     private var webview: WebView? = null
 
-    // tasks
+    // Tasks
     private lateinit var coroutineScope: CoroutineScope
     private lateinit var mainScope: CoroutineScope
     private lateinit var mJob: Job
 
-    // data
-    private lateinit var picasso: Picasso
+    // Data
     private var imageUrls: Array<String?> = emptyArray()
     private var url: String = "";
     //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
@@ -71,14 +66,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize Picasso with SVG and Base64 support
-        picasso = Picasso.Builder(this)
-            //.addRequestHandler(SvgRequestHandler())
-            .addRequestHandler(Base64RequestHandler())
-            .build()
-            // Set this instance as the singleton
-        Picasso.setSingletonInstance(picasso)
-
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
         // Check if app is using night mode resources
@@ -88,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         // Set server urls list string
         dataManager.setServerUrlsList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverUrls)))
 
-        // bindings
+        // Bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -101,10 +88,11 @@ class MainActivity : AppCompatActivity() {
         discoverBtn = binding.discoverBtn
         webview = binding.webview
 
+        // Tasks
         coroutineScope = CoroutineScope(Dispatchers.IO)
         mainScope = CoroutineScope(Dispatchers.Main)
 
-        // check intent
+        // Check intent
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 if ("text/plain" == intent.type) {
@@ -113,6 +101,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        /*
+         * View manipulation
+         */
         discoverBtn?.isEnabled = false
         webview?.visibility = View.GONE;
 
@@ -253,7 +244,7 @@ class MainActivity : AppCompatActivity() {
         }
         var uri = imageUrl.toUri()
         if(imageUrl.contains("data:image") && imageUrl.contains("base64")) {
-            uri = "${Base64RequestHandler.SCHEME_BASE64}://$imageUrl".toUri()
+            uri = "base64://$imageUrl".toUri()
             Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURL:BASE64 $imageUrl")
         } else {
             if(uri.host == null) {
@@ -266,9 +257,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURLAF $imageUrl")
 
         runOnUiThread {
-            /*picasso.load(uri)
-                .placeholder(R.drawable.placeholder_image)
-                .into(previewImage)*/
             Log.d("GLIDE", imageUrl)
             Glide.with(this)
                 .load(imageUrl)

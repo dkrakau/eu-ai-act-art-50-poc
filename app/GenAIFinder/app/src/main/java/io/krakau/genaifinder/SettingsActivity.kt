@@ -2,63 +2,59 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
 
 class SettingsActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_SETTINGS_ACTIVITY: String = "SettingsActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
-    // view binding
+    // View variables
     private lateinit var settingsBack: ImageView
     private lateinit var darkModeSwitch: Switch
     private lateinit var serverListLinearLayout: LinearLayout
 
+    // Data
     private lateinit var callingActivity: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_settings)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val applicationContext = this;
-
-        settingsBack = findViewById<ImageView>(R.id.settingsBack)
-        darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
-        serverListLinearLayout = findViewById<LinearLayout>(R.id.serverListLinearLayout)
 
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
 
-        // Get calling activity
+        // Get intent from calling activity
         callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
         Log.d(LOG_SETTINGS_ACTIVITY, "callingActivity $callingActivity")
 
+        // Bindings
+        settingsBack = findViewById<ImageView>(R.id.settingsBack)
+        darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
+        serverListLinearLayout = findViewById<LinearLayout>(R.id.serverListLinearLayout)
+
+        /*
+         * View manipulation
+         */
         settingsBack.setOnClickListener {
             startActivity(goBackIntent(callingActivity))
         }
@@ -82,7 +78,7 @@ class SettingsActivity : AppCompatActivity() {
             val textView = TextView(this)
             textView.text = serverUrls[i]
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            textView.setTextColor(this.resources.getColor(R.color.primary_color))
+            textView.setTextColor(ContextCompat.getColor(this, R.color.primary_color))
             textView.setTypeface(Typeface.MONOSPACE)
             serverListLinearLayout.addView(textView)
         }

@@ -13,53 +13,53 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.navigation.ui.AppBarConfiguration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexboxLayout
-import io.krakau.genaifinder.databinding.ActivityMainBinding
 
 class ImageGalleryActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_IMAGE_GALLERY_ACTIVITY: String = "ImageGalleryActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    // Shared preferences via data manager
+    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
+    private lateinit var dataManager: DataManager
 
-    private lateinit var txt: TextView
-
+    // View variables
     private lateinit var scrollView: ScrollView
     private lateinit var flexboxLayout: FlexboxLayout
-    private var imageUrls: List<String>? = emptyList()
-    private var selectedImageUrl: String = "null"
-
     private lateinit var dialog: Dialog
     private lateinit var dialogImageView: ImageView
     private lateinit var findBtn: Button
 
-    // shared preferences via data manager
-    private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
-    private lateinit var dataManager: DataManager
+    // Data
+    private var imageUrls: List<String>? = emptyList()
+    private var selectedImageUrl: String = "null"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)*/
+        // Load view from xml
         setContentView(R.layout.activity_image_gallery)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        txt = findViewById<TextView>(R.id.testIntent)
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        // Get image urls
+        imageUrls = dataManager.getImageUrls().toList()
+
+        // Bindings
         scrollView = findViewById<ScrollView>(R.id.scrollview)
         flexboxLayout = findViewById<FlexboxLayout>(R.id.flexboxLayout)
 
-        // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        /*
+         * View manipulation
+         */
+        // Load image urls into flexboxLayout
+        displayImages()
 
         // Dialog for image url selection
         dialog = Dialog(this)
@@ -70,24 +70,9 @@ class ImageGalleryActivity : AppCompatActivity() {
         findBtn.setOnClickListener {
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"BUTTONS: User tapped the findBtn")
             Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"DIALOG: $selectedImageUrl")
-            //Toast.makeText(this, selectedImageUrl, Toast.LENGTH_LONG).show()
             dataManager.setInputImageUrl(selectedImageUrl)
             startActivity(Intent(this@ImageGalleryActivity, FinderActivity::class.java))
         }
-
-        // load image urls into flexboxLayout
-        imageUrls = dataManager.getImageUrls().toList()
-        debugImageUrlTexts()
-        displayImages()
-    }
-
-    private fun debugImageUrlTexts() {
-        var images = ""
-        imageUrls?.forEach {
-            Log.d(LOG_IMAGE_GALLERY_ACTIVITY,"ImageGallery $it")
-            images += it + "; "
-        }
-        txt.text = images
     }
 
     private fun displayImages() {
@@ -103,9 +88,6 @@ class ImageGalleryActivity : AppCompatActivity() {
             imageCardView.setOnClickListener {
                 selectedImageUrl = imageUrls?.get(index)!!
                 dialogImageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
-                /*Picasso.get().load(selectedImageUrl)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(dialogImageView)*/
                 Glide.with(this)
                     .load(selectedImageUrl)
                     .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
@@ -119,9 +101,6 @@ class ImageGalleryActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
             imageView.layoutParams = imageLayoutParams
-            /*Picasso.get().load(imageUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .into(imageView)*/
             Glide.with(this)
                 .load(imageUrl)
                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
@@ -134,10 +113,6 @@ class ImageGalleryActivity : AppCompatActivity() {
     private fun dpToPx(dp: Int): Int {
         val scale = this.resources.displayMetrics.density
         return (dp * scale + 0.5f).toInt()
-    }
-
-    private fun calculateHorizontalSpacing(): Int {
-        return this.resources.displayMetrics.widthPixels - ( (dpToPx(125) * 3) + (dpToPx(15) * 2) + (dpToPx(20) * 2) )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

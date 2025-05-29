@@ -121,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="Share content with GenAI Finder App"
+                android:hint="Share content with GenAI·Finder App"
                 android:textSize="16sp" />
 
             <TextView

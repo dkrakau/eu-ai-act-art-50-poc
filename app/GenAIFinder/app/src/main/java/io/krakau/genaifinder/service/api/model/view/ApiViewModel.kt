@@ -1,6 +1,5 @@
 package io.krakau.genaifinder.service.api.model.view
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -8,18 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import io.krakau.genaifinder.service.api.ApiService
-import io.krakau.genaifinder.service.api.RetrofitClient
 import io.krakau.genaifinder.service.api.RetrofitClientFactory
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.processNextEventInCurrentThread
-import java.io.InputStream
 import java.util.Base64
 
 class ApiViewModel(
@@ -27,7 +20,6 @@ class ApiViewModel(
     private var serverUrls: List<String>
 ) : ViewModel() {
 
-    // constants
     private val LOG_API_VIEW_MODEL: String = "ApiViewModel"
 
     private var apiServices: MutableList<ApiService> = mutableListOf()
@@ -81,7 +73,10 @@ class ApiViewModel(
         viewModelScope.launch {
             try {
 
-                /* FOR DEVELOPMENT: One host simulating multiple provider */
+                /*
+                 * FOR DEVELOPMENT: One host simulating multiple provider.
+                 * Check also strings.xml in resources/values!
+                 */
                 val providerApiService = apiServices[serverProvider.indexOf("genaifinder")]
                 //val providerApiService = apiServices[serverProvider.indexOf(provider)]
 

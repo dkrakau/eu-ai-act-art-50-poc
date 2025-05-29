@@ -2,7 +2,6 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -13,7 +12,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,14 +19,12 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.JsonArray
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
 import io.krakau.genaifinder.service.api.model.data.Iscc
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
 import io.krakau.genaifinder.service.api.model.view.ApiViewModelFactory
-import org.json.JSONArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.security.KeyFactory
@@ -39,18 +35,17 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.crypto.Cipher
 
-
 class FinderActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_FINDER_ACTIVITY: String = "FinderActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
-    // view variables
+    // View variables
     private lateinit var finderLinearLayout: LinearLayout
     private lateinit var itemImageView: ImageView
     private lateinit var titleTextView: TextView
@@ -65,20 +60,26 @@ class FinderActivity : AppCompatActivity() {
     private lateinit var loadingConstraintLayout: ConstraintLayout
     private lateinit var loadingImageView: ImageView
 
+    // Data
     private lateinit var inputImageUrl: String
-
     private lateinit var viewModel: ApiViewModel
-
     private lateinit var iscc: Iscc
     private lateinit var explainedIscc: ExplainedIscc
     private var resultList: MutableList<Asset> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_finder)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        // bindings
+        // Pass shared preferences to data manager
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        // Get input image url
+        inputImageUrl = dataManager.getInputImageUrl()
+        Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
+
+        // Bindings
         finderLinearLayout = findViewById<LinearLayout>(R.id.finderLinearLayout)
         itemImageView = findViewById<ImageView>(R.id.itemImageView)
         titleTextView = findViewById<TextView>(R.id.titleTextView)
@@ -93,9 +94,9 @@ class FinderActivity : AppCompatActivity() {
         loadingConstraintLayout = findViewById<ConstraintLayout>(R.id.loadingConstraintLayout)
         loadingImageView = findViewById<ImageView>(R.id.loadingImageView)
 
-        // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
-
+        /*
+         * View manipulation
+         */
         loadingConstraintLayout.visibility = View.VISIBLE;
         finderLinearLayout.visibility = View.GONE;
 
@@ -103,14 +104,13 @@ class FinderActivity : AppCompatActivity() {
         loadingImageView.animation = rotateAnimation
         loadingImageView.animation.start()
 
-        inputImageUrl = dataManager.getInputImageUrl()
-        Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")
-
+        /*
+         * Fetching data
+         */
         val factory = ApiViewModelFactory(
             dataManager.stringToList(dataManager.getServerProviderList()),
             dataManager.stringToList(dataManager.getServerUrlsList()))
         viewModel = ViewModelProvider(this, factory)[ApiViewModel::class.java]
-
         // Observe the LiveData
         viewModel.iscc.observe(this) { iscc ->
             // Update UI with the iscc
@@ -136,17 +136,6 @@ class FinderActivity : AppCompatActivity() {
         }
         // Fetch iscc data from selected url
         viewModel.fetchCreateIsccFromUrl(inputImageUrl)
-    }
-
-    private fun sortedMergedList(assetData: List<List<Asset>>): List<Asset> {
-        val mergedList = mutableListOf<Asset>()
-         for (list in assetData) {
-             for (item in list) {
-                 mergedList.add(item)
-             }
-         }
-        return mergedList
-        //return mergedList.toList()
     }
 
     private fun renderInputAsset() {
@@ -193,7 +182,6 @@ class FinderActivity : AppCompatActivity() {
                 )
             listItem.setOnClickListener {
                 Log.d(LOG_FINDER_ACTIVITY, "BUTTONS: User tapped item in list")
-                //Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
                 dataManager.setInputImageUrl(inputImageUrl)
                 dataManager.setInputImageContentCode(explainedIscc.units[1].hash_bits)
                 dataManager.setSelectedImageFilename(assets[i].metadata.iscc.data.filename)
@@ -231,9 +219,6 @@ class FinderActivity : AppCompatActivity() {
         var verificationImageView = listItemLinearLayout.findViewById<ImageView>(R.id.verificationImageView)
 
         // Set values
-        /*Picasso.get().load(imageData)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(itemImageView)*/
         Glide.with(this)
             .load(imageData)
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))

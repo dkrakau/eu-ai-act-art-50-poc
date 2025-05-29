@@ -5,11 +5,16 @@ services:
     build: .
     ports:
       - "80:80"
+      #- "443:443"
     volumes:
       - type: bind
         source: ./src/main/resources/application.properties
         target: /app/application.properties
         read_only: true
+      #- type: bind
+      #  source: ~/letsencrypt/keystore.p12
+      #  target: /app/keystore.p12
+      #  read_only: true
       - type: bind
         source: ./keys
         target: /app/keys

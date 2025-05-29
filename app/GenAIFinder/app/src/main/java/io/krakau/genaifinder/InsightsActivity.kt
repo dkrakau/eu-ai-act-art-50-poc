@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -26,22 +25,23 @@ import java.math.RoundingMode
 
 class InsightsActivity : AppCompatActivity() {
 
-    // constants
+    // Constants
     private val LOG_INSIGHTS_ACTIVITY: String = "InsightsActivity"
     private val CALLING_ACTIVITY: String = "callingActivity"
 
-    // shared preferences via data manager
+    // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
 
+    // View variables
     private lateinit var insightBack: ImageView
     private lateinit var insightsSimularityTextView: TextView
     private lateinit var inputAssetImageView: ImageView
     private lateinit var selectedAssetImageView: ImageView
     private lateinit var contentCodeLinearLayout: LinearLayout
 
+    // Data
     private lateinit var viewModel: ApiViewModel
-
     private lateinit var inputAssetUrl: String
     private lateinit var inputAssetContentCode: String
     private lateinit var selectedAssetFilename: String
@@ -50,14 +50,9 @@ class InsightsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Load view from xml
         setContentView(R.layout.activity_insights)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        insightBack = findViewById<ImageView>(R.id.insightBack)
-        inputAssetImageView = findViewById<ImageView>(R.id.inputAssetImageView)
-        selectedAssetImageView = findViewById<ImageView>(R.id.selectedAssetImageView)
-        contentCodeLinearLayout = findViewById<LinearLayout>(R.id.contentCodeLinearLayout)
-        insightsSimularityTextView = findViewById<TextView>(R.id.insightsSimularityTextView)
 
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
@@ -66,17 +61,25 @@ class InsightsActivity : AppCompatActivity() {
         selectedAssetFilename = dataManager.getSelectedImageFilename()
         selectedAssetProvider = dataManager.getSelectedImageProvider()
         selectedAssetContentCode = dataManager.getSelectedImageContentCode()
-
-        insightBack.setOnClickListener {
-            startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
-        }
-
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetUrl")
         Log.d(LOG_INSIGHTS_ACTIVITY, "inputAssetUrl: $inputAssetContentCode")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetFilename: $selectedAssetFilename")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetProvider: $selectedAssetProvider")
         Log.d(LOG_INSIGHTS_ACTIVITY, "selectedAssetContentCode: $selectedAssetContentCode")
 
+        // Bindings
+        insightBack = findViewById<ImageView>(R.id.insightBack)
+        inputAssetImageView = findViewById<ImageView>(R.id.inputAssetImageView)
+        selectedAssetImageView = findViewById<ImageView>(R.id.selectedAssetImageView)
+        contentCodeLinearLayout = findViewById<LinearLayout>(R.id.contentCodeLinearLayout)
+        insightsSimularityTextView = findViewById<TextView>(R.id.insightsSimularityTextView)
+
+        /*
+         * View manipulation
+         */
+        insightBack.setOnClickListener {
+            startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
+        }
         insightsSimularityTextView.text = "" + calculateSimularity() + "% simular"
 
         Glide.with(this)
@@ -84,11 +87,15 @@ class InsightsActivity : AppCompatActivity() {
             .apply(RequestOptions.placeholderOf(R.drawable.placeholder_image).error(R.drawable.placeholder_image_error))
             .into(inputAssetImageView)
 
+        renderContentCode()
+
+        /*
+         * Fetching data
+         */
         val factory = ApiViewModelFactory(
             dataManager.stringToList(dataManager.getServerProviderList()),
             dataManager.stringToList(dataManager.getServerUrlsList()))
         viewModel = ViewModelProvider(this, factory)[ApiViewModel::class.java]
-
         // Observe the LiveData
         viewModel.imageResource.observe(this) { bitmap ->
             // Update UI with the resource
@@ -96,8 +103,6 @@ class InsightsActivity : AppCompatActivity() {
             selectedAssetImageView.setImageBitmap(bitmap)
         }
         viewModel.fetchGetImageResource(selectedAssetProvider, selectedAssetFilename)
-
-        renderContentCode()
     }
 
     private fun calculateSimularity(): BigDecimal {
