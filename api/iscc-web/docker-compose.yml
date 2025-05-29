@@ -21,8 +21,8 @@ services:
       - caddy-data:/data
     ports:
       - "8000:8000"
-      - "443:443"
-      - "443:443/udp"
+      #- "443:443"
+      #- "443:443/udp"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
