@@ -51,8 +51,6 @@ public class EnvironmentVariables {
     // ### SECURITY ###
     @Value("${spring.security.allowed.localhost}")
     public String SECURITY_LOCALHOST;
-    @Value("${spring.security.allowed.domain}")
-    public String SECURITY_DOMAIN;
     @Value("${spring.security.allowed.ip}")
     public String SECURITY_IP;
     
