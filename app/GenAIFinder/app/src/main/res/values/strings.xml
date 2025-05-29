@@ -14,7 +14,7 @@
         <!--<item>LeonardoAI</item>-->
     </string-array>
     <string-array name="serverUrls">
-        <item>http://10.35.1.167</item>
+        <item>https://genaifinder.krakau.io</item>
         <!--<item>http://10.35.1.167</item>-->
         <!--<item>http://10.35.1.158</item>-->
     </string-array>
