@@ -56,12 +56,6 @@ class MainActivity : AppCompatActivity() {
     // Data
     private var imageUrls: Array<String?> = emptyArray()
     private var url: String = "";
-    //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
-    //private var url: String = "https://pbs.twimg.com/media/GbDmULJXYAAsPBQ?format=jpg&name=small";
-    //private var url: String = "https://www.spiegel.de/";
-    //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
-    //private var url: String = "https://www.tagesschau.de/"
-    //private var url: String = "https://web.de/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
