@@ -1,4 +1,4 @@
-package io.krakau.genaifinder
+package io.krakau.genaifinder.preferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
@@ -19,7 +19,7 @@ class DataManager(private val prefs: SharedPreferences) {
     private val PREF_SELECTED_IMAGE_CONTENTCODE: String = "selectedImageContentCode"
 
     fun setDarkMode(darkMode: Boolean) {
-        this.prefs.edit() { putBoolean(PREF_DARK_MODE, false) }
+        this.prefs.edit() { putBoolean(PREF_DARK_MODE, darkMode) }
     }
     fun getDarkMode(): Boolean {
         return this.prefs.getBoolean(PREF_DARK_MODE, false)

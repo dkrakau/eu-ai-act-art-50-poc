@@ -26,6 +26,7 @@ import org.jsoup.Jsoup
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.krakau.genaifinder.preferences.DataManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
         // Check if app is using night mode resources
         dataManager.setDarkMode(isUsingNightModeResources())
         // Set server provider list string
