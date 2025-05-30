@@ -18,11 +18,18 @@ class DataManager(private val prefs: SharedPreferences) {
     private val PREF_SELECTED_IMAGE_PROVIDER: String = "selectedImageProvider"
     private val PREF_SELECTED_IMAGE_CONTENTCODE: String = "selectedImageContentCode"
 
-    fun setDarkMode(darkMode: Boolean) {
-        this.prefs.edit() { putBoolean(PREF_DARK_MODE, false) }
+    fun clearPrefs() {
+        this.prefs.edit().clear().commit()
     }
-    fun getDarkMode(): Boolean {
-        return this.prefs.getBoolean(PREF_DARK_MODE, false)
+
+    fun setDarkMode(darkMode: Int) {
+        this.prefs.edit() {
+            putInt(PREF_DARK_MODE, darkMode)
+            commit()
+        }
+    }
+    fun getDarkMode(): Int {
+        return this.prefs.getInt(PREF_DARK_MODE, -1)
     }
 
     fun setServerProviderList(serverProviderList: String) {

@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.datastore.dataStore
 import io.krakau.genaifinder.preferences.DataManager
 
 class SettingsActivity : AppCompatActivity() {
@@ -60,16 +61,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Setup dark mode switch
-        darkModeSwitch.isChecked = dataManager.getDarkMode()
+        darkModeSwitch.isChecked = dataManager.getDarkMode() == 1
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                dataManager.setDarkMode(true)
+                dataManager.setDarkMode(1)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                dataManager.setDarkMode(false)
+                dataManager.setDarkMode(0)
             }
-            recreate()
         }
 
         // Setup server url list

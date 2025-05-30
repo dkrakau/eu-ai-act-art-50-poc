@@ -17,6 +17,7 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import io.krakau.genaifinder.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
+    /*private lateinit var dataRepository: DataRepository*/
 
     // View variables
     private lateinit var binding: ActivityMainBinding
@@ -63,12 +65,22 @@ class MainActivity : AppCompatActivity() {
 
         // Pass shared preferences to data manager
         dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
+        //dataManager.clearPrefs() // Clear all stored information in shared preferences
         // Check if app is using night mode resources
-        dataManager.setDarkMode(isUsingNightModeResources())
+        dataManager.setDarkMode(initDarkMode())
         // Set server provider list string
         dataManager.setServerProviderList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverProvider)))
         // Set server urls list string
         dataManager.setServerUrlsList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverUrls)))
+
+        /*dataRepository = DataRepository(this)
+        val serverProviderList = this.resources.getStringArray(R.array.serverProvider)
+        val serverUrlList = this.resources.getStringArray(R.array.serverUrls)
+        lifecycleScope.launch {
+            dataRepository.setDarkMode(isUsingNightModeResources())
+            dataRepository.setServerProviderList(dataRepository.arrayToString(serverProviderList))
+            dataRepository.setServerUrlsList(dataRepository.arrayToString(serverUrlList))
+        }*/
 
         // Bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -99,6 +111,13 @@ class MainActivity : AppCompatActivity() {
         /*
          * View manipulation
          */
+        // Load dark mode settings
+        if (dataManager.getDarkMode() == 1) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if(dataManager.getDarkMode() == 0) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         discoverBtn?.isEnabled = false
         webview?.visibility = View.GONE;
 
@@ -269,12 +288,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun isUsingNightModeResources(): Boolean {
+    private fun initDarkMode(): Int {
+        return if(dataManager.getDarkMode() == -1) isUsingNightModeResources() else dataManager.getDarkMode()
+    }
+    private fun isUsingNightModeResources(): Int {
         return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> true
-            Configuration.UI_MODE_NIGHT_NO -> false
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
-            else -> false
+            Configuration.UI_MODE_NIGHT_YES -> 1
+            Configuration.UI_MODE_NIGHT_NO -> 0
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> -1
+            else -> -1
         }
     }
 
