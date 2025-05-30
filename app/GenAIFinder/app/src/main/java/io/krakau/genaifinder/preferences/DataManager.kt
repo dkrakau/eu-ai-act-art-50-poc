@@ -19,7 +19,7 @@ class DataManager(private val prefs: SharedPreferences) {
     private val PREF_SELECTED_IMAGE_CONTENTCODE: String = "selectedImageContentCode"
 
     fun setDarkMode(darkMode: Boolean) {
-        this.prefs.edit() { putBoolean(PREF_DARK_MODE, darkMode) }
+        this.prefs.edit() { putBoolean(PREF_DARK_MODE, false) }
     }
     fun getDarkMode(): Boolean {
         return this.prefs.getBoolean(PREF_DARK_MODE, false)
