@@ -1,6 +1,5 @@
 package io.krakau.genaifinder
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -15,6 +14,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.datastore.dataStore
+import io.krakau.genaifinder.preferences.DataManager
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -41,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
 
         // Get intent from calling activity
         callingActivity = intent.getStringExtra(CALLING_ACTIVITY)!!
@@ -60,16 +61,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Setup dark mode switch
-        darkModeSwitch.isChecked = dataManager.getDarkMode()
+        darkModeSwitch.isChecked = dataManager.getDarkMode() == 1
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                dataManager.setDarkMode(true)
+                dataManager.setDarkMode(1)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                dataManager.setDarkMode(false)
+                dataManager.setDarkMode(0)
             }
-            recreate()
         }
 
         // Setup server url list
@@ -111,13 +111,13 @@ class SettingsActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this@SettingsActivity, SettingsActivity::class.java).apply {
-                    putExtra("callingActivity", callingActivity)
+                    putExtra(CALLING_ACTIVITY, callingActivity)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }
             R.id.action_information -> {
                 startActivity(Intent(this@SettingsActivity, InformationActivity::class.java).apply {
-                    putExtra("callingActivity", callingActivity)
+                    putExtra(CALLING_ACTIVITY, callingActivity)
                 }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 true
             }

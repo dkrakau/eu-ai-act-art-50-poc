@@ -1,6 +1,5 @@
 package io.krakau.genaifinder
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
@@ -19,6 +18,7 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.krakau.genaifinder.preferences.DataManager
 import io.krakau.genaifinder.service.api.model.data.Asset
 import io.krakau.genaifinder.service.api.model.data.Credentials
 import io.krakau.genaifinder.service.api.model.data.ExplainedIscc
@@ -74,7 +74,7 @@ class FinderActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
         // Get input image url
         inputImageUrl = dataManager.getInputImageUrl()
         Log.d(LOG_FINDER_ACTIVITY, "InputImageUrl: $inputImageUrl")

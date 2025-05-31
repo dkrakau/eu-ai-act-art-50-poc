@@ -1,6 +1,5 @@
 package io.krakau.genaifinder
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +17,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.JustifyContent
+import io.krakau.genaifinder.preferences.DataManager
 import io.krakau.genaifinder.service.api.model.view.ApiViewModel
 import io.krakau.genaifinder.service.api.model.view.ApiViewModelFactory
 import java.math.BigDecimal
@@ -55,7 +55,7 @@ class InsightsActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
         inputAssetUrl = dataManager.getInputImageUrl()
         inputAssetContentCode = dataManager.getInputImageContentCode()
         selectedAssetFilename = dataManager.getSelectedImageFilename()

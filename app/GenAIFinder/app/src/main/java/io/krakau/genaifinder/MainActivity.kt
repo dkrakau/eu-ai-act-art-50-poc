@@ -17,6 +17,7 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import io.krakau.genaifinder.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ import org.jsoup.Jsoup
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.krakau.genaifinder.preferences.DataManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     // Shared preferences via data manager
     private val SHARED_PREFS_KEY = "genaifinder_shared_preferences"
     private lateinit var dataManager: DataManager
+    /*private lateinit var dataRepository: DataRepository*/
 
     // View variables
     private lateinit var binding: ActivityMainBinding
@@ -56,24 +59,28 @@ class MainActivity : AppCompatActivity() {
     // Data
     private var imageUrls: Array<String?> = emptyArray()
     private var url: String = "";
-    //private var url: String = "https://www.facebook.com/share/p/1AKUUFvQAM/"
-    //private var url: String = "https://pbs.twimg.com/media/GbDmULJXYAAsPBQ?format=jpg&name=small";
-    //private var url: String = "https://www.spiegel.de/";
-    //private var url: String = "https://www.instagram.com/andy.grote/p/DH3tiQ5MUs6/?img_index=1";
-    //private var url: String = "https://www.tagesschau.de/"
-    //private var url: String = "https://web.de/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Pass shared preferences to data manager
-        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE))
+        dataManager = DataManager(getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE))
+        //dataManager.clearPrefs() // Clear all stored information in shared preferences
         // Check if app is using night mode resources
-        dataManager.setDarkMode(isUsingNightModeResources())
+        dataManager.setDarkMode(initDarkMode())
         // Set server provider list string
         dataManager.setServerProviderList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverProvider)))
         // Set server urls list string
         dataManager.setServerUrlsList(dataManager.arrayToString(this.resources.getStringArray(R.array.serverUrls)))
+
+        /*dataRepository = DataRepository(this)
+        val serverProviderList = this.resources.getStringArray(R.array.serverProvider)
+        val serverUrlList = this.resources.getStringArray(R.array.serverUrls)
+        lifecycleScope.launch {
+            dataRepository.setDarkMode(isUsingNightModeResources())
+            dataRepository.setServerProviderList(dataRepository.arrayToString(serverProviderList))
+            dataRepository.setServerUrlsList(dataRepository.arrayToString(serverUrlList))
+        }*/
 
         // Bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -104,6 +111,13 @@ class MainActivity : AppCompatActivity() {
         /*
          * View manipulation
          */
+        // Load dark mode settings
+        if (dataManager.getDarkMode() == 1) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if(dataManager.getDarkMode() == 0) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         discoverBtn?.isEnabled = false
         webview?.visibility = View.GONE;
 
@@ -274,12 +288,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun isUsingNightModeResources(): Boolean {
+    private fun initDarkMode(): Int {
+        return if(dataManager.getDarkMode() == -1) isUsingNightModeResources() else dataManager.getDarkMode()
+    }
+    private fun isUsingNightModeResources(): Int {
         return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> true
-            Configuration.UI_MODE_NIGHT_NO -> false
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
-            else -> false
+            Configuration.UI_MODE_NIGHT_YES -> 1
+            Configuration.UI_MODE_NIGHT_NO -> 0
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> -1
+            else -> -1
         }
     }
 

@@ -55,8 +55,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // custom imports
-    implementation(libs.jsoup)
-    implementation("com.squareup.picasso:picasso:2.8")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
+    implementation("org.jsoup:jsoup:1.15.3")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
