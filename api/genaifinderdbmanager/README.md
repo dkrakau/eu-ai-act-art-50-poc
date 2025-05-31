@@ -1,0 +1,2 @@
+# GenAI·Finder DB Manager
+
