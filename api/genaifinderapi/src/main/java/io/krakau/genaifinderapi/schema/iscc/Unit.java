@@ -1,25 +1,26 @@
 package io.krakau.genaifinderapi.schema.iscc;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.json.JSONObject;
 
 /**
  *
  * @author Dominik
  */
 public class Unit {
-    
+
     @Schema(type = "string", example = "META-NONE-V0-64-c8a70639eb1167b3", description = "readable")
     private String readable;
-    
+
     @Schema(type = "string", example = "e1fb7dc4e3dbb4be", description = "hash_hex")
     private String hash_hex;
-    
+
     @Schema(type = "string", example = "ISCC:AAA4RJYGHHVRCZ5T", description = "iscc_unit")
     private String iscc_unit;
-    
+
     @Schema(type = "string", example = "1110000111111011011111011100010011100011110110111011010010111110", description = "hash_bits")
     private String hash_bits;
-    
+
     @Schema(type = "string", example = "16283747162278048958", description = "hash_unit")
     private String hash_unit;
 
@@ -71,9 +72,19 @@ public class Unit {
         return hash_unit;
     }
 
+    public static Unit parse(JSONObject json) {
+        return new Unit(
+                json.getString("readable"),
+                json.getString("hash_hex"),
+                json.getString("iscc_unit"),
+                json.getString("hash_bits"),
+                json.getString("hash_uint")
+        );
+    }
+
     @Override
     public String toString() {
         return "Unit{" + "readable=" + readable + ", hash_hex=" + hash_hex + ", iscc_unit=" + iscc_unit + ", hash_bits=" + hash_bits + ", hash_unit=" + hash_unit + '}';
     }
-    
+
 }

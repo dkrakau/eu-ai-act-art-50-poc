@@ -11,19 +11,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Dominik
  */
-//@CrossOrigin(origins = "*") // just for testing
+@CrossOrigin(origins = "*")
 @Tag(name = "Find", description = "Find generated AI assets")
 @RestController
 @RequestMapping("/find")
@@ -42,20 +41,18 @@ public class FindController {
             tags = {"Find"})
     @ApiResponses({
         @ApiResponse(responseCode = "200",
-                description = "Assets that have matched the query.",
+                description = "Assets that have matched the query",
                 content = {
-                    @Content(schema = @Schema(implementation = Slice.class), mediaType = "application/json")}),
+                    @Content(schema = @Schema(implementation = Asset.class), mediaType = "application/json")}),  // Asset instead of Slice<Asset>
         @ApiResponse(responseCode = "400",
-                description = "Error message if the request failed.",
+                description = "Error message if the request failed",
                 content = {
                     @Content(schema = @Schema(implementation = Error.class), mediaType = "application/json")})
     })
-    @GetMapping("/image")
+    @GetMapping("/image/{iscc}")
     public ResponseEntity<List<Asset>> findImage(
-            @PathVariable("url")
-            @Parameter(description = "URL of an image resource.", example = "https://pbs.twimg.com/media/GrAdSm-WAAA0yxV?format=jpg&name=large")
-            @RequestParam String url) throws Exception {
-        return ResponseEntity.ok().body(this.findService.findImage(url));
+            @Parameter(description = "ISCC that is used to find image assets", example = "ISCC:KEC2G5AYLD6L665LQFZQFCW57VZKGGCDAIQFEYVGU4XWYQPDPD2IVSI") @PathVariable String iscc) throws Exception {
+        return ResponseEntity.ok().body(this.findService.findImage(iscc));
     }
 
 }

@@ -43,7 +43,7 @@ public class Cryptographer {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    public Cryptographer(EnviromentVariables env, ResourceLoader resourceLoader) throws NoSuchAlgorithmException, NoSuchPaddingException {
+    public Cryptographer(EnvironmentVariables env, ResourceLoader resourceLoader) throws NoSuchAlgorithmException, NoSuchPaddingException {
         
         this.privateKeys = new HashMap<String, PrivateKey>();
         this.publicKeys = new HashMap<String, PublicKey>();
@@ -52,7 +52,7 @@ public class Cryptographer {
 
         this.keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         this.keyPairGenerator.initialize(2048);
-        this.cipher = Cipher.getInstance("RSA/ECB/NoPadding");
+        this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
         try {
             this.loadKeyPair(

@@ -2,14 +2,12 @@ package io.krakau.genaifinder
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -31,10 +29,17 @@ import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.krakau.genaifinder.picassso.Base64RequestHandler
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var picasso: Picasso
+
+    // constants
+    private val LOG_MAIN_ACTIVITY: String = "MainActivity"
+    private val CALLING_ACTIVITY: String = "callingActivity"
+    private val PREF_APP_SETTINGS: String = "app_settings"
+    private val PREF_APP_SETTINGS_DARK_MODE: String = "dark_mode"
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -75,6 +80,11 @@ class MainActivity : AppCompatActivity() {
             // Set this instance as the singleton
         Picasso.setSingletonInstance(picasso)
 
+        // get shared prefs
+        val prefs = getSharedPreferences(PREF_APP_SETTINGS, Context.MODE_PRIVATE)
+        // check if app is using night mode resources
+        prefs.edit() { putBoolean(PREF_APP_SETTINGS_DARK_MODE, isUsingNightModeResources()) }
+
         // bindings
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -100,8 +110,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //discoverBtn?.isEnabled = false
-        webview?.setVisibility(View.GONE);
+        discoverBtn?.isEnabled = false
+        webview?.visibility = View.GONE;
 
         webview?.settings?.javaScriptEnabled = true
         webview?.settings?.domStorageEnabled = true
@@ -139,16 +149,8 @@ class MainActivity : AppCompatActivity() {
                 ImageAnalyser.boundMethod(imgTags[i].currentSrc, i, imgTags.length);
             }
             """.trimIndent()
-            //webview?.loadUrl("javascript:$javascript")
-            val sendDataIntent = Intent(this@MainActivity, FinderActivity::class.java).apply {
-               // putExtra("imageUrls", filterContent(imageUrls))
-            }
-            startActivity(sendDataIntent)
+            webview?.loadUrl("javascript:$javascript")
         }
-
-        /*val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)*/
     }
 
     private inner class MyJavaScriptInterface(private val ctx: Context) {
@@ -165,18 +167,17 @@ class MainActivity : AppCompatActivity() {
                         Log.d("imageUrls", imageUrl!!)
                         images += "$imageUrl; "
                     }
-                    // Stuff that updates the UI
+                    // Update the UI
                     textImages?.text = images
-
-                    val sendDataIntent = Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
+                    // Start activity
+                    startActivity(Intent(this@MainActivity, ImageGalleryActivity::class.java).apply {
                         putExtra("imageUrls", filterContent(imageUrls))
-                    }
-                    /* If set, and the activity being launched is already running in the current task,
-                    then instead of launching a new instance of that activity, all of the other
-                    activities on top of it will be closed and this Intent will be delivered
-                    to the (now on top) old activity as a new Intent. */
-                    sendDataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(sendDataIntent)
+                    }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    /* If set setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), and the activity being
+                    launched is already running in the current task, then instead of launching
+                    a new instance of that activity, all of the other activities on top of it
+                    will be closed and this Intent will be delivered to the (now on top) old
+                    activity as a new Intent. */
                 }
             }
         }
@@ -254,17 +255,17 @@ class MainActivity : AppCompatActivity() {
         }
         var uri = imageUrl.toUri()
         if(imageUrl.contains("data:image") && imageUrl.contains("base64")) {
-            uri = Uri.parse("${Base64RequestHandler.SCHEME_BASE64}://$imageUrl")
-            Log.d("OG:IMAGEURL:BASE64", imageUrl)
+            uri = "${Base64RequestHandler.SCHEME_BASE64}://$imageUrl".toUri()
+            Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURL:BASE64 $imageUrl")
         } else {
             if(uri.host == null) {
                 imageUrl = "https://" + url.toUri().authority + imageUrl
             }
         }
 
-        Log.d("extractUrlData", url)
-        Log.d("OG:IMAGEURL", uri.toString())
-        Log.d("OG:IMAGEURLAF", imageUrl)
+        Log.d(LOG_MAIN_ACTIVITY, "extractUrlData: $url")
+        Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURL " + uri.toString())
+        Log.d(LOG_MAIN_ACTIVITY,"OG:IMAGEURLAF $imageUrl")
 
         runOnUiThread {
             /*picasso.load(uri)
@@ -281,10 +282,19 @@ class MainActivity : AppCompatActivity() {
             discoverBtn?.isEnabled = true
         }
 
-        Log.d("JSOUP", title)
-        Log.d("JSOUP", description)
-        Log.d("JSOUP", imageUrl)
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $title")
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $description")
+        Log.d(LOG_MAIN_ACTIVITY,"JSOUP $imageUrl")
 
+    }
+
+    private fun isUsingNightModeResources(): Boolean {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+            else -> false
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -306,14 +316,20 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this@MainActivity, SettingsActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
+            R.id.action_information -> {
+                startActivity(Intent(this@MainActivity, InformationActivity::class.java).apply {
+                    putExtra(CALLING_ACTIVITY, MainActivity::class.java.name)
+                }.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
 }

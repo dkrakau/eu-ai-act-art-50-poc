@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author Dominik
  */
-@CrossOrigin(origins = "localhost") // just for testing
+@CrossOrigin(origins = "*")
 @Tag(
         name = "Create",
         description = "Create entries for generated AI assets")
@@ -47,10 +46,10 @@ public class CreateController {
             description = "This api endpoint is beeing used to create image asset entries.",
             tags = {"Create"})
     @ApiResponses({
-        @ApiResponse(responseCode = "200",
+        @ApiResponse(responseCode = "201",
                 description = "Asset have been created.",
                 content = {
-                    @Content(schema = @Schema(implementation = Slice.class),
+                    @Content(schema = @Schema(implementation = Asset.class),
                             mediaType = "application/json")
                 }),
         @ApiResponse(responseCode = "400",

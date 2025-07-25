@@ -1,8 +1,6 @@
 package io.krakau.genaifinderapi.service;
 
-import com.google.gson.JsonObject;
-import io.krakau.genaifinderapi.GenaifinderapiApplication;
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.MutationResult;
@@ -31,7 +29,7 @@ public class MilvusService {
 
     @Autowired
     public MilvusService(
-            EnviromentVariables env,
+            EnvironmentVariables env,
             MilvusServiceClient milvusServiceClient
     ) {
         this.milvusServiceClient = milvusServiceClient;

@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DownloadService {
     
+    private static Logger logger = Logger.getLogger(DownloadService.class.getName());
+    
     private MimeTypes mimeTypes;
     
     @Autowired
@@ -63,11 +65,11 @@ public class DownloadService {
 
     public File download(String sourceUrl) throws MalformedURLException, IOException, Exception {
         
-        Logger.getLogger(DownloadService.class.getName()).log(Level.INFO, "Source URL: " + sourceUrl);
+        logger.log(Level.INFO, "Source URL: " + sourceUrl);
 
         File file = null;
 
-//        Logger.getLogger(Crawler.class.getName()).log(Level.INFO, "Downloading: " + fileURL);
+//        logger.log(Level.INFO, "Downloading: " + fileURL);
         String saveFilePath = null;
 
         URL url = new URL(sourceUrl);
@@ -112,7 +114,7 @@ public class DownloadService {
         }
         httpConn.disconnect();
         
-        Logger.getLogger(DownloadService.class.getName()).log(Level.INFO, "Downloaded file: " + file.getAbsolutePath());
+        logger.log(Level.INFO, "Downloaded file: " + file.getAbsolutePath());
 
         return file;
     }
@@ -121,7 +123,7 @@ public class DownloadService {
         if (file != null && file.exists()) {
             file.delete();
         } else {
-            Logger.getLogger(DownloadService.class.getName()).log(Level.INFO, "No file named " + file.getName() + " found.");
+            logger.log(Level.INFO, "No file named " + file.getName() + " found.");
         }
     }
 

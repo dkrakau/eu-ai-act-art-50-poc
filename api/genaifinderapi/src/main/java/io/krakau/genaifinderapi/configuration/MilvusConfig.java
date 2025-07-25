@@ -1,6 +1,6 @@
 package io.krakau.genaifinderapi.configuration;
 
-import io.krakau.genaifinderapi.component.EnviromentVariables;
+import io.krakau.genaifinderapi.component.EnvironmentVariables;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.ConnectParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MilvusConfig {
 
-    private EnviromentVariables env;
+    private EnvironmentVariables env;
     
     @Autowired
-    public MilvusConfig(EnviromentVariables env) {
+    public MilvusConfig(EnvironmentVariables env) {
         this.env = env;
     }
 
