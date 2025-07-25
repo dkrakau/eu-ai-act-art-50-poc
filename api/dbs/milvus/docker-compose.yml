@@ -37,7 +37,7 @@ services:
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     ports:
-      - "19530:19530"
+      - "127.0.0.1:19530:19530"
     depends_on:
       - "etcd"
       - "minio"
@@ -46,7 +46,7 @@ services:
     container_name: milvus-attu
     image: zilliz/attu:v2.5
     ports:
-      - "8001:3000"
+      - "127.0.0.1:8001:3000"
     depends_on:
       - "etcd"
       - "minio"
