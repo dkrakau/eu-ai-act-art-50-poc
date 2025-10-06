@@ -84,7 +84,7 @@ class FinderActivity : AppCompatActivity() {
         itemImageView = findViewById<ImageView>(R.id.itemImageView)
         titleTextView = findViewById<TextView>(R.id.titleTextView)
         descriptionTextView = findViewById<TextView>(R.id.descriptionTextView)
-        simularityTextView = findViewById<TextView>(R.id.simularityTextView)
+        simularityTextView = findViewById<TextView>(R.id.similarityTextView)
         dateTextView = findViewById<TextView>(R.id.dateTextView)
         timeTextView = findViewById<TextView>(R.id.timeTextView)
         originTagCardView = findViewById<CardView>(R.id.originTagCardView)
@@ -174,7 +174,7 @@ class FinderActivity : AppCompatActivity() {
                     thumbnail,
                     title,
                     description,
-                "${calculateSimularity(distance)}% simular",
+                "${calculateSimilarity(distance)}% similar",
                     provider.name,
                     getDate(provider.timestamp),
                     getTime(provider.timestamp),
@@ -198,7 +198,7 @@ class FinderActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateSimularity(distance: Int): BigDecimal {
+    private fun calculateSimilarity(distance: Int): BigDecimal {
         return (100.0 - (distance * 100.0 / 64.0)).toBigDecimal().setScale(2, RoundingMode.HALF_EVEN)
     }
 
@@ -210,7 +210,7 @@ class FinderActivity : AppCompatActivity() {
         var itemImageView = listItemLinearLayout.findViewById<ImageView>(R.id.itemImageView)
         var titleTextView = listItemLinearLayout.findViewById<TextView>(R.id.titleTextView)
         var descriptionTextView = listItemLinearLayout.findViewById<TextView>(R.id.descriptionTextView)
-        var simularityTextView = listItemLinearLayout.findViewById<TextView>(R.id.simularityTextView)
+        var similarityTextView = listItemLinearLayout.findViewById<TextView>(R.id.similarityTextView)
         var dateTextView = listItemLinearLayout.findViewById<TextView>(R.id.dateTextView)
         var timeTextView = listItemLinearLayout.findViewById<TextView>(R.id.timeTextView)
         var originTagBackgroundLayout = listItemLinearLayout.findViewById<LinearLayout>(R.id.originTagBackgroundLayout)
@@ -225,7 +225,7 @@ class FinderActivity : AppCompatActivity() {
             .into(itemImageView)
         titleTextView.text = title
         descriptionTextView.text = description
-        simularityTextView.text = simularity
+        similarityTextView.text = simularity
 
         dateTextView.hint = date
         timeTextView.hint = time

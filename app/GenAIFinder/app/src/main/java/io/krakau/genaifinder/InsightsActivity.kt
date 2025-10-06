@@ -80,7 +80,7 @@ class InsightsActivity : AppCompatActivity() {
         insightBack.setOnClickListener {
             startActivity(Intent(this@InsightsActivity, FinderActivity::class.java))
         }
-        insightsSimularityTextView.text = "" + calculateSimularity() + "% simular"
+        insightsSimularityTextView.text = "" + calculateSimilarity() + "% similar"
 
         Glide.with(this)
             .load(inputAssetUrl)
@@ -105,7 +105,7 @@ class InsightsActivity : AppCompatActivity() {
         viewModel.fetchGetImageResource(selectedAssetProvider, selectedAssetFilename)
     }
 
-    private fun calculateSimularity(): BigDecimal {
+    private fun calculateSimilarity(): BigDecimal {
         var distance = 0
         for (i in inputAssetContentCode.indices) {
             if(i < 64 && inputAssetContentCode[i] != selectedAssetContentCode[i]) {
