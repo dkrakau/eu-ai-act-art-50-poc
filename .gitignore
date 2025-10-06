@@ -9,4 +9,13 @@ app/GenAIFinder/.idea/deploymentTargetSelector.xml
 app/GenAIFinder/.idea/
 
 api/genaifinderapi/resources/
+
 docs/iscc_content_code_sicherheitsbetrachtung/.vscode/
+
+docs/iscc_content_code_sicherheitsbetrachtung/cropping/
+
+docs/iscc_content_code_sicherheitsbetrachtung/mirroring/
+
+docs/iscc_content_code_sicherheitsbetrachtung/poisioning/
+
+docs/iscc_content_code_sicherheitsbetrachtung/rotating/
